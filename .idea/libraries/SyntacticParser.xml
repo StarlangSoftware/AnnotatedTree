@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SyntacticParser">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/libs/SyntacticParser.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
