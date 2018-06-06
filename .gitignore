@@ -53,3 +53,14 @@ nb-configuration.xml
 release.properties
 pom.xml.releaseBackup
 pom.xml.tag
+out/artifacts/AnnotatedTree_jar/AnnotatedTree.jar
+out/production/AnnotatedTree/libs/AnnotatedSentence.jar
+out/production/AnnotatedTree/libs/MorphologicalAnalysis.jar
+out/production/AnnotatedTree/libs/NamedEntityRecognition.jar
+out/production/AnnotatedTree/libs/ParseTree.jar
+out/production/AnnotatedTree/libs/PropBank.jar
+out/production/AnnotatedTree/libs/Sampling.jar
+out/production/AnnotatedTree/libs/SyntacticParser.jar
+out/production/AnnotatedTree/libs/Translation.jar
+out/production/AnnotatedTree/libs/Util.jar
+out/production/AnnotatedTree/libs/WordNet.jar
