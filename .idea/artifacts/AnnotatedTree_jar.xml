@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="AnnotatedTree:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/AnnotatedTree_jar</output-path>
-    <root id="archive" name="AnnotatedTree.jar">
-      <element id="module-output" name="AnnotatedTree" />
-    </root>
-  </artifact>
-</component>
