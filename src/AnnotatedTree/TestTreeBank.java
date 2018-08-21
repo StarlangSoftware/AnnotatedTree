@@ -6,7 +6,6 @@ import ContextFreeGrammar.*;
 import Dictionary.*;
 import MorphologicalAnalysis.FsmMorphologicalAnalyzer;
 import AnnotatedTree.Processor.Condition.*;
-import AnnotatedTree.Processor.LeafConverter.LeafToEnglish;
 import AnnotatedTree.Processor.LeafConverter.LeafToLanguageConverter;
 import AnnotatedTree.Processor.LeafConverter.LeafToTurkish;
 import AnnotatedTree.Processor.NodeDrawableCollector;
@@ -27,31 +26,117 @@ import java.util.*;
 
 public class TestTreeBank {
 
-    public static void interlingualCandidates(Pos turkishPos, Pos englishPos){
-        ParallelTreeBankDrawable treebank = new ParallelTreeBankDrawable(new File("../Penn-Treebank/English"), new File("../Penn-Treebank/Turkish"));
+    public static void interlingualMultipleCandidates(int count){
+        ParallelTreeBankDrawable treebank = new ParallelTreeBankDrawable(new File("../../Penn-Treebank/English"), new File("../../Penn-Treebank/Turkish"));
         WordNet turkishWordNet = new WordNet();
         WordNet englishWordNet = new WordNet("Data/Wordnet/english_wordnet_version_31.xml", new Locale("en"));
         try {
-            PrintWriter pw = new PrintWriter("output-" + turkishPos + "-" + englishPos + ".txt");
+            PrintWriter pw = new PrintWriter("output-" + count + "-control.txt");
             for (int i = 0; i < treebank.size(); i++) {
                 ParseTreeDrawable turkishParseTree = treebank.toTree(i);
-                TreeToStringConverter treeToStringConverter = new TreeToStringConverter(turkishParseTree, new LeafToTurkish());
-                String turkishSentence = treeToStringConverter.convert();
-                ParseTreeDrawable englishParseTree = treebank.fromTree(i);
-                TreeToStringConverter treeToStringConverter2 = new TreeToStringConverter(englishParseTree, new LeafToEnglish());
-                String englishSentence = treeToStringConverter2.convert();
                 NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) turkishParseTree.getRoot(), new IsLeafNode());
                 ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
                 for (ParseNodeDrawable parseNode : leafList) {
                     LayerInfo layerInfo = parseNode.getLayerInfo();
                     if (layerInfo.layerExists(ViewLayerType.ENGLISH_SEMANTICS) && layerInfo.layerExists(ViewLayerType.SEMANTICS)) {
-                        if (layerInfo.getNumberOfMeanings() == 1) {
-                            SynSet turkish = turkishWordNet.getSynSetWithId(layerInfo.getLayerData(ViewLayerType.SEMANTICS));
+                        if (layerInfo.getNumberOfMeanings() == count) {
+                            String turkishText = "";
+                            for (int j = 0; j < count; j++){
+                                SynSet turkish = turkishWordNet.getSynSetWithId(layerInfo.getSemanticAt(j));
+                                if (turkish != null){
+                                    turkishText = turkishText + "\t" + turkish.getId() + "\t" + turkish.getSynonym() + "\t" + turkish.getDefinition();
+                                }
+                            }
                             SynSet english = englishWordNet.getSynSetWithId(layerInfo.getLayerData(ViewLayerType.ENGLISH_SEMANTICS));
-                            if (turkish != null && english != null && turkish.getPos() != null && turkish.getPos().equals(turkishPos) && english.getPos().equals(englishPos)) {
-                                pw.println(turkish.getId() + "\t" + turkish.getSynonym() + "\t" + turkish.getDefinition() + "\t" + english.getId() + "\t" + english.getSynonym() + "\t" + english.getDefinition() + "\t" + turkishParseTree.getFileDescription().getRawFileName() + "\t" + turkishSentence + "\t" + englishSentence);
+                            if (english != null) {
+                                pw.println(layerInfo.getLayerData(ViewLayerType.ENGLISH_WORD) + "\t" + layerInfo.getLayerData(ViewLayerType.TURKISH_WORD) + "\t" + turkishParseTree.getFileDescription().getRawFileName() + "\t" + english.getId() + "\t" + english.getSynonym() + "\t" + english.getDefinition() + "\t" + turkishText);
                             }
                         }
+                    }
+                }
+            }
+            pw.close();
+        } catch (FileNotFoundException | WordNotExistsException | LayerNotExistsException e) {
+        }
+    }
+
+    public static void interlingualCandidates(int count){
+        ParallelTreeBankDrawable treebank = new ParallelTreeBankDrawable(new File("../../Penn-Treebank/English"), new File("../../Penn-Treebank/Turkish"));
+        WordNet turkishWordNet = new WordNet();
+        WordNet englishWordNet = new WordNet("Data/Wordnet/english_wordnet_version_31.xml", new Locale("en"));
+        try {
+            PrintWriter pw = new PrintWriter("synonym-" + count + ".txt");
+            for (int i = 0; i < treebank.size(); i++) {
+                ParseTreeDrawable turkishParseTree = treebank.toTree(i);
+                NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) turkishParseTree.getRoot(), new IsLeafNode());
+                ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
+                for (ParseNodeDrawable parseNode : leafList) {
+                    LayerInfo layerInfo = parseNode.getLayerInfo();
+                    if (layerInfo.layerExists(ViewLayerType.ENGLISH_SEMANTICS) && layerInfo.layerExists(ViewLayerType.SEMANTICS)) {
+                        if (layerInfo.getNumberOfMeanings() == 1 && layerInfo.getNumberOfWords() == count) {
+                            SynSet turkish = turkishWordNet.getSynSetWithId(layerInfo.getLayerData(ViewLayerType.SEMANTICS));
+                            SynSet english = englishWordNet.getSynSetWithId(layerInfo.getLayerData(ViewLayerType.ENGLISH_SEMANTICS));
+                            if (turkish != null && english != null) {
+                                pw.println(layerInfo.getLayerData(ViewLayerType.ENGLISH_WORD) + "\t" + layerInfo.getLayerData(ViewLayerType.TURKISH_WORD) + "\t" + turkishParseTree.getFileDescription().getRawFileName() + "\t" + turkish.getId() + "\t" + turkish.getSynonym() + "\t" + turkish.getDefinition() + "\t" + english.getId() + "\t" + english.getSynonym() + "\t" + english.getDefinition());
+                            }
+                        }
+                    }
+                }
+            }
+            pw.close();
+        } catch (FileNotFoundException | LayerNotExistsException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void multiWordCandidates(int count){
+        ParallelTreeBankDrawable treebank = new ParallelTreeBankDrawable(new File("../../Penn-Treebank/English"), new File("../../Penn-Treebank/Turkish"));
+        WordNet turkishWordNet = new WordNet();
+        try {
+            PrintWriter pw = new PrintWriter("multiword-" + count + ".txt");
+            for (int i = 0; i < treebank.size(); i++) {
+                ParseTreeDrawable turkishParseTree = treebank.toTree(i);
+                Sentence treeSentence = turkishParseTree.generateAnnotatedSentence();
+                for (int j = 0; j < treeSentence.wordCount() - count + 1; j++) {
+                    AnnotatedWord annotatedWord = (AnnotatedWord) treeSentence.getWord(j);
+                    String turkishWord = annotatedWord.getName();
+                    if (annotatedWord.getSemantic() != null && !annotatedWord.getSemantic().startsWith("TUR10-00000")){
+                        boolean found = true;
+                        for (int k = 1; k <= count - 1; k++){
+                            AnnotatedWord annotatedWordToCompare = (AnnotatedWord) treeSentence.getWord(j + k);
+                            turkishWord = turkishWord + " " + annotatedWordToCompare.getName();
+                            if (annotatedWordToCompare.getSemantic() == null || !annotatedWord.getSemantic().equals(annotatedWordToCompare.getSemantic())){
+                                found = false;
+                                break;
+                            }
+                        }
+                        if (found) {
+                            SynSet turkish = turkishWordNet.getSynSetWithId(annotatedWord.getSemantic());
+                            if (turkish != null) {
+                                pw.println(turkish.getId() + "\t" + turkishWord + "\t" + turkishParseTree.getFileDescription().getRawFileName() + "\t" + turkish.getSynonym() + "\t" + turkish.getDefinition());
+                            }
+                        }
+                    }
+                }
+            }
+            pw.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void missingCandidates(){
+        ParallelTreeBankDrawable treebank = new ParallelTreeBankDrawable(new File("../../Penn-Treebank/English"), new File("../../Penn-Treebank/Turkish"));
+        try {
+            PrintWriter pw = new PrintWriter("missing.txt");
+            for (int i = 0; i < treebank.size(); i++) {
+                ParseTreeDrawable turkishParseTree = treebank.toTree(i);
+                NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) turkishParseTree.getRoot(), new IsLeafNode());
+                ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
+                for (ParseNodeDrawable parseNode : leafList) {
+                    LayerInfo layerInfo = parseNode.getLayerInfo();
+                    if (layerInfo.layerExists(ViewLayerType.ENGLISH_SEMANTICS) && !layerInfo.layerExists(ViewLayerType.SEMANTICS)) {
+                        pw.println(layerInfo.getLayerData(ViewLayerType.ENGLISH_WORD) + "\t" + layerInfo.getLayerData(ViewLayerType.TURKISH_WORD) + "\t" + turkishParseTree.getFileDescription().getRawFileName());
                     }
                 }
             }
@@ -600,7 +685,7 @@ public class TestTreeBank {
     }
 
     public static void main(String[] args){
-        copyTurkish(new File("../Penn-Treebank/Turkish/"));
+        multiWordCandidates(3);
     }
 
 }
