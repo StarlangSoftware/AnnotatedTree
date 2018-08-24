@@ -89,6 +89,35 @@ public class TestTreeBank {
         }
     }
 
+    public static void newSynSetCandidates(int count){
+        ParallelTreeBankDrawable treebank = new ParallelTreeBankDrawable(new File("../../Penn-Treebank/English"), new File("../../Penn-Treebank/Turkish"));
+        WordNet english = new WordNet("Data/Wordnet/english_wordnet_version_31.xml", new Locale("en"));
+        try {
+            PrintWriter pw = new PrintWriter("synset-" + count + ".txt");
+            for (int i = 0; i < treebank.size(); i++) {
+                ParseTreeDrawable turkishParseTree = treebank.toTree(i);
+                Sentence treeSentence = turkishParseTree.generateAnnotatedSentence();
+                for (int j = 0; j < treeSentence.wordCount() - count + 1; j++) {
+                    AnnotatedWord annotatedWord = (AnnotatedWord) treeSentence.getWord(j);
+                    String turkishWord = annotatedWord.getName();
+                    if (annotatedWord.getSemantic() != null && annotatedWord.getSemantic().equals("TUR10-0000000")){
+                        for (int k = 1; k <= count - 1; k++){
+                            AnnotatedWord annotatedWordToCompare = (AnnotatedWord) treeSentence.getWord(j + k);
+                            turkishWord = turkishWord + " " + annotatedWordToCompare.getName();
+                        }
+                        ArrayList<SynSet> synSets = english.getSynSetsWithLiteral(turkishWord);
+                        if (synSets.size() > 0) {
+                            pw.println(turkishWord + "\t" + turkishParseTree.getFileDescription().getRawFileName() + "\t" + synSets.get(0).getId() + "\t" + synSets.get(0).getSynonym());
+                        }
+                    }
+                }
+            }
+            pw.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void multiWordCandidates(int count){
         ParallelTreeBankDrawable treebank = new ParallelTreeBankDrawable(new File("../../Penn-Treebank/English"), new File("../../Penn-Treebank/Turkish"));
         WordNet turkishWordNet = new WordNet();
@@ -685,7 +714,7 @@ public class TestTreeBank {
     }
 
     public static void main(String[] args){
-        multiWordCandidates(3);
+        newSynSetCandidates(3);
     }
 
 }
