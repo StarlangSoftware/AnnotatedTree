@@ -714,7 +714,7 @@ public class TestTreeBank {
     }
 
     public static void main(String[] args){
-        newSynSetCandidates(3);
+        interlingualMultipleCandidates(2);
     }
 
 }
