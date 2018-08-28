@@ -715,6 +715,13 @@ public class TestTreeBank {
 
     public static void main(String[] args){
         interlingualMultipleCandidates(2);
+        interlingualMultipleCandidates(3);
+        interlingualCandidates(1);
+        interlingualCandidates(2);
+        interlingualCandidates(3);
+        multiWordCandidates(2);
+        multiWordCandidates(3);
+        missingCandidates();
     }
 
 }
