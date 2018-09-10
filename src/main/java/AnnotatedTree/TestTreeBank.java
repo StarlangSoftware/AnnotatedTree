@@ -10,6 +10,7 @@ import AnnotatedTree.Processor.LeafConverter.LeafToLanguageConverter;
 import AnnotatedTree.Processor.LeafConverter.LeafToTurkish;
 import AnnotatedTree.Processor.NodeDrawableCollector;
 import AnnotatedTree.Processor.TreeToStringConverter;
+import MorphologicalDisambiguation.RootWordStatistics;
 import ParseTree.ParseNode;
 import ParseTree.TreeBank;
 import ProbabilisticContextFreeGrammar.ProbabilisticContextFreeGrammar;
@@ -714,14 +715,17 @@ public class TestTreeBank {
     }
 
     public static void main(String[] args){
-        interlingualMultipleCandidates(2);
+        /*interlingualMultipleCandidates(2);
         interlingualMultipleCandidates(3);
         interlingualCandidates(1);
         interlingualCandidates(2);
         interlingualCandidates(3);
         multiWordCandidates(2);
         multiWordCandidates(3);
-        missingCandidates();
+        missingCandidates();*/
+        TreeBankDrawable treeBank = new TreeBankDrawable(new File("../../Penn-Treebank/Turkish"));
+        RootWordStatistics rootWordStatistics = treeBank.extractRootWordStatistics(new FsmMorphologicalAnalyzer());
+        rootWordStatistics.saveStatistics("rootwordstatistics.bin");
     }
 
 }
