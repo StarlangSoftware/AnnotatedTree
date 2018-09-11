@@ -714,18 +714,21 @@ public class TestTreeBank {
         }
     }
 
+    public static void extractStatistics(){
+        TreeBankDrawable treeBank = new TreeBankDrawable(new File("../../Penn-Treebank/Turkish"));
+        RootWordStatistics rootWordStatistics = treeBank.extractRootWordStatistics(new FsmMorphologicalAnalyzer());
+        rootWordStatistics.saveStatistics("rootwordstatistics.bin");
+    }
+
     public static void main(String[] args){
-        /*interlingualMultipleCandidates(2);
+        interlingualMultipleCandidates(2);
         interlingualMultipleCandidates(3);
         interlingualCandidates(1);
         interlingualCandidates(2);
         interlingualCandidates(3);
         multiWordCandidates(2);
         multiWordCandidates(3);
-        missingCandidates();*/
-        TreeBankDrawable treeBank = new TreeBankDrawable(new File("../../Penn-Treebank/Turkish"));
-        RootWordStatistics rootWordStatistics = treeBank.extractRootWordStatistics(new FsmMorphologicalAnalyzer());
-        rootWordStatistics.saveStatistics("rootwordstatistics.bin");
+        missingCandidates();
     }
 
 }
