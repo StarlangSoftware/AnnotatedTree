@@ -270,6 +270,19 @@ public class ParseTreeDrawable extends ParseTree {
         }
     }
 
+    public boolean updateConnectedPredicate(String previousId, String currentId){
+        boolean modified = false;
+        NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable)root, new IsTurkishLeafNode());
+        ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
+        for (ParseNodeDrawable parseNode : leafList){
+            if (parseNode.getLayerInfo().getArgument() != null && parseNode.getLayerInfo().getArgument().getId() != null && parseNode.getLayerInfo().getArgument().getId().equals(previousId)){
+                parseNode.getLayerInfo().setLayerData(ViewLayerType.PROPBANK, parseNode.getLayerInfo().getArgument().getArgumentType() + "$" + currentId);
+                modified = true;
+            }
+        }
+        return modified;
+    }
+
     public ParseNodeDrawable nextLeafNode(ParseNodeDrawable parseNode){
         NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable)root, new IsTurkishLeafNode());
         ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();

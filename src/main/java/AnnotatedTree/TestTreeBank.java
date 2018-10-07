@@ -30,7 +30,7 @@ public class TestTreeBank {
     public static void interlingualMultipleCandidates(int count){
         ParallelTreeBankDrawable treebank = new ParallelTreeBankDrawable(new File("../../Penn-Treebank/English"), new File("../../Penn-Treebank/Turkish"));
         WordNet turkishWordNet = new WordNet();
-        WordNet englishWordNet = new WordNet("Data/Wordnet/english_wordnet_version_31.xml");
+        WordNet englishWordNet = new WordNet("english_wordnet_version_31.xml");
         try {
             PrintWriter pw = new PrintWriter("output-" + count + "-control.txt");
             for (int i = 0; i < treebank.size(); i++) {
@@ -64,7 +64,7 @@ public class TestTreeBank {
     public static void interlingualCandidates(int count){
         ParallelTreeBankDrawable treebank = new ParallelTreeBankDrawable(new File("../../Penn-Treebank/English"), new File("../../Penn-Treebank/Turkish"));
         WordNet turkishWordNet = new WordNet();
-        WordNet englishWordNet = new WordNet("Data/Wordnet/english_wordnet_version_31.xml");
+        WordNet englishWordNet = new WordNet("english_wordnet_version_31.xml");
         try {
             PrintWriter pw = new PrintWriter("synonym-" + count + ".txt");
             for (int i = 0; i < treebank.size(); i++) {
@@ -92,7 +92,7 @@ public class TestTreeBank {
 
     public static void newSynSetCandidates(int count){
         ParallelTreeBankDrawable treebank = new ParallelTreeBankDrawable(new File("../../Penn-Treebank/English"), new File("../../Penn-Treebank/Turkish"));
-        WordNet english = new WordNet("Data/Wordnet/english_wordnet_version_31.xml");
+        WordNet english = new WordNet("english_wordnet_version_31.xml");
         try {
             PrintWriter pw = new PrintWriter("synset-" + count + ".txt");
             for (int i = 0; i < treebank.size(); i++) {
@@ -292,7 +292,7 @@ public class TestTreeBank {
 
     public static void propbankAnnotationControl(){
         WordNet turkish = new WordNet();
-        TreeBankDrawable treeBank = new TreeBankDrawable(new File("../Penn-Treebank/Turkish"));
+        TreeBankDrawable treeBank = new TreeBankDrawable(new File("../../Penn-Treebank/Turkish"));
         try {
             PrintWriter pw = new PrintWriter("output.txt");
             for (int i = 0; i < treeBank.size(); i++){
@@ -721,14 +721,15 @@ public class TestTreeBank {
     }
 
     public static void main(String[] args){
-        interlingualMultipleCandidates(2);
+        /*interlingualMultipleCandidates(2);
         interlingualMultipleCandidates(3);
         interlingualCandidates(1);
         interlingualCandidates(2);
         interlingualCandidates(3);
         multiWordCandidates(2);
         multiWordCandidates(3);
-        missingCandidates();
+        missingCandidates();*/
+        propbankAnnotationControl();
     }
 
 }
