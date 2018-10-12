@@ -290,63 +290,73 @@ public class TestTreeBank {
         }
     }
 
+    public static void propBankAnnotationCheckAndUpdate() {
+        TreeBankDrawable treeBank = new TreeBankDrawable(new File("../../Penn-Treebank/Turkish"));
+        for (int i = 0; i < treeBank.size(); i++){
+            NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) treeBank.get(i).getRoot(), new IsTurkishLeafNode());
+            ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
+            for (ParseNodeDrawable leafNode : leafList){
+                LayerInfo layerInfo = leafNode.getLayerInfo();
+                if (layerInfo.getNumberOfMeanings() == 1 && layerInfo.getArgument() != null && layerInfo.getArgument().getArgumentType().equals("PREDICATE") && !layerInfo.getArgument().getId().equals(layerInfo.getLayerData(ViewLayerType.SEMANTICS))) {
+                    String oldId = layerInfo.getArgument().getId();
+                    String newId = layerInfo.getLayerData(ViewLayerType.SEMANTICS);
+                    if (treeBank.get(i).updateConnectedPredicate(oldId, newId)){
+                        treeBank.get(i).save();
+                    }
+                }
+            }
+        }
+    }
+
     public static void propbankAnnotationControl(){
         WordNet turkish = new WordNet();
+        SynSet synSet;
         TreeBankDrawable treeBank = new TreeBankDrawable(new File("../../Penn-Treebank/Turkish"));
         try {
             PrintWriter pw = new PrintWriter("output.txt");
             for (int i = 0; i < treeBank.size(); i++){
-                ArrayList<ParseNodeDrawable> predicateNodes = treeBank.get(i).extractNodesWithPredicateVerbs(turkish);
-                if (predicateNodes.size() > 0){
-                    SynSet synSet = null;
-                    for (ParseNodeDrawable predicateNode : predicateNodes){
-                        try {
-                            for (int j = 0; j < predicateNode.getLayerInfo().getNumberOfWords(); j++){
-                                String synSetId = predicateNode.getLayerInfo().getSemanticAt(j);
-                                SynSet currentSynSet = turkish.getSynSetWithId(synSetId);
-                                if (currentSynSet != null && currentSynSet.getPos() != null && currentSynSet.getPos().equals(Pos.VERB)){
-                                    synSet = currentSynSet;
-                                    break;
-                                }
-                            }
-                        } catch (LayerNotExistsException | WordNotExistsException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    TreeToStringConverter treeToStringConverter = new TreeToStringConverter(treeBank.get(i), new LeafToTurkish());
-                    String sentence = treeToStringConverter.convert();
-                    NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) treeBank.get(i).getRoot(), new IsTurkishLeafNode());
-                    ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
-                    String phrase = "";
-                    String previousAnnotation = "";
-                    for (ParseNodeDrawable leafNode : leafList){
-                        LayerInfo layerInfo = leafNode.getLayerInfo();
-                        if (layerInfo.getLayerData(ViewLayerType.PROPBANK) != null){
-                            if (layerInfo.getLayerData(ViewLayerType.PROPBANK).equals(previousAnnotation)){
-                                phrase = phrase + " " + layerInfo.getLayerData(ViewLayerType.TURKISH_WORD);
-                            } else {
-                                if (phrase.length() > 0 && synSet != null){
-                                    pw.println(treeBank.get(i).getFileDescription().getRawFileName() + "\t" + phrase + "\t" + previousAnnotation + "\t" + synSet.getSynonym() + "\t" + synSet.getDefinition() + "\t" + sentence);
-                                }
-                                if (!layerInfo.getLayerData(ViewLayerType.PROPBANK).equals("NONE")){
-                                    phrase = layerInfo.getLayerData(ViewLayerType.TURKISH_WORD);
-                                    previousAnnotation = layerInfo.getLayerData(ViewLayerType.PROPBANK);
-                                } else {
-                                    phrase = "";
-                                    previousAnnotation = "";
-                                }
-                            }
+                TreeToStringConverter treeToStringConverter = new TreeToStringConverter(treeBank.get(i), new LeafToTurkish());
+                String sentence = treeToStringConverter.convert();
+                NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) treeBank.get(i).getRoot(), new IsTurkishLeafNode());
+                ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
+                String phrase = "";
+                String previousAnnotation = "";
+                for (ParseNodeDrawable leafNode : leafList){
+                    LayerInfo layerInfo = leafNode.getLayerInfo();
+                    if (layerInfo.getLayerData(ViewLayerType.PROPBANK) != null){
+                        if (layerInfo.getLayerData(ViewLayerType.PROPBANK).equals(previousAnnotation)){
+                            phrase = phrase + " " + layerInfo.getLayerData(ViewLayerType.TURKISH_WORD);
                         } else {
-                            if (phrase.length() > 0){
+                            if (phrase.length() > 0 && previousAnnotation.contains("$") && previousAnnotation.split("\\$").length > 1){
+                                synSet = turkish.getSynSetWithId(previousAnnotation.split("\\$")[1]);
                                 if (synSet != null){
                                     pw.println(treeBank.get(i).getFileDescription().getRawFileName() + "\t" + phrase + "\t" + previousAnnotation + "\t" + synSet.getSynonym() + "\t" + synSet.getDefinition() + "\t" + sentence);
                                 }
+                            }
+                            if (!layerInfo.getLayerData(ViewLayerType.PROPBANK).equals("NONE")){
+                                phrase = layerInfo.getLayerData(ViewLayerType.TURKISH_WORD);
+                                previousAnnotation = layerInfo.getLayerData(ViewLayerType.PROPBANK);
+                            } else {
                                 phrase = "";
                                 previousAnnotation = "";
                             }
                         }
+                    } else {
+                        if (phrase.length() > 0){
+                            if (previousAnnotation.contains("$") && previousAnnotation.split("\\$").length > 1){
+                                synSet = turkish.getSynSetWithId(previousAnnotation.split("\\$")[1]);
+                                if (synSet != null){
+                                    pw.println(treeBank.get(i).getFileDescription().getRawFileName() + "\t" + phrase + "\t" + previousAnnotation + "\t" + synSet.getSynonym() + "\t" + synSet.getDefinition() + "\t" + sentence);
+                                }
+                            }
+                            phrase = "";
+                            previousAnnotation = "";
+                        }
                     }
-                    if (phrase.length() > 0 && synSet != null){
+                }
+                if (phrase.length() > 0 && previousAnnotation.contains("$") && previousAnnotation.split("\\$").length > 1){
+                    synSet = turkish.getSynSetWithId(previousAnnotation.split("\\$")[1]);
+                    if (synSet != null){
                         pw.println(treeBank.get(i).getFileDescription().getRawFileName() + "\t" + phrase + "\t" + previousAnnotation + "\t" + synSet.getSynonym() + "\t" + synSet.getDefinition() + "\t" + sentence);
                     }
                 }
@@ -460,7 +470,7 @@ public class TestTreeBank {
     public static void frameSetConversion(){
         WordNet turkish = new WordNet();
         IdMapping mapping = new IdMapping("Data/Wordnet/mapping.txt");
-        FramesetList xmlParser = new FramesetList("frameset.xml");
+        FramesetList xmlParser = new FramesetList();
         for (int i = 0; i < xmlParser.size(); i++){
             Frameset frameset = xmlParser.getFrameSet(i);
             if (turkish.getSynSetWithId(frameset.getId()) == null){
@@ -730,6 +740,7 @@ public class TestTreeBank {
         multiWordCandidates(3);
         missingCandidates();*/
         propbankAnnotationControl();
+        //propBankAnnotationCheckAndUpdate();
     }
 
 }
