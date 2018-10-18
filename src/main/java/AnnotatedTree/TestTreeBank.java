@@ -477,10 +477,10 @@ public class TestTreeBank {
                 String mappedId = mapping.map(frameset.getId());
                 if (mappedId != null){
                     frameset.setId(mappedId);
+                    frameset.saveAsXml();
                 }
             }
         }
-        xmlParser.saveAsXml(null, null, null, -1);
     }
 
     public static void semanticNotExists(){
