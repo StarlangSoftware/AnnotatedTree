@@ -740,7 +740,6 @@ public class TestTreeBank {
         multiWordCandidates(3);
         missingCandidates();*/
         propbankAnnotationControl();
-        //propBankAnnotationCheckAndUpdate();
     }
 
 }
