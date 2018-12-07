@@ -730,6 +730,12 @@ public class TestTreeBank {
         rootWordStatistics.saveStatistics("rootwordstatistics.bin");
     }
 
+    public static void extractDictionary(){
+        TreeBankDrawable treeBank = new TreeBankDrawable(new File("../../alcatel/Turkish"));
+        TxtDictionary dictionary = treeBank.createDictionary();
+        dictionary.saveAsTxt("deneme.txt");
+    }
+
     public static void main(String[] args){
         /*interlingualMultipleCandidates(2);
         interlingualMultipleCandidates(3);
@@ -738,8 +744,9 @@ public class TestTreeBank {
         interlingualCandidates(3);
         multiWordCandidates(2);
         multiWordCandidates(3);
-        missingCandidates();*/
-        propbankAnnotationControl();
+        missingCandidates();
+        propbankAnnotationControl();*/
+        extractDictionary();
     }
 
 }

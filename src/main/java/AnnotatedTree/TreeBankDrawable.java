@@ -19,6 +19,7 @@ import AnnotatedTree.Processor.TreeToStringConverter;
 import Util.Interval;
 import WordNet.WordNet;
 import Corpus.*;
+import Dictionary.*;
 
 import javax.swing.*;
 import java.io.*;
@@ -275,6 +276,48 @@ public class TreeBankDrawable extends TreeBank {
             }
         }
         return corpus;
+    }
+
+    public TxtDictionary createDictionary() {
+        TxtDictionary dictionary = new TxtDictionary(new TurkishWordComparator());
+        for (ParseTree tree:parseTrees){
+            ParseTreeDrawable parseTree = (ParseTreeDrawable) tree;
+            NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) parseTree.getRoot(), new IsTurkishLeafNode());
+            ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
+            for (ParseNode node : leafList){
+                ParseNodeDrawable leafNode = (ParseNodeDrawable) node;
+                LayerInfo layerInfo = leafNode.getLayerInfo();
+                if (layerInfo.layerExists(ViewLayerType.INFLECTIONAL_GROUP)){
+                    try{
+                        for (int i = 0; i < layerInfo.getNumberOfWords(); i++){
+                            MorphologicalParse morphologicalParse = layerInfo.getMorphologicalParseAt(i);
+                            String pos = morphologicalParse.getRootPos();
+                            String name = morphologicalParse.getWord().getName();
+                            switch (pos){
+                                case "NOUN":
+                                    if (morphologicalParse.isProperNoun()){
+                                        dictionary.addProperNoun(name);
+                                    } else {
+                                        dictionary.addNoun(name);
+                                    }
+                                    break;
+                                case "VERB":
+                                    dictionary.addVerb(name);
+                                    break;
+                                case "ADJ":
+                                    dictionary.addAdjective(name);
+                                    break;
+                                case "ADV":
+                                    dictionary.addAdverb(name);
+                                    break;
+                            }
+                        }
+                    } catch (LayerNotExistsException | WordNotExistsException e){
+                    }
+                }
+            }
+        }
+        return dictionary;
     }
 
     public ArrayList<ParseNodeDrawable> extractVerbs(WordNet wordNet){
