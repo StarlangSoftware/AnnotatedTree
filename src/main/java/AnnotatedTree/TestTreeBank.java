@@ -730,10 +730,10 @@ public class TestTreeBank {
         rootWordStatistics.saveStatistics("rootwordstatistics.bin");
     }
 
-    public static void extractDictionary(){
-        TreeBankDrawable treeBank = new TreeBankDrawable(new File("../../alcatel/Turkish"));
+    public static void extractDictionary(String pathName, String outputFileName){
+        TreeBankDrawable treeBank = new TreeBankDrawable(new File(pathName));
         TxtDictionary dictionary = treeBank.createDictionary();
-        dictionary.saveAsTxt("deneme.txt");
+        dictionary.saveAsTxt(outputFileName);
     }
 
     public static void main(String[] args){
@@ -746,7 +746,7 @@ public class TestTreeBank {
         multiWordCandidates(3);
         missingCandidates();
         propbankAnnotationControl();*/
-        extractDictionary();
+        extractDictionary("../../Penn-Treebank/Turkish", "deneme2.txt");
     }
 
 }
