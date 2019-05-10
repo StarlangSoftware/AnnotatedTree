@@ -6,22 +6,11 @@ import AnnotatedTree.LayerItemNotExistsException;
 
 import java.util.ArrayList;
 
-public class MetaMorphemeLayer extends MultiWordMultiItemLayer<MetamorphicParse>{
+public class MetaMorphemeLayer extends MetaMorphemesMovedLayer{
 
     public MetaMorphemeLayer(String layerValue) {
+        super(layerValue);
         layerName = "metaMorphemes";
-        setLayerValue(layerValue);
-    }
-
-    public void setLayerValue(String layerValue){
-        items = new ArrayList<MetamorphicParse>();
-        this.layerValue = layerValue;
-        if (layerValue != null){
-            String[] splitWords = layerValue.split("\\s");
-            for (String word:splitWords){
-                items.add(new MetamorphicParse(word));
-            }
-        }
     }
 
     public void setLayerValue(MetamorphicParse parse){
@@ -33,25 +22,6 @@ public class MetaMorphemeLayer extends MultiWordMultiItemLayer<MetamorphicParse>
                 items.add(new MetamorphicParse(word));
             }
         }
-    }
-
-    public int getLayerSize(ViewLayerType viewLayer) {
-        int size = 0;
-        for (MetamorphicParse parse: items){
-            size += parse.size();
-        }
-        return size;
-    }
-
-    public String getLayerInfoAt(ViewLayerType viewLayer, int index) {
-        int size = 0;
-        for (MetamorphicParse parse: items){
-            if (index < size + parse.size()){
-                return parse.getMetaMorpheme(index - size);
-            }
-            size += parse.size();
-        }
-        return null;
     }
 
     public String getLayerInfoFrom(int index) {

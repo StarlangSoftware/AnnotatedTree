@@ -206,7 +206,7 @@ public class LayerInfo {
     }
 
     public String getTurkishWordAt(int index) throws LayerNotExistsException, WordNotExistsException {
-        return getMultiWordAt(ViewLayerType.TURKISH_WORD, index, "Turkish");
+        return getMultiWordAt(ViewLayerType.TURKISH_WORD, index, "turkish");
     }
 
     public int getNumberOfMeanings(){
@@ -218,11 +218,11 @@ public class LayerInfo {
     }
 
     public String getSemanticAt(int index) throws LayerNotExistsException, WordNotExistsException {
-        return getMultiWordAt(ViewLayerType.SEMANTICS, index, "Semantics");
+        return getMultiWordAt(ViewLayerType.SEMANTICS, index, "semantics");
     }
 
     public String getShallowParseAt(int index) throws LayerNotExistsException, WordNotExistsException {
-        return getMultiWordAt(ViewLayerType.SHALLOW_PARSE, index, "Shallow Parse");
+        return getMultiWordAt(ViewLayerType.SHALLOW_PARSE, index, "shallowParse");
     }
 
     public Argument getArgument() {
