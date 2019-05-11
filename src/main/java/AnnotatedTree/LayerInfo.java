@@ -442,7 +442,7 @@ public class LayerInfo {
     }
 
     public boolean isVerbal(){
-        if (layers.get(ViewLayerType.INFLECTIONAL_GROUP) != null){
+        if (layers.containsKey(ViewLayerType.INFLECTIONAL_GROUP)){
             return ((MorphologicalAnalysisLayer) layers.get(ViewLayerType.INFLECTIONAL_GROUP)).isVerbal();
         } else {
             return false;
@@ -450,7 +450,7 @@ public class LayerInfo {
     }
 
     public boolean isNominal(){
-        if (layers.get(ViewLayerType.INFLECTIONAL_GROUP) != null){
+        if (layers.containsKey(ViewLayerType.INFLECTIONAL_GROUP)){
             return ((MorphologicalAnalysisLayer) layers.get(ViewLayerType.INFLECTIONAL_GROUP)).isNominal();
         } else {
             return false;
