@@ -15,10 +15,7 @@ public class IsTransferable extends IsLeafNode {
             if (new IsNoneNode(secondLanguage).satisfies(parseNode)){
                 return false;
             }
-            if (new IsNullElement().satisfies(parseNode)){
-                return false;
-            }
-            return true;
+            return !new IsNullElement().satisfies(parseNode);
         }
         return false;
     }
