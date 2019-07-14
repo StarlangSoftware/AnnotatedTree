@@ -80,7 +80,7 @@ Use below line to generate jar file:
 
 ------------------------------------------------
 
-WordNet
+AnnotatedTree
 ============
 + [Maven Usage](#maven-usage)
 
