@@ -243,6 +243,16 @@ public class ParseTreeDrawable extends ParseTree {
         }
     }
 
+    public void moveNode(ParseNode fromNode, ParseNode toNode, int childIndex){
+        if (root != fromNode){
+            ParseNode parent = fromNode.getParent();
+            parent.removeChild(fromNode);
+            toNode.addChild(childIndex, fromNode);
+            updateTraversalIndexes();
+            ((ParseNodeDrawable) root).updateDepths(0);
+        }
+    }
+
     public boolean layerExists(ViewLayerType viewLayerType){
         return ((ParseNodeDrawable)(root)).layerExists(viewLayerType);
     }
