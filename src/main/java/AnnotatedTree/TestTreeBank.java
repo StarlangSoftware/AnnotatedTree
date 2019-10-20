@@ -190,7 +190,7 @@ public class TestTreeBank {
 
     public static void countWords(){
         TreeBank treeBank = new TreeBank(new File(TreeBankDrawable.ENGLISH_PATH), ".train", 5246, 8659);
-        System.out.println(treeBank.countWords(true));
+        System.out.println(treeBank.wordCount(true));
     }
 
     public static void printSentences(String path){

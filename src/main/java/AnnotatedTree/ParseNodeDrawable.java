@@ -1237,8 +1237,13 @@ public class ParseNodeDrawable extends ParseNode {
                     g.setColor(Color.MAGENTA);
                     if (selectedIndex == -1)
                         g.drawRect(x - 5, y - 15, stringSize + 10, 20);
-                    else
-                        g.drawRect(x - 5, y - 15 + 20 * selectedIndex, stringSize + 10, 20);
+                    else {
+                        if (originalLayer != ViewLayerType.TURKISH_WORD){
+                            g.drawRect(x - 5, y - 15 + 20 * selectedIndex, stringSize + 10, 20);
+                        } else {
+                            g.drawRect(x - 5 + selectedIndex * (stringSize + 10) / (numberOfChildren() + 1), y - 15, (stringSize + 10) / (numberOfChildren() + 1), 20);
+                        }
+                    }
                     g.setColor(Color.BLACK);
                 } else {
                     if (selected){
