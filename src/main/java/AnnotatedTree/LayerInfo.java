@@ -8,6 +8,7 @@ import MorphologicalAnalysis.MetamorphicParse;
 import AnnotatedTree.Layer.*;
 import PropBank.Argument;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 
 public class LayerInfo {
@@ -455,6 +456,45 @@ public class LayerInfo {
         } else {
             return false;
         }
+    }
+
+    public ArrayList<LayerInfo> divideIntoWords() throws LayerNotExistsException {
+        ArrayList<LayerInfo> result = new ArrayList<>();
+        for (int i = 0; i < getNumberOfWords(); i++){
+            try {
+                LayerInfo layerInfo = new LayerInfo();
+                layerInfo.setLayerData(ViewLayerType.TURKISH_WORD, getTurkishWordAt(i));
+                layerInfo.setLayerData(ViewLayerType.ENGLISH_WORD, getLayerData(ViewLayerType.ENGLISH_WORD));
+                if (layerExists(ViewLayerType.INFLECTIONAL_GROUP)){
+                    layerInfo.setMorphologicalAnalysis(getMorphologicalParseAt(i));
+                }
+                if (layerExists(ViewLayerType.META_MORPHEME)) {
+                    layerInfo.setMetaMorphemes(getMetamorphicParseAt(i));
+                }
+                if (layerExists(ViewLayerType.ENGLISH_PROPBANK)) {
+                    layerInfo.setLayerData(ViewLayerType.ENGLISH_PROPBANK, getLayerData(ViewLayerType.ENGLISH_PROPBANK));
+                }
+                if (layerExists(ViewLayerType.ENGLISH_SEMANTICS)) {
+                    layerInfo.setLayerData(ViewLayerType.ENGLISH_SEMANTICS, getLayerData(ViewLayerType.ENGLISH_SEMANTICS));
+                }
+                if (layerExists(ViewLayerType.NER)){
+                    layerInfo.setLayerData(ViewLayerType.NER, getLayerData(ViewLayerType.NER));
+                }
+                if (layerExists(ViewLayerType.SEMANTICS)) {
+                    layerInfo.setLayerData(ViewLayerType.SEMANTICS, getSemanticAt(i));
+                }
+                if (layerExists(ViewLayerType.PROPBANK)) {
+                    layerInfo.setLayerData(ViewLayerType.PROPBANK, getArgument().toString());
+                }
+                if (layerExists(ViewLayerType.SHALLOW_PARSE)) {
+                    layerInfo.setLayerData(ViewLayerType.SHALLOW_PARSE, getShallowParseAt(i));
+                }
+                result.add(layerInfo);
+                } catch (WordNotExistsException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 
     public AnnotatedWord toAnnotatedWord(int wordIndex) throws LayerNotExistsException {

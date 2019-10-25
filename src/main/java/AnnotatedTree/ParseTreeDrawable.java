@@ -1,8 +1,10 @@
 package AnnotatedTree;
 
 import AnnotatedSentence.*;
+import MorphologicalAnalysis.MorphologicalTag;
 import ParseTree.ParseNode;
 import ParseTree.ParseTree;
+import ParseTree.Symbol;
 import Corpus.FileDescription;
 import Translation.AutomaticTranslationDictionary;
 import Dictionary.EnglishWordComparator;
@@ -231,6 +233,52 @@ public class ParseTreeDrawable extends ParseTree {
         }
     }
 
+    public void divideIntoWords(ParseNodeDrawable parseNode){
+        try {
+            String symbol = "-XXX-";
+            ArrayList<LayerInfo> layers = parseNode.getLayerInfo().divideIntoWords();
+            parseNode.getParent().removeChild(parseNode);
+            for (LayerInfo layerInfo : layers){
+                symbol = "-XXX-";
+                if (layerInfo.getMorphologicalParseAt(0).isProperNoun()){
+                    symbol = "NNP";
+                } else {
+                    if (layerInfo.getMorphologicalParseAt(0).isVerb()){
+                        symbol = "V";
+                    } else {
+                        if (layerInfo.getMorphologicalParseAt(0).isAdjective()){
+                            symbol = "JJ";
+                        } else {
+                            if (layerInfo.getMorphologicalParseAt(0).isNoun()){
+                                symbol = "NN";
+                            } else {
+                                if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.ADVERB)){
+                                    symbol = "RB";
+                                } else {
+                                    if (layerInfo.getMorphologicalParseAt(0).isCardinal()){
+                                        symbol = "CD";
+                                    } else {
+                                        if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.POSTPOSITION)){
+                                            symbol = "IN";
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                ParseNodeDrawable child = new ParseNodeDrawable(new Symbol(symbol));
+                parseNode.getParent().addChild(child);
+                ParseNodeDrawable grandChild = new ParseNodeDrawable(child, layerInfo.getLayerDescription(), true, parseNode.getDepth() + 1);
+                child.addChild(grandChild);
+                updateTraversalIndexes();
+                ((ParseNodeDrawable) root).updateDepths(0);
+            }
+        } catch (LayerNotExistsException | ParenthesisInLayerException | WordNotExistsException e) {
+            e.printStackTrace();
+        }
+    }
+
     public HashMap<ParseNode, ParseNodeDrawable> mapTree(ParseTreeDrawable parseTree){
         HashMap<ParseNode, ParseNodeDrawable> nodeMap = new HashMap<>();
         ((ParseNodeDrawable)root).mapTree((ParseNodeDrawable) parseTree.getRoot(), nodeMap);
@@ -255,6 +303,15 @@ public class ParseTreeDrawable extends ParseTree {
             updateTraversalIndexes();
             ((ParseNodeDrawable) root).updateDepths(0);
         }
+    }
+
+    public void combineWords(ParseNodeDrawable parent, ParseNodeDrawable child){
+        while (parent.numberOfChildren() > 0){
+            parent.removeChild(parent.firstChild());
+        }
+        parent.addChild(child);
+        updateTraversalIndexes();
+        ((ParseNodeDrawable) root).updateDepths(0);
     }
 
     public boolean layerExists(ViewLayerType viewLayerType){
