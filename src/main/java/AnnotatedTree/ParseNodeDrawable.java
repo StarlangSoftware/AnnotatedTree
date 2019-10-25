@@ -4,6 +4,8 @@ import AnnotatedSentence.LayerNotExistsException;
 import AnnotatedSentence.ViewLayerType;
 import AnnotatedTree.ReorderMap.NodePermutationSet;
 import ContextFreeGrammar.ContextFreeGrammar;
+import MorphologicalAnalysis.MorphologicalParse;
+import MorphologicalAnalysis.MorphologicalTag;
 import ParseTree.ParseNode;
 import ContextFreeGrammar.Rule;
 import ParseTree.Symbol;
@@ -427,6 +429,68 @@ public class ParseNodeDrawable extends ParseNode {
             }
         }
         return true;
+    }
+
+    public void updatePosTags(){
+        if (children.size() == 1 && children.get(0).isLeaf() && !children.get(0).isDummyNode()){
+            LayerInfo layerInfo = ((ParseNodeDrawable)children.get(0)).getLayerInfo();
+            try {
+                MorphologicalParse morphologicalParse = layerInfo.getMorphologicalParseAt(layerInfo.getNumberOfWords() - 1);
+                if (morphologicalParse.isProperNoun()){
+                    setData(new Symbol("NNP"));
+                } else {
+                    if (morphologicalParse.isNoun()){
+                        setData(new Symbol("NN"));
+                    } else {
+                        if (morphologicalParse.isAdjective()){
+                            setData(new Symbol("JJ"));
+                        } else {
+                            if (morphologicalParse.getPos().equals("ADV")){
+                                setData(new Symbol("RB"));
+                            } else {
+                                if (morphologicalParse.getPos().equals("CONJ")){
+                                    setData(new Symbol("CC"));
+                                } else {
+                                    if (morphologicalParse.getPos().equals("DET")){
+                                        setData(new Symbol("DT"));
+                                    } else {
+                                        if (morphologicalParse.getPos().equals("POSTP")){
+                                            setData(new Symbol("IN"));
+                                        } else {
+                                            if (morphologicalParse.isCardinal()){
+                                                setData(new Symbol("CD"));
+                                            } else {
+                                                if (morphologicalParse.isVerb()){
+                                                    setData(new Symbol("V"));
+                                                } else {
+                                                    if (morphologicalParse.getPos().equals("INTERJ")){
+                                                        setData(new Symbol("UH"));
+                                                    } else {
+                                                        if (morphologicalParse.getPos().equals("PRON")){
+                                                            if (morphologicalParse.containsTag(MorphologicalTag.QUESTIONPRONOUN)){
+                                                                setData(new Symbol("WP"));
+                                                            } else {
+                                                                setData(new Symbol("PRP"));
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (LayerNotExistsException | WordNotExistsException e) {
+            }
+        } else {
+            for (ParseNode aChildren:children){
+                ParseNodeDrawable aChild = (ParseNodeDrawable) aChildren;
+                aChild.updatePosTags();
+            }
+        }
     }
 
     public void addReorder(ParseNodeDrawable toNode, ReorderMap reorderMap){

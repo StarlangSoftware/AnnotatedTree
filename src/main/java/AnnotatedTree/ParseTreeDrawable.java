@@ -197,6 +197,10 @@ public class ParseTreeDrawable extends ParseTree {
         return ((ParseNodeDrawable)root).satisfy(tree);
     }
 
+    public void updatePosTags(){
+        ((ParseNodeDrawable)root).updatePosTags();
+    }
+
     public void addReorder(ParseTreeDrawable toTree, ReorderMap reorderMap){
         ((ParseNodeDrawable)root).addReorder((ParseNodeDrawable)toTree.root, reorderMap);
     }

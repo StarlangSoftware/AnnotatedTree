@@ -2,6 +2,7 @@ package AnnotatedTree;
 
 import AnnotatedSentence.*;
 import AnnotatedSentence.AnnotatedSentence;
+import AnnotatedTree.Processor.ConvertToTurkishParseTree;
 import ContextFreeGrammar.*;
 import Dictionary.*;
 import MorphologicalAnalysis.FsmMorphologicalAnalyzer;
@@ -746,7 +747,7 @@ public class TestTreeBank {
         multiWordCandidates(3);
         missingCandidates();
         propbankAnnotationControl();*/
-        extractDictionary("../../Penn-Treebank/Turkish", "deneme2.txt");
+        //extractDictionary("../../Penn-Treebank/Turkish", "deneme2.txt");
     }
 
 }

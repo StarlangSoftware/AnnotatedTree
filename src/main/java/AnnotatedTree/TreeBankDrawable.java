@@ -254,11 +254,7 @@ public class TreeBankDrawable extends TreeBank {
                 continue;
             }
             ConvertToTurkishParseTree convertToTurkishParseTree = new ConvertToTurkishParseTree(parseTree);
-            try {
-                convertToTurkishParseTree.convert();
-            } catch (ParenthesisInLayerException e) {
-                e.printStackTrace();
-            }
+            convertToTurkishParseTree.convert();
             parseTree.save(TreeBankDrawable.TURKISH_PARSE_PATH + parseTree.getName());
         }
     }

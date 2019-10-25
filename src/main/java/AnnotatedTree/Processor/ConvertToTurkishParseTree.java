@@ -1,12 +1,8 @@
 package AnnotatedTree.Processor;
 
-import AnnotatedSentence.LayerNotExistsException;
 import AnnotatedSentence.ViewLayerType;
 import ParseTree.ParseNode;
-import MorphologicalAnalysis.MorphologicalParse;
 import AnnotatedTree.*;
-import AnnotatedTree.Processor.NodeModification.DestroyLayers;
-import AnnotatedTree.Processor.NodeModification.ModifyTags;
 
 import java.util.Iterator;
 
@@ -22,7 +18,7 @@ public class ConvertToTurkishParseTree {
             for (int i = 0; i < child.numberOfChildren(); i++) {
                 ParseNodeDrawable grandChild = (ParseNodeDrawable) child.getChild(i);
                 if (grandChild.getLayerInfo() != null) {
-                    if ((grandChild.getLayerData(ViewLayerType.TURKISH_WORD)).contains("*") || (grandChild.getLayerData(ViewLayerType.TURKISH_WORD)).equals("0")) {
+                    if ((grandChild.getLayerData(ViewLayerType.TURKISH_WORD)).contains("*")) {
                         childIterator.remove();
                         isDeleted = true;
                         parseNode.setChildDeleted();
@@ -74,101 +70,10 @@ public class ConvertToTurkishParseTree {
         }
     }
 
-    private void separateNodeToNodes(ParseNodeDrawable parseNode) throws ParenthesisInLayerException {
-        int k, l;
-        ParseNodeDrawable nonTerminal;
-        LayerInfo layerInfo;
-        boolean willContinue;
-        for (k = 0; k < parseNode.numberOfChildren(); k++) {
-            ParseNodeDrawable child = (ParseNodeDrawable) parseNode.getChild(k);
-            willContinue = false;
-            for (l = 0; l < child.numberOfChildren(); l++) {
-                ParseNodeDrawable grandChild = (ParseNodeDrawable) child.getChild(l);
-                if (grandChild.getLayerInfo() != null && grandChild.getLayerData(ViewLayerType.META_MORPHEME) != null) {
-                    layerInfo = grandChild.getLayerInfo();
-                    try{
-                        if (layerInfo.getMorphologicalParseAt(0).size() > 0){
-                            nonTerminal = new ParseNodeDrawable(grandChild, layerInfo.getMorphologicalParseAt(0).getRootPos(), true, grandChild.getDepth() + 1);
-                        } else {
-                            nonTerminal = new ParseNodeDrawable(grandChild, "-XXX-", true, grandChild.getDepth() + 1);
-                        }
-                        nonTerminal.addChild(grandChild);
-                        child.replaceChild(grandChild, nonTerminal);
-                    } catch (LayerNotExistsException e) {
-                        e.printStackTrace();
-                    } catch (WordNotExistsException e) {
-                        e.printStackTrace();
-                    }
-                }  else {
-                    willContinue = true;
-                }
-            }
-            if (willContinue){
-                separateNodeToNodes(child);
-            }
-        }
-    }
-
-    private int deleteExtraNodes() {
+    private void deleteExtraNodes() {
         int numberOfPasses = 0;
         while (deleteExtraNodes((ParseNodeDrawable)parseTree.getRoot())){
             numberOfPasses++;
-        }
-        return numberOfPasses;
-    }
-
-    private void separateMultiWord(ParseNodeDrawable parseNode) throws ParenthesisInLayerException {
-        ParseNodeDrawable newChildNode;
-        int k, l, t;
-        boolean willContinue;
-        for (k = 0; k < parseNode.numberOfChildren(); k++) {
-            ParseNodeDrawable child = (ParseNodeDrawable) parseNode.getChild(k);
-            willContinue = false;
-            for (l = 0; l < child.numberOfChildren(); l++) {
-                ParseNodeDrawable grandChild = (ParseNodeDrawable) child.getChild(l);
-                LayerInfo layerInfo = grandChild.getLayerInfo();
-                if (layerInfo != null && grandChild.getLayerData(ViewLayerType.META_MORPHEME) != null) {
-                    try{
-                        if (layerInfo.getNumberOfWords() > 1 && grandChild.numberOfChildren() == 0) {
-                            ParseNodeDrawable nonTerminal;
-                            for (t = 0; t < layerInfo.getNumberOfWords(); t++){
-                                MorphologicalParse parse = layerInfo.getMorphologicalParseAt(t);
-                                nonTerminal = new ParseNodeDrawable(grandChild, parse.getPos(), true, grandChild.getDepth() + 1);
-                                if (t == 0){
-                                    child.setChild(l, nonTerminal);
-                                } else {
-                                    child.addChild(l, nonTerminal);
-                                }
-                                l++;
-                                newChildNode = new ParseNodeDrawable(nonTerminal, layerInfo.getTurkishWordAt(t), true, grandChild.getDepth() + 2);
-                                newChildNode.clearLayers();
-                                newChildNode.getLayerInfo().setLayerData(ViewLayerType.TURKISH_WORD, layerInfo.getTurkishWordAt(t));
-                                newChildNode.getLayerInfo().setMorphologicalAnalysis(layerInfo.getMorphologicalParseAt(t));
-                                newChildNode.getLayerInfo().setMetaMorphemes(layerInfo.getMetamorphicParseAt(t));
-                                newChildNode.getLayerInfo().setLayerData(ViewLayerType.NER, layerInfo.getLayerData(ViewLayerType.NER));
-                                if (layerInfo.getLayerData(ViewLayerType.SEMANTICS) != null){
-                                    if (layerInfo.getLayerSize(ViewLayerType.SEMANTICS) < t){
-                                        newChildNode.getLayerInfo().setLayerData(ViewLayerType.SEMANTICS, layerInfo.getSemanticAt(0));
-                                    } else {
-                                        newChildNode.getLayerInfo().setLayerData(ViewLayerType.SEMANTICS, layerInfo.getSemanticAt(t));
-                                    }
-                                }
-                                newChildNode.clearData();
-                                nonTerminal.addChild(newChildNode);
-                            }
-                        }
-                    } catch (WordNotExistsException e) {
-                        e.printStackTrace();
-                    } catch (LayerNotExistsException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    willContinue = true;
-                }
-            }
-            if (willContinue){
-                separateMultiWord(child);
-            }
         }
     }
 
@@ -190,17 +95,10 @@ public class ConvertToTurkishParseTree {
         return result;
     }
 
-    public void convert() throws ParenthesisInLayerException {
-        TreeModifier treeModifier;
+    public void convert() {
         searchNONE((ParseNodeDrawable)parseTree.getRoot());
         deleteLeafNonTerminals((ParseNodeDrawable)parseTree.getRoot());
         deleteExtraNodes();
-        treeModifier = new TreeModifier(parseTree, new ModifyTags());
-        treeModifier.modify();
-        separateMultiWord((ParseNodeDrawable)parseTree.getRoot());
-        separateNodeToNodes((ParseNodeDrawable)parseTree.getRoot());
-        treeModifier = new TreeModifier(parseTree, new DestroyLayers());
-        treeModifier.modify();
     }
 
     public ConvertToTurkishParseTree(ParseTreeDrawable parseTree){
