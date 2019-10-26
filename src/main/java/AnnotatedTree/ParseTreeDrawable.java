@@ -260,6 +260,22 @@ public class ParseTreeDrawable extends ParseTree {
                                     } else {
                                         if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.POSTPOSITION)){
                                             symbol = "IN";
+                                        } else {
+                                            if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.CONJUNCTION)){
+                                                symbol = "CC";
+                                            } else {
+                                                if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.DETERMINER)){
+                                                    symbol = "DT";
+                                                } else {
+                                                    if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.INTERJECTION)){
+                                                        symbol = "UH";
+                                                    } else {
+                                                        if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.PRONOUN)){
+                                                            symbol = "PRP";
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
