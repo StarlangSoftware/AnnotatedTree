@@ -235,55 +235,11 @@ public class ParseTreeDrawable extends ParseTree {
 
     public void divideIntoWords(ParseNodeDrawable parseNode){
         try {
-            String symbol = "-XXX-";
             ArrayList<LayerInfo> layers = parseNode.getLayerInfo().divideIntoWords();
             parseNode.getParent().removeChild(parseNode);
             for (LayerInfo layerInfo : layers){
-                symbol = "-XXX-";
-                if (layerInfo.getMorphologicalParseAt(0).isProperNoun()){
-                    symbol = "NNP";
-                } else {
-                    if (layerInfo.getMorphologicalParseAt(0).isVerb()){
-                        symbol = "V";
-                    } else {
-                        if (layerInfo.getMorphologicalParseAt(0).isAdjective()){
-                            symbol = "JJ";
-                        } else {
-                            if (layerInfo.getMorphologicalParseAt(0).isNoun()){
-                                symbol = "NN";
-                            } else {
-                                if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.ADVERB)){
-                                    symbol = "RB";
-                                } else {
-                                    if (layerInfo.getMorphologicalParseAt(0).isCardinal()){
-                                        symbol = "CD";
-                                    } else {
-                                        if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.POSTPOSITION)){
-                                            symbol = "IN";
-                                        } else {
-                                            if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.CONJUNCTION)){
-                                                symbol = "CC";
-                                            } else {
-                                                if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.DETERMINER)){
-                                                    symbol = "DT";
-                                                } else {
-                                                    if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.INTERJECTION)){
-                                                        symbol = "UH";
-                                                    } else {
-                                                        if (layerInfo.getMorphologicalParseAt(0).containsTag(MorphologicalTag.PRONOUN)){
-                                                            symbol = "PRP";
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                ParseNodeDrawable child = new ParseNodeDrawable(new Symbol(symbol));
+                Symbol symbol = new Symbol(layerInfo.getMorphologicalParseAt(0).getTreePos());
+                ParseNodeDrawable child = new ParseNodeDrawable(symbol);
                 parseNode.getParent().addChild(child);
                 ParseNodeDrawable grandChild = new ParseNodeDrawable(child, layerInfo.getLayerDescription(), true, parseNode.getDepth() + 1);
                 child.addChild(grandChild);
