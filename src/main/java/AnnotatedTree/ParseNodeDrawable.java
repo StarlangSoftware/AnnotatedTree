@@ -47,9 +47,6 @@ public class ParseNodeDrawable extends ParseNode {
         String childLine = "";
         this.depth = depth;
         this.parent = parent;
-        if (parent != null){
-            this.childIndex = parent.children.size();
-        }
         children = new ArrayList<>();
         area = null;
         if (isLeaf){
@@ -96,10 +93,8 @@ public class ParseNodeDrawable extends ParseNode {
         this.depth = child.depth;
         child.updateDepths(this.depth + 1);
         this.parent = parent;
-        this.childIndex = child.childIndex;
-        this.parent.setChild(this.childIndex, this);
+        this.parent.setChild(parent.getChildIndex(child), this);
         this.children.add(child);
-        child.childIndex = 0;
         child.parent = this;
         this.data = new Symbol(symbol);
         this.inOrderTraversalIndex = child.inOrderTraversalIndex;
@@ -287,8 +282,7 @@ public class ParseNodeDrawable extends ParseNode {
     public void replaceChild(ParseNodeDrawable oldChild, ParseNodeDrawable newChild){
         newChild.updateDepths(this.depth + 1);
         newChild.parent = this;
-        newChild.childIndex = children.indexOf(oldChild);
-        children.set(newChild.childIndex, newChild);
+        children.set(children.indexOf(oldChild), newChild);
     }
 
     public void updateDepths(int depth){
