@@ -1,7 +1,6 @@
 package AnnotatedTree;
 
 import AnnotatedSentence.*;
-import MorphologicalAnalysis.MorphologicalTag;
 import ParseTree.ParseNode;
 import ParseTree.ParseTree;
 import ParseTree.Symbol;
@@ -17,6 +16,7 @@ import WordNet.WordNet;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -60,7 +60,7 @@ public class ParseTreeDrawable extends ParseTree {
 
     private void readFromFile(String currentPath){
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileDescription.getFileName(currentPath)), "UTF8"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileDescription.getFileName(currentPath)), StandardCharsets.UTF_8));
             String line = br.readLine();
             if (line.contains("(") && line.contains(")")){
                 line = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")")).trim();
@@ -82,7 +82,7 @@ public class ParseTreeDrawable extends ParseTree {
     public ParseTreeDrawable(FileInputStream file){
         try {
             name = file.getFD().toString();
-            BufferedReader br = new BufferedReader(new InputStreamReader(file, "UTF8"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
             String line = br.readLine();
             if (line != null && line.contains("(") && line.contains(")")){
                 line = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")")).trim();
@@ -96,23 +96,6 @@ public class ParseTreeDrawable extends ParseTree {
             root = null;
         } catch (ParenthesisInLayerException e) {
             System.out.println(e.toString());
-            root = null;
-        }
-    }
-
-    public ParseTreeDrawable(String line){
-        line = line.replaceAll("\\n", "");
-        line = line.replaceAll("\\t", "");
-        if (line.contains("(") && line.contains(")")){
-            line = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")")).trim();
-            try {
-                root = new ParseNodeDrawable(null, line, false, 0);
-                updateTraversalIndexes();
-            } catch (ParenthesisInLayerException e) {
-                System.out.println(e.toString());
-                root = null;
-            }
-        } else {
             root = null;
         }
     }

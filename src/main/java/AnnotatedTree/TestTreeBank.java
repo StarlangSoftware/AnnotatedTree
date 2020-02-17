@@ -11,8 +11,11 @@ import AnnotatedTree.Processor.LeafConverter.LeafToLanguageConverter;
 import AnnotatedTree.Processor.LeafConverter.LeafToTurkish;
 import AnnotatedTree.Processor.NodeDrawableCollector;
 import AnnotatedTree.Processor.TreeToStringConverter;
+import MorphologicalAnalysis.MorphologicalParse;
+import MorphologicalAnalysis.MorphologicalTag;
 import MorphologicalDisambiguation.RootWordStatistics;
 import ParseTree.ParseNode;
+import ParseTree.Symbol;
 import ParseTree.TreeBank;
 import ProbabilisticContextFreeGrammar.ProbabilisticContextFreeGrammar;
 import Corpus.*;
@@ -738,6 +741,7 @@ public class TestTreeBank {
     }
 
     public static void main(String[] args){
+        TreeBankDrawable treeBank = new TreeBankDrawable("../../Penn-Treebank/Turkish", "test", 345, 345);
         /*interlingualMultipleCandidates(2);
         interlingualMultipleCandidates(3);
         interlingualCandidates(1);

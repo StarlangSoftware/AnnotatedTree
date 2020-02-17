@@ -9,7 +9,7 @@ public class IsTurkishLeafNode extends IsLeafNode{
         if (super.satisfies(parseNode)){
             String data = parseNode.getLayerInfo().getLayerData(ViewLayerType.TURKISH_WORD);
             String parentData = parseNode.getParent().getData().getName();
-            return (data != null && !data.contains("*") && !(data.equals("0") && parentData.equals("-NONE-")));
+            return data != null && !data.contains("*") && !(data.equals("0") && parentData.equals("-NONE-"));
         }
         return false;
     }

@@ -171,42 +171,6 @@ public class TreeBankDrawable extends TreeBank {
         }
     }
 
-    public TreeBankDrawable(String fileName){
-        String line, treeLine;
-        int parenthesisCount = 0;
-        parseTrees = new ArrayList<>();
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF8"));
-            line = br.readLine();
-            treeLine = "";
-            while (line != null){
-                if (!line.isEmpty()){
-                    for (int i = 0; i < line.length(); i++){
-                        if (line.charAt(i) == '('){
-                            parenthesisCount++;
-                        } else {
-                            if (line.charAt(i) == ')'){
-                                parenthesisCount--;
-                            }
-                        }
-                    }
-                    treeLine = treeLine + line;
-                    if (parenthesisCount == 0){
-                        ParseTreeDrawable tree = new ParseTreeDrawable(treeLine);
-                        if (tree.getRoot() != null){
-                            parseTrees.add(tree);
-                        }
-                        treeLine = "";
-                    }
-                }
-                line = br.readLine();
-            }
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public List<ParseTree> getParseTrees(){
         return parseTrees;
     }
