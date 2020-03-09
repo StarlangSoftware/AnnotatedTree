@@ -167,7 +167,7 @@ public class ParallelTreeBankDrawable {
                     TreeToStringConverter treeToStringConverter = new TreeToStringConverter(toTree, new LeafToTurkish());
                     goldLanguageFile.write(treeToStringConverter.convert() + "\n");
                     if (bestTranslation != null){
-                        learnedLanguageFile.write(bestTranslation.getToSentence() + "\n");
+                        learnedLanguageFile.write(bestTranslation.getTargetSentence() + "\n");
                     } else {
                         learnedLanguageFile.write(fromTree.toSentence() + "\n");
                     }
