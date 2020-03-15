@@ -227,7 +227,7 @@ Bir cümlede adlandırılmış varlık tanıma yapmak için
 sınıfı kullanılır. Örneğin,
 
 	a = TurkishTreeAutoNER();
-	a.autoNER(parseTRee);
+	a.autoNER(parseTree);
 
 ile ağacın varlık tanıma otomatik olarak yapılır.
 
@@ -238,6 +238,6 @@ Bir cümlede anlamsal işaretleme için
 sınıfı kullanılır. Örneğin,
 
 	a = TurkishTreeAutoSemantic();
-	a.autoSemantic(parseTRee);
+	a.autoSemantic(parseTree);
 
 ile ağacın anlamsal işaretleme otomatik olarak yapılır.
