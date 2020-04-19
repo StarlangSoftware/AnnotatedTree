@@ -117,11 +117,11 @@ Use below line to generate jar file:
 
 ## Maven Usage
 
-	<dependency>
-  	<groupId>NlpToolkit</groupId>
-  	<artifactId>AnnotatedTree</artifactId>
-  	<version>1.0.8</version>
-	</dependency>
+        <dependency>
+            <groupId>io.github.starlangsoftware</groupId>
+            <artifactId>AnnotatedTree</artifactId>
+            <version>1.0.8</version>
+        </dependency>
 
 ------------------------------------------------
 
