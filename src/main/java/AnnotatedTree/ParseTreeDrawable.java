@@ -58,6 +58,10 @@ public class ParseTreeDrawable extends ParseTree {
         readFromFile(fileDescription.getPath());
     }
 
+    public void setRoot(ParseNode newRootNode){
+        root = newRootNode;
+    }
+
     private void readFromFile(String currentPath){
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileDescription.getFileName(currentPath)), StandardCharsets.UTF_8));

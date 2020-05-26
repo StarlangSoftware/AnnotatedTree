@@ -742,7 +742,7 @@ public class TestTreeBank {
     }
 
     public static void main(String[] args) throws LayerNotExistsException, WordNotExistsException {
-        /*TreeBankDrawable treeBank = new TreeBankDrawable("../../alcatel/Turkish", "train", 1, 9000);
+/*        TreeBankDrawable treeBank = new TreeBankDrawable("../../alcatel/Turkish", "train", 1, 9000);
         for (ParseTree parseTree: treeBank.getParseTrees()){
             ParseTreeDrawable parseTreeDrawable = (ParseTreeDrawable) parseTree;
             ConvertToTurkishParseTree convertToTurkishParseTree = new ConvertToTurkishParseTree(parseTreeDrawable);
@@ -774,7 +774,22 @@ public class TestTreeBank {
             nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) parseTreeDrawable.getRoot(), new IsDoubleNode());
             ArrayList<ParseNodeDrawable> nodeList = nodeDrawableCollector.collect();
             for (ParseNodeDrawable node : nodeList){
-                node.setChild(0, node.getChild(0).getChild(0));
+                if (node.getParent() == null){
+                    parseTreeDrawable.setRoot(node.getChild(0));
+                } else {
+                    int childIndex = node.getParent().getChildIndex(node);
+                    node.getParent().setChild(childIndex, node.getChild(0));
+                }
+            }
+            nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) parseTreeDrawable.getRoot(), new IsDoubleNodeWithDifferentTags());
+            nodeList = nodeDrawableCollector.collect();
+            for (ParseNodeDrawable node : nodeList){
+                if (node.getParent() == null){
+                    parseTreeDrawable.setRoot(node.getChild(0));
+                } else {
+                    int childIndex = node.getParent().getChildIndex(node);
+                    node.getParent().setChild(childIndex, node.getChild(0));
+                }
             }
             parseTreeDrawable.save();
         }*/
