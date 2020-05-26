@@ -431,40 +431,40 @@ public class ParseNodeDrawable extends ParseNode {
             try {
                 MorphologicalParse morphologicalParse = layerInfo.getMorphologicalParseAt(layerInfo.getNumberOfWords() - 1);
                 if (morphologicalParse.isProperNoun()){
-                    setData(new Symbol("NNP"));
+                    setData(new Symbol("NP"));
                 } else {
                     if (morphologicalParse.isNoun()){
-                        setData(new Symbol("NN"));
+                        setData(new Symbol("NP"));
                     } else {
                         if (morphologicalParse.isAdjective()){
-                            setData(new Symbol("JJ"));
+                            setData(new Symbol("ADJP"));
                         } else {
                             if (morphologicalParse.getPos().equals("ADV")){
-                                setData(new Symbol("RB"));
+                                setData(new Symbol("ADVP"));
                             } else {
                                 if (morphologicalParse.getPos().equals("CONJ")){
-                                    setData(new Symbol("CC"));
+                                    setData(new Symbol("CONJP"));
                                 } else {
                                     if (morphologicalParse.getPos().equals("DET")){
-                                        setData(new Symbol("DT"));
+                                        setData(new Symbol("DP"));
                                     } else {
                                         if (morphologicalParse.getPos().equals("POSTP")){
-                                            setData(new Symbol("IN"));
+                                            setData(new Symbol("PP"));
                                         } else {
                                             if (morphologicalParse.isCardinal()){
                                                 setData(new Symbol("CD"));
                                             } else {
                                                 if (morphologicalParse.isVerb()){
-                                                    setData(new Symbol("V"));
+                                                    setData(new Symbol("VP"));
                                                 } else {
                                                     if (morphologicalParse.getPos().equals("INTERJ")){
-                                                        setData(new Symbol("UH"));
+                                                        setData(new Symbol("INTJP"));
                                                     } else {
                                                         if (morphologicalParse.getPos().equals("PRON")){
                                                             if (morphologicalParse.containsTag(MorphologicalTag.QUESTIONPRONOUN)){
                                                                 setData(new Symbol("WP"));
                                                             } else {
-                                                                setData(new Symbol("PRP"));
+                                                                setData(new Symbol("NP"));
                                                             }
                                                         }
                                                     }

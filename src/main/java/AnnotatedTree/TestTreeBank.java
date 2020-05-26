@@ -15,6 +15,7 @@ import MorphologicalAnalysis.MorphologicalParse;
 import MorphologicalAnalysis.MorphologicalTag;
 import MorphologicalDisambiguation.RootWordStatistics;
 import ParseTree.ParseNode;
+import ParseTree.ParseTree;
 import ParseTree.Symbol;
 import ParseTree.TreeBank;
 import ProbabilisticContextFreeGrammar.ProbabilisticContextFreeGrammar;
@@ -740,8 +741,43 @@ public class TestTreeBank {
         dictionary.saveAsTxt(outputFileName);
     }
 
-    public static void main(String[] args){
-        TreeBankDrawable treeBank = new TreeBankDrawable("../../Penn-Treebank/Turkish", "test", 345, 345);
+    public static void main(String[] args) throws LayerNotExistsException, WordNotExistsException {
+        /*TreeBankDrawable treeBank = new TreeBankDrawable("../../alcatel/Turkish", "train", 1, 9000);
+        for (ParseTree parseTree: treeBank.getParseTrees()){
+            ParseTreeDrawable parseTreeDrawable = (ParseTreeDrawable) parseTree;
+            ConvertToTurkishParseTree convertToTurkishParseTree = new ConvertToTurkishParseTree(parseTreeDrawable);
+            convertToTurkishParseTree.convert();
+            parseTreeDrawable.updatePosTags();
+            NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) parseTreeDrawable.getRoot(), new IsTurkishLeafNode());
+            ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
+            for (ParseNodeDrawable leafNode : leafList){
+                if (leafNode.getLayerInfo().layerExists(ViewLayerType.INFLECTIONAL_GROUP) && leafNode.getLayerInfo().getMorphologicalParseAt(0).containsTag(MorphologicalTag.ZERO) && leafNode.getLayerInfo().getMorphologicalParseAt(0).containsTag(MorphologicalTag.COPULA)){
+                    boolean isDegil = leafNode.getLayerInfo().getMorphologicalParseAt(0).getWord().getName().startsWith("değil");
+                    boolean firstParent = true;
+                    ParseNode parent = leafNode.getParent();
+                    while (parent.getData().isVP()){
+                        if (!firstParent || !isDegil){
+                            parent.setData(new Symbol("NOMP"));
+                        }
+                        parent = parent.getParent();
+                        firstParent = false;
+                    }
+                }
+            }
+            nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) parseTreeDrawable.getRoot(), new IsTurkishLeafNode());
+            leafList = nodeDrawableCollector.collect();
+            for (ParseNodeDrawable leafNode : leafList){
+                if (leafNode.getLayerInfo().getNumberOfWords() > 1){
+                    ((ParseTreeDrawable) parseTree).divideIntoWords(leafNode);
+                }
+            }
+            nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) parseTreeDrawable.getRoot(), new IsDoubleNode());
+            ArrayList<ParseNodeDrawable> nodeList = nodeDrawableCollector.collect();
+            for (ParseNodeDrawable node : nodeList){
+                node.setChild(0, node.getChild(0).getChild(0));
+            }
+            parseTreeDrawable.save();
+        }*/
         /*interlingualMultipleCandidates(2);
         interlingualMultipleCandidates(3);
         interlingualCandidates(1);

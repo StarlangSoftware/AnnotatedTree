@@ -17,7 +17,7 @@ public class ConvertToTurkishParseTree {
             ParseNodeDrawable child = (ParseNodeDrawable) childIterator.next();
             for (int i = 0; i < child.numberOfChildren(); i++) {
                 ParseNodeDrawable grandChild = (ParseNodeDrawable) child.getChild(i);
-                if (grandChild.getLayerInfo() != null) {
+                if (grandChild.getLayerInfo() != null && grandChild.getLayerData(ViewLayerType.TURKISH_WORD) != null) {
                     if ((grandChild.getLayerData(ViewLayerType.TURKISH_WORD)).contains("*")) {
                         childIterator.remove();
                         isDeleted = true;

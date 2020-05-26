@@ -221,7 +221,12 @@ public class ParseTreeDrawable extends ParseTree {
             ArrayList<LayerInfo> layers = parseNode.getLayerInfo().divideIntoWords();
             parseNode.getParent().removeChild(parseNode);
             for (LayerInfo layerInfo : layers){
-                Symbol symbol = new Symbol(layerInfo.getMorphologicalParseAt(0).getTreePos());
+                Symbol symbol;
+                if (layerInfo.layerExists(ViewLayerType.INFLECTIONAL_GROUP)){
+                    symbol = new Symbol(layerInfo.getMorphologicalParseAt(0).getTreePos());
+                } else {
+                    symbol = new Symbol("-XXX-");
+                }
                 ParseNodeDrawable child = new ParseNodeDrawable(symbol);
                 parseNode.getParent().addChild(child);
                 ParseNodeDrawable grandChild = new ParseNodeDrawable(child, layerInfo.getLayerDescription(), true, parseNode.getDepth() + 1);
