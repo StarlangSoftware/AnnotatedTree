@@ -430,54 +430,10 @@ public class ParseNodeDrawable extends ParseNode {
             LayerInfo layerInfo = ((ParseNodeDrawable)children.get(0)).getLayerInfo();
             try {
                 MorphologicalParse morphologicalParse = layerInfo.getMorphologicalParseAt(layerInfo.getNumberOfWords() - 1);
-                if (morphologicalParse.isProperNoun()){
-                    setData(new Symbol("NP"));
-                } else {
-                    if (morphologicalParse.isNoun()){
-                        setData(new Symbol("NP"));
-                    } else {
-                        if (morphologicalParse.isAdjective()){
-                            setData(new Symbol("ADJP"));
-                        } else {
-                            if (morphologicalParse.getPos().equals("ADV")){
-                                setData(new Symbol("ADVP"));
-                            } else {
-                                if (morphologicalParse.getPos().equals("CONJ")){
-                                    setData(new Symbol("CONJP"));
-                                } else {
-                                    if (morphologicalParse.getPos().equals("DET")){
-                                        setData(new Symbol("DP"));
-                                    } else {
-                                        if (morphologicalParse.getPos().equals("POSTP")){
-                                            setData(new Symbol("PP"));
-                                        } else {
-                                            if (morphologicalParse.isCardinal()){
-                                                setData(new Symbol("CD"));
-                                            } else {
-                                                if (morphologicalParse.isVerb()){
-                                                    setData(new Symbol("VP"));
-                                                } else {
-                                                    if (morphologicalParse.getPos().equals("INTERJ")){
-                                                        setData(new Symbol("INTJP"));
-                                                    } else {
-                                                        if (morphologicalParse.getPos().equals("PRON")){
-                                                            if (morphologicalParse.containsTag(MorphologicalTag.QUESTIONPRONOUN)){
-                                                                setData(new Symbol("WP"));
-                                                            } else {
-                                                                setData(new Symbol("NP"));
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                String symbol = morphologicalParse.getTreePos();
+                setData(new Symbol(symbol));
             } catch (LayerNotExistsException | WordNotExistsException e) {
+                e.printStackTrace();
             }
         } else {
             for (ParseNode aChildren:children){
