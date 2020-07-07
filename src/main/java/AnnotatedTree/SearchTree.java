@@ -1,10 +1,13 @@
 package AnnotatedTree;
 
 import ParseTree.ParseNode;
-import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -14,17 +17,20 @@ public class SearchTree {
 
     public SearchTree(String fileName){
         Node parseNode, rootNode, nextNode;
-        DOMParser parser = new DOMParser();
-        Document doc;
+        DocumentBuilder builder = null;
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
-            parser.parse(fileName);
-        } catch (SAXException e) {
+            builder = factory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+        Document doc = null;
+        try {
+            doc = builder.parse(fileName);
+        } catch (SAXException | IOException e) {
             e.printStackTrace();
         }
         searchTrees = new ArrayList<ParseTreeSearchable>();
-        doc = parser.getDocument();
         rootNode = doc.getFirstChild();
         parseNode = rootNode.getFirstChild();
         while (parseNode != null){

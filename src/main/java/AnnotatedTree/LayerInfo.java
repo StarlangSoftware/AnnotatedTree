@@ -58,6 +58,10 @@ public class LayerInfo {
                                                     } else {
                                                         if (layerType.equalsIgnoreCase("englishSemantics")){
                                                             layers.put(ViewLayerType.ENGLISH_SEMANTICS, new EnglishSemanticLayer(layerValue));
+                                                        } else {
+                                                            if (layerType.equalsIgnoreCase("shallowParse")){
+                                                                layers.put(ViewLayerType.SHALLOW_PARSE, new ShallowParseLayer(layerValue));
+                                                            }
                                                         }
                                                     }
                                                 }
