@@ -723,7 +723,7 @@ public class ParseNodeDrawable extends ParseNode {
         } else {
             String st = "";
             for (ParseNode aChild : children) {
-                st = st + aChild.toSentence();
+                st = st + ((ParseNodeDrawable) aChild).toTurkishSentence();
             }
             return st;
         }
