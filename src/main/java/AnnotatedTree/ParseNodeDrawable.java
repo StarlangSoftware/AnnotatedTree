@@ -715,7 +715,7 @@ public class ParseNodeDrawable extends ParseNode {
 
     public String toTurkishSentence(){
         if (children.size() == 0){
-            if (getLayerData(ViewLayerType.TURKISH_WORD) != null && !isDummyNode()){
+            if (getLayerData(ViewLayerType.TURKISH_WORD) != null && !getLayerData(ViewLayerType.TURKISH_WORD).equals("*NONE*")){
                 return " " + getLayerData(ViewLayerType.TURKISH_WORD).replaceAll("-LRB-", "(").replaceAll("-RRB-", ")").replaceAll("-LSB-", "[").replaceAll("-RSB-", "]").replaceAll("-LCB-", "{").replaceAll("-RCB-", "}").replaceAll("-lrb-", "(").replaceAll("-rrb-", ")").replaceAll("-lsb-", "[").replaceAll("-rsb-", "]").replaceAll("-lcb-", "{").replaceAll("-rcb-", "}");
             } else {
                 return " ";
