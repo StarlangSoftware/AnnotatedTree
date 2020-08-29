@@ -653,6 +653,24 @@ public class ParseNodeDrawable extends ParseNode {
         return false;
     }
 
+    public void extractTags(ArrayList<String> tagList){
+        if (numberOfChildren() != 0){
+            tagList.add(getData().getName());
+        }
+        for (int i = 0; i < numberOfChildren(); i++){
+            ((ParseNodeDrawable) getChild(i)).extractTags(tagList);
+        }
+    }
+
+    public void extractNumberOfChildren(ArrayList<Integer> childNumberList){
+        if (numberOfChildren() != 0){
+            childNumberList.add(numberOfChildren());
+        }
+        for (int i = 0; i < numberOfChildren(); i++){
+            ((ParseNodeDrawable) getChild(i)).extractNumberOfChildren(childNumberList);
+        }
+    }
+
     private void setShallowParseLayer(ChunkType chunkType, String label){
         boolean startWord = true;
         String nodeLabel = "", wordLabel = "";

@@ -389,6 +389,18 @@ public class ParseTreeDrawable extends ParseTree {
         }
     }
 
+    public ArrayList<String> extractTags(){
+        ArrayList<String> tagList = new ArrayList<>();
+        ((ParseNodeDrawable)root).extractTags(tagList);
+        return tagList;
+    }
+
+    public ArrayList<Integer> extractNumberOfChildren(){
+        ArrayList<Integer> numberOfChildrenList = new ArrayList<>();
+        ((ParseNodeDrawable)root).extractNumberOfChildren(numberOfChildrenList);
+        return numberOfChildrenList;
+    }
+
     public int getSubItemAt(int x, int y){
         return ((ParseNodeDrawable)root).getSubItemAt(x, y);
     }
