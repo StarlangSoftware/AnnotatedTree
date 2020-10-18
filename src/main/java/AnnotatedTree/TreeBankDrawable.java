@@ -80,6 +80,9 @@ public class TreeBankDrawable extends TreeBank {
             readCount = 0;
             progressBar.setMaximum(listOfFiles.length);
             for (File file:listOfFiles){
+                if (file.isDirectory()){
+                    continue;
+                }
                 ReadTree task = new ReadTree(file);
                 task.execute();
             }
@@ -92,6 +95,9 @@ public class TreeBankDrawable extends TreeBank {
         if (listOfFiles != null){
             Arrays.sort(listOfFiles);
             for (File file:listOfFiles){
+                if (file.isDirectory()){
+                    continue;
+                }
                 try {
                     ParseTreeDrawable parseTree = new ParseTreeDrawable(new FileInputStream(file.getAbsolutePath()));
                     if (parseTree.getRoot() != null){
@@ -114,6 +120,9 @@ public class TreeBankDrawable extends TreeBank {
         if (listOfFiles != null){
             Arrays.sort(listOfFiles);
             for (File file:listOfFiles){
+                if (file.isDirectory()){
+                    continue;
+                }
                 String fileName = file.getName();
                 if (!fileName.contains(pattern))
                     continue;
