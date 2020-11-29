@@ -12,18 +12,20 @@ import AnnotatedTree.ParseNodeDrawable;
 import AnnotatedTree.ParseTreeDrawable;
 import AnnotatedTree.Processor.Condition.IsTurkishLeafNode;
 import AnnotatedTree.Processor.NodeDrawableCollector;
+import MorphologicalDisambiguation.RootWordStatisticsDisambiguation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TurkishTreeAutoDisambiguator extends TreeAutoDisambiguator {
+    private RootWordStatisticsDisambiguation rootWordStatisticsDisambiguation;
 
     public TurkishTreeAutoDisambiguator(RootWordStatistics rootWordStatistics) {
         super(new FsmMorphologicalAnalyzer(), rootWordStatistics);
+        rootWordStatisticsDisambiguation = new RootWordStatisticsDisambiguation();
     }
 
-    protected boolean autoFillSingleAnalysis(ParseTreeDrawable parseTree){
-        boolean modified = false;
+    protected void autoFillSingleAnalysis(ParseTreeDrawable parseTree){
         NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) parseTree.getRoot(), new IsTurkishLeafNode());
         ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
         for (ParseNodeDrawable parseNode : leafList){
@@ -44,72 +46,27 @@ public class TurkishTreeAutoDisambiguator extends TreeAutoDisambiguator {
                         }
                     }
                     if (morphologicalAnalysis.length() > 0){
-                        modified = true;
                         parseNode.getLayerInfo().setLayerData(ViewLayerType.INFLECTIONAL_GROUP, morphologicalAnalysis.trim());
                         parseNode.getLayerInfo().setLayerData(ViewLayerType.META_MORPHEME, morphotactics.trim());
                     }
                 }
             }
         }
-        return modified;
-    }
-
-    private Word[][] getRootWords(FsmParseList[] fsmParses){
-        Word[][] rootWords = new Word[fsmParses.length][];
-        for (int i = 0; i < fsmParses.length; i++){
-            HashMap<String, Word> roots = new HashMap<String, Word>();
-            for (int j = 0; j < fsmParses[i].size(); j++){
-                if (!roots.containsKey(fsmParses[i].getFsmParse(j).getWord().getName())){
-                    roots.put(fsmParses[i].getFsmParse(j).getWord().getName(), fsmParses[i].getFsmParse(j).getWord());
-                }
-            }
-            rootWords[i] = new Word[roots.size()];
-            int j = 0;
-            for (Word word : roots.values()){
-                rootWords[i][j] = word;
-                j++;
-            }
-        }
-        return rootWords;
-    }
-
-    private boolean containsSingleRootWord(Word[][] rootWords){
-        for (Word[] rootWord : rootWords) {
-            if (rootWord == null || rootWord.length != 1) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private void setDisambiguatedParses(FsmParse[] disambiguatedFsmParses, ParseNodeDrawable parseNode){
         String morphologicalAnalysis = disambiguatedFsmParses[0].transitionList();
         String morphotactics = disambiguatedFsmParses[0].withList();
         for (int i = 1; i < disambiguatedFsmParses.length; i++){
-            morphologicalAnalysis = morphologicalAnalysis + " " + disambiguatedFsmParses[i].transitionList();
-            morphotactics = morphotactics + " " + disambiguatedFsmParses[i].withList();
+            morphologicalAnalysis += " " + disambiguatedFsmParses[i].transitionList();
+            morphotactics += " " + disambiguatedFsmParses[i].withList();
         }
         parseNode.getLayerInfo().setLayerData(ViewLayerType.INFLECTIONAL_GROUP, morphologicalAnalysis);
         parseNode.getLayerInfo().setLayerData(ViewLayerType.META_MORPHEME, morphotactics);
     }
 
-    private boolean disambiguateSingleRootWord(ParseNodeDrawable parseNode, FsmParseList[] fsmParseLists){
-        FsmParse[] disambiguatedFsmParses = new FsmParse[fsmParseLists.length];
-        boolean disambiguated = true;
-        for (int i = 0; i < fsmParseLists.length; i++){
-            disambiguatedFsmParses[i] = fsmParseLists[i].caseDisambiguator();
-            if (disambiguatedFsmParses[i] == null){
-                disambiguated = false;
-            }
-        }
-        if (disambiguated){
-            setDisambiguatedParses(disambiguatedFsmParses, parseNode);
-        }
-        return disambiguated;
-    }
 
-    protected boolean autoDisambiguateSingleRootWords(ParseTreeDrawable parseTree){
-        boolean modified = false;
+    protected void autoDisambiguateMultipleRootWords(ParseTreeDrawable parseTree) {
         NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) parseTree.getRoot(), new IsTurkishLeafNode());
         ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
         for (ParseNodeDrawable parseNode : leafList) {
@@ -117,45 +74,20 @@ public class TurkishTreeAutoDisambiguator extends TreeAutoDisambiguator {
                 String turkishWords = parseNode.getLayerData(ViewLayerType.TURKISH_WORD);
                 if (turkishWords != null) {
                     FsmParseList[] fsmParseLists = morphologicalAnalyzer.robustMorphologicalAnalysis(new Sentence(turkishWords));
-                    if (containsSingleRootWord(getRootWords(fsmParseLists))){
-                        modified = modified || disambiguateSingleRootWord(parseNode, fsmParseLists);
+                    ArrayList<FsmParse> fsmParses = rootWordStatisticsDisambiguation.disambiguate(fsmParseLists);
+                    FsmParse[] disambiguatedParses = new FsmParse[fsmParses.size()];
+                    for (int i = 0; i < fsmParses.size(); i++){
+                        disambiguatedParses[i] = fsmParses.get(i);
                     }
+                    setDisambiguatedParses(disambiguatedParses, parseNode);
                 }
             }
         }
-        return modified;
     }
 
-    protected boolean autoDisambiguateMultipleRootWords(ParseTreeDrawable parseTree) {
-        boolean modified = false;
-        NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) parseTree.getRoot(), new IsTurkishLeafNode());
-        ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
-        for (ParseNodeDrawable parseNode : leafList) {
-            if (parseNode.getLayerData(ViewLayerType.INFLECTIONAL_GROUP) == null) {
-                String turkishWords = parseNode.getLayerData(ViewLayerType.TURKISH_WORD);
-                if (turkishWords != null) {
-                    FsmParseList[] fsmParseLists = morphologicalAnalyzer.robustMorphologicalAnalysis(new Sentence(turkishWords));
-                    if (!containsSingleRootWord(getRootWords(fsmParseLists))){
-                        for (FsmParseList parseList : fsmParseLists){
-                            String bestRootWord = rootWordStatistics.bestRootWord(parseList, 0.0);
-                            if (bestRootWord != null){
-                                parseList.reduceToParsesWithSameRoot(bestRootWord);
-                            }
-                        }
-                    }
-                    if (containsSingleRootWord(getRootWords(fsmParseLists))){
-                        modified = modified || disambiguateSingleRootWord(parseNode, fsmParseLists);
-                    }
-                }
-            }
-        }
-        return modified;
-    }
-
-    protected boolean autoDisambiguateWithRules(ParseTreeDrawable parseTree) {
+    protected void autoDisambiguateWithRules(ParseTreeDrawable parseTree) {
         PartOfSpeechDisambiguator disambiguator;
         FsmParse[] disambiguatedFsmParses;
-        boolean modified = false;
         NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) parseTree.getRoot(), new IsTurkishLeafNode());
         ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
         for (int i = 0; i < leafList.size(); i++){
@@ -224,14 +156,12 @@ public class TurkishTreeAutoDisambiguator extends TreeAutoDisambiguator {
                     if (disambiguator != null){
                         disambiguatedFsmParses = disambiguator.disambiguate(fsmParseList, parseNode, parseTree);
                         if (disambiguatedFsmParses != null){
-                            modified = true;
                             setDisambiguatedParses(disambiguatedFsmParses, parseNode);
                         }
                     }
                 }
             }
         }
-        return modified;
     }
 
 }
