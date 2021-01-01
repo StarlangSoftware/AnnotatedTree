@@ -6,7 +6,7 @@
 
     <groupId>io.github.starlangsoftware</groupId>
     <artifactId>AnnotatedTree</artifactId>
-    <version>1.0.15</version>
+    <version>1.0.16</version>
     <packaging>jar</packaging>
 
     <name>NlpToolkit.AnnotatedTree</name>
@@ -111,11 +111,6 @@
             <groupId>io.github.starlangsoftware</groupId>
             <artifactId>DataStructure</artifactId>
             <version>1.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.starlangsoftware</groupId>
-            <artifactId>MorphologicalDisambiguation</artifactId>
-            <version>1.0.17</version>
         </dependency>
         <dependency>
             <groupId>javax.xml.parsers</groupId>
