@@ -2,7 +2,6 @@ package AnnotatedTree;
 
 import AnnotatedSentence.LayerNotExistsException;
 import AnnotatedSentence.ViewLayerType;
-import AnnotatedTree.ReorderMap.NodePermutationSet;
 import ContextFreeGrammar.ContextFreeGrammar;
 import MorphologicalAnalysis.MorphologicalParse;
 import MorphologicalAnalysis.MorphologicalTag;
@@ -12,11 +11,8 @@ import ParseTree.Symbol;
 import Dictionary.EnglishWordComparator;
 import AnnotatedTree.Processor.Condition.IsTurkishLeafNode;
 import AnnotatedTree.Processor.NodeDrawableCollector;
-import AnnotatedTree.ReorderMap.NodePermutation;
-import AnnotatedTree.ReorderMap.ReorderMap;
 import Dictionary.*;
 import NamedEntityRecognition.Gazetteer;
-import Translation.ScoredSentence;
 import Util.Permutation;
 
 import java.awt.*;
@@ -443,18 +439,6 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
-    public void addReorder(ParseNodeDrawable toNode, ReorderMap reorderMap){
-        if (children.size() < 2)
-            return;
-        if (!isPermutation(toNode))
-            return;
-        NodePermutation nodePermutation = new NodePermutation(this, toNode);
-        Rule rule = ContextFreeGrammar.toRule(toNode, true);
-        reorderMap.addReorder(rule, nodePermutation);
-        for (int i = 0; i < children.size(); i++)
-            ((ParseNodeDrawable)children.get(i)).addReorder((ParseNodeDrawable)toNode.getChild(nodePermutation.nodePermutation.get(i)), reorderMap);
-    }
-
     public int score(ParseNodeDrawable correctNode){
         int sum;
         boolean isCorrectOrder = true;
@@ -745,51 +729,6 @@ public class ParseNodeDrawable extends ParseNode {
             }
             return st;
         }
-    }
-
-    public void mlTranslate(ReorderMap reorderMap){
-        if (children.size() < 2)
-            return;
-        Rule rule = ContextFreeGrammar.toRule(this, true);
-        NodePermutationSet ps = reorderMap.permutationSet(rule);
-        if (ps != null)
-            ps.mlPermutation().apply(children);
-        for (ParseNode child: children)
-            ((ParseNodeDrawable)child).mlTranslate(reorderMap);
-    }
-
-    public ArrayList<ScoredSentence> allPermutations(ReorderMap reorderMap){
-        if (children.size() < 2){
-            if (toSentence().trim().length() > 0)
-                return new ArrayList<>(Arrays.asList(new ScoredSentence(toSentence().trim())));
-            return new ArrayList<>(Arrays.asList(new ScoredSentence()));
-        }
-        ArrayList<ArrayList<ScoredSentence>> listOfChildrenSentences = new ArrayList<>();
-        for (ParseNode child:children)
-            listOfChildrenSentences.add(((ParseNodeDrawable)child).allPermutations(reorderMap));
-        Rule rule = ContextFreeGrammar.toRule(this, true);
-        NodePermutationSet ps = reorderMap.permutationSet(rule);
-        if (ps == null) {
-            ps = new NodePermutationSet();
-            ps.nodePermutations = new ArrayList<>(Arrays.asList(new NodePermutation(numberOfChildren())));
-        }
-        ArrayList<ScoredSentence> sentences = new ArrayList<>();
-        for (NodePermutation nodePermutation :ps.nodePermutations){
-            ArrayList<ScoredSentence> currentChildSentences = listOfChildrenSentences.get(nodePermutation.nodePermutation.get(0));
-            for (int i = 1; i < nodePermutation.nodePermutation.size(); i++) {
-                ArrayList<ScoredSentence> nextChildSentences = listOfChildrenSentences.get(nodePermutation.nodePermutation.get(i));
-                ArrayList<ScoredSentence> tmp = new ArrayList<>();
-                for (ScoredSentence currentChildSentence : currentChildSentences)
-                    for (ScoredSentence nextChildSentence : nextChildSentences)
-                        tmp.add(currentChildSentence.join(nextChildSentence));
-                currentChildSentences = tmp;
-            }
-            for (ScoredSentence s : currentChildSentences) {
-                s.addLogProb(nodePermutation.logProb);
-                sentences.add(s);
-            }
-        }
-        return sentences;
     }
 
     public void checkGazetteer(Gazetteer gazetteer, String word){

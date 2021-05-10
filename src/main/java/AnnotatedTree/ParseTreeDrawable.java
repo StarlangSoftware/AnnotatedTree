@@ -5,13 +5,8 @@ import ParseTree.ParseNode;
 import ParseTree.ParseTree;
 import ParseTree.Symbol;
 import Corpus.FileDescription;
-import Translation.AutomaticTranslationDictionary;
-import Dictionary.EnglishWordComparator;
-import Dictionary.Word;
 import AnnotatedTree.Processor.Condition.*;
 import AnnotatedTree.Processor.NodeDrawableCollector;
-import AnnotatedTree.ReorderMap.ReorderMap;
-import Translation.ScoredSentence;
 import WordNet.WordNet;
 
 import java.awt.*;
@@ -190,10 +185,6 @@ public class ParseTreeDrawable extends ParseTree {
         ((ParseNodeDrawable)root).updatePosTags();
     }
 
-    public void addReorder(ParseTreeDrawable toTree, ReorderMap reorderMap){
-        ((ParseNodeDrawable)root).addReorder((ParseNodeDrawable)toTree.root, reorderMap);
-    }
-
     public int score(ParseTreeDrawable correctTree){
         return ((ParseNodeDrawable)root).score((ParseNodeDrawable)correctTree.root);
     }
@@ -284,25 +275,6 @@ public class ParseTreeDrawable extends ParseTree {
 
     public boolean layerAll(ViewLayerType viewLayerType){
         return ((ParseNodeDrawable)(root)).layerAll(viewLayerType);
-    }
-
-    public AutomaticTranslationDictionary translate(ViewLayerType fromLayer, ViewLayerType toLayer){
-        AutomaticTranslationDictionary dictionary = new AutomaticTranslationDictionary(new EnglishWordComparator());
-        addTranslations(dictionary, fromLayer, toLayer);
-        return dictionary;
-    }
-
-    public void addTranslations(AutomaticTranslationDictionary dictionary, ViewLayerType fromLayer, ViewLayerType toLayer){
-        NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable)this.getRoot(), new IsLeafNode());
-        ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
-        for (ParseNodeDrawable leafNode: leafList){
-            if (leafNode.getLayerData(fromLayer) != null && leafNode.getLayerData(toLayer) != null){
-                if (leafNode.getLayerData(fromLayer).equals("*NONE*"))
-                    dictionary.addWord(new Word(leafNode.getLayerInfo().getRobustLayerData(fromLayer)), new Word(leafNode.getLayerInfo().getRobustLayerData(toLayer)));
-                else
-                    dictionary.addWord(new Word(leafNode.getLayerInfo().getRobustLayerData(fromLayer).toLowerCase()), new Word(leafNode.getLayerInfo().getRobustLayerData(toLayer)));
-            }
-        }
     }
 
     public boolean updateConnectedPredicate(String previousId, String currentId){
@@ -422,18 +394,6 @@ public class ParseTreeDrawable extends ParseTree {
         if (viewLayer == ViewLayerType.INFLECTIONAL_GROUP){
             ((ParseNodeDrawable)root).drawDependency(g, this);
         }
-    }
-
-    public ArrayList<ScoredSentence> allPermutations(ReorderMap reorderMap){
-        if (root != null){
-            return ((ParseNodeDrawable)root).allPermutations(reorderMap);
-        } else {
-            return null;
-        }
-    }
-
-    public void mlTranslate(ReorderMap reorderMap){
-        ((ParseNodeDrawable)root).mlTranslate(reorderMap);
     }
 
 }

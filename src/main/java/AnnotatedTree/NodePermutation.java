@@ -1,6 +1,5 @@
-package AnnotatedTree.ReorderMap;
+package AnnotatedTree;
 
-import AnnotatedTree.ParseNodeDrawable;
 import ParseTree.ParseNode;
 
 import java.util.ArrayList;

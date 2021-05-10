@@ -9,7 +9,6 @@ import DataStructure.CounterHashMap;
 import MorphologicalAnalysis.FsmMorphologicalAnalyzer;
 import MorphologicalAnalysis.FsmParseList;
 import MorphologicalDisambiguation.RootWordStatistics;
-import Translation.AutomaticTranslationDictionary;
 import MorphologicalAnalysis.MorphologicalParse;
 import AnnotatedTree.Processor.Condition.IsTurkishLeafNode;
 import AnnotatedTree.Processor.ConvertToTurkishParseTree;
@@ -195,26 +194,6 @@ public class TreeBankDrawable extends TreeBank {
             }
         }
         return null;
-    }
-
-    public void prepareTranslationDictionary(ViewLayerType fromLayer, ViewLayerType toLayer, String fileName){
-        boolean firstTree = true;
-        AutomaticTranslationDictionary dictionary = null, tmpDictionary;
-        for (ParseTree tree:parseTrees){
-            ParseTreeDrawable parseTree = (ParseTreeDrawable) tree;
-            tmpDictionary = parseTree.translate(fromLayer, toLayer);
-            if (firstTree){
-                dictionary = tmpDictionary;
-                firstTree = false;
-            } else {
-                if (dictionary != null) {
-                    dictionary.mergeWith(tmpDictionary);
-                }
-            }
-        }
-        if (dictionary != null) {
-            dictionary.saveAsXml(fileName);
-        }
     }
 
     public void convertToTurkishParseTree(){
