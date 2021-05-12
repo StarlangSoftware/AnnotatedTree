@@ -15,12 +15,11 @@ public class NodeDrawableCollector {
     }
 
     private void collectNodes(ParseNodeDrawable parseNode, ArrayList<ParseNodeDrawable> collected){
-        if (condition.satisfies(parseNode)){
+        if (condition == null || condition.satisfies(parseNode)){
             collected.add(parseNode);
-        } else {
-            for (int i = 0; i < parseNode.numberOfChildren(); i++){
-                collectNodes((ParseNodeDrawable)parseNode.getChild(i), collected);
-            }
+        }
+        for (int i = 0; i < parseNode.numberOfChildren(); i++){
+            collectNodes((ParseNodeDrawable)parseNode.getChild(i), collected);
         }
     }
 
