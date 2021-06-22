@@ -8,7 +8,6 @@ import ParseTree.TreeBank;
 import DataStructure.CounterHashMap;
 import MorphologicalAnalysis.FsmMorphologicalAnalyzer;
 import MorphologicalAnalysis.FsmParseList;
-import MorphologicalDisambiguation.RootWordStatistics;
 import MorphologicalAnalysis.MorphologicalParse;
 import AnnotatedTree.Processor.Condition.IsTurkishLeafNode;
 import AnnotatedTree.Processor.ConvertToTurkishParseTree;
@@ -323,40 +322,6 @@ public class TreeBankDrawable extends TreeBank {
 
     public void sort(){
         Collections.sort(parseTrees, new ParseTreeComparator());
-    }
-
-    public RootWordStatistics extractRootWordStatistics(FsmMorphologicalAnalyzer fsm){
-        RootWordStatistics statistics = new RootWordStatistics();
-        CounterHashMap<String> rootWordStatistics;
-        for (ParseTree tree:getParseTrees()){
-            ParseTreeDrawable parseTree = (ParseTreeDrawable) tree;
-            NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) parseTree.getRoot(), new IsTurkishLeafNode());
-            ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
-            for (ParseNode node : leafList){
-                ParseNodeDrawable leafNode = (ParseNodeDrawable) node;
-                try {
-                    for (int i = 0; i < leafNode.getLayerInfo().getNumberOfWords(); i++){
-                        FsmParseList parseList = fsm.morphologicalAnalysis(leafNode.getLayerInfo().getTurkishWordAt(i));
-                        if (parseList.size() > 0){
-                            String rootWords = parseList.rootWords();
-                            if (rootWords.contains("$")){
-                                if (!statistics.containsKey(rootWords)){
-                                    rootWordStatistics = new CounterHashMap<>();
-                                } else {
-                                    rootWordStatistics = statistics.get(rootWords);
-                                }
-                                MorphologicalParse parse = leafNode.getLayerInfo().getMorphologicalParseAt(i);
-                                rootWordStatistics.put(parse.getWord().getName());
-                                statistics.put(rootWords, rootWordStatistics);
-                            }
-                        }
-                    }
-                } catch (LayerNotExistsException | WordNotExistsException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return statistics;
     }
 
 }
