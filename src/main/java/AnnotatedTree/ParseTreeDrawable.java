@@ -341,6 +341,18 @@ public class ParseTreeDrawable extends ParseTree {
         return sentence;
     }
 
+    public AnnotatedSentence generateAnnotatedSentence(String language){
+        AnnotatedSentence sentence = new AnnotatedSentence();
+        NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable)root, new IsEnglishLeafNode());
+        ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
+        for (ParseNodeDrawable parseNode : leafList){
+            AnnotatedWord newWord = new AnnotatedWord("{" + language + "=" + parseNode.getData().getName() + "}{posTag="
+                    + parseNode.getParent().getData().getName() + "}");
+            sentence.addWord(newWord);
+        }
+        return sentence;
+    }
+
     public ArrayList<ParseNodeDrawable> extractNodesWithVerbs(WordNet wordNet){
         NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) root, new IsVerbNode(wordNet));
         return nodeDrawableCollector.collect();

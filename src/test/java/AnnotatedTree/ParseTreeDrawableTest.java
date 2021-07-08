@@ -1,16 +1,11 @@
 package AnnotatedTree;
 
-import AnnotatedSentence.ViewLayerType;
-import AnnotatedTree.Processor.Condition.IsNoneNode;
-import AnnotatedTree.Processor.Condition.IsTurkishLeafNode;
-import AnnotatedTree.Processor.NodeDrawableCollector;
 import ParseTree.ParseTree;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -49,13 +44,13 @@ public class ParseTreeDrawableTest {
     @Test
     public void testGenerateAnnotatedSentence() {
         assertEquals("{turkish=yeni}{morphologicalAnalysis=yeni+ADJ}{metaMorphemes=yeni}{semantics=TUR10-0848740}{namedEntity=NONE}{propbank=ARG0$TUR10-0122540} " +
-                "{turkish=Büyük}{morphologicalAnalysis=büyük+ADJ}{metaMorphemes=büyük}{semantics=TUR10-0092410}{namedEntity=NONE}{propbank=ARG0$TUR10-0122540} " +
-                "{turkish=yasada}{morphologicalAnalysis=yasa+NOUN+A3SG+PNON+LOC}{metaMorphemes=yasa+DA}{semantics=TUR10-0411070}{namedEntity=NONE}{propbank=ARG0$TUR10-0122540} " +
-                "{turkish=karmaşık}{morphologicalAnalysis=karmaşık+ADJ}{metaMorphemes=karmaşık}{semantics=TUR10-0422250}{namedEntity=NONE}{propbank=ARG0$TUR10-0122540} " +
-                "{turkish=dil}{morphologicalAnalysis=dil+NOUN+A3SG+PNON+NOM}{metaMorphemes=dil}{semantics=TUR10-0204790}{namedEntity=NONE}{propbank=ARG0$TUR10-0122540} " +
-                "{turkish=savaşı}{morphologicalAnalysis=savaş+NOUN+A3SG+PNON+ACC}{metaMorphemes=savaş+yH}{semantics=TUR10-0135880}{namedEntity=NONE}{propbank=ARG1$TUR10-0122540} " +
-                "{turkish=bulandırmıştır}{morphologicalAnalysis=bulan+VERB^DB+VERB+CAUS+POS+NARR+COP+A3SG}{metaMorphemes=bulan+DHr+mHs+DHr}{semantics=TUR10-0122540}{namedEntity=NONE}{propbank=PREDICATE$TUR10-0122540} " +
-                "{turkish=.}{morphologicalAnalysis=.+PUNC}{metaMorphemes=.}{semantics=TUR10-1081860}{namedEntity=NONE}{propbank=NONE}",
+                        "{turkish=Büyük}{morphologicalAnalysis=büyük+ADJ}{metaMorphemes=büyük}{semantics=TUR10-0092410}{namedEntity=NONE}{propbank=ARG0$TUR10-0122540} " +
+                        "{turkish=yasada}{morphologicalAnalysis=yasa+NOUN+A3SG+PNON+LOC}{metaMorphemes=yasa+DA}{semantics=TUR10-0411070}{namedEntity=NONE}{propbank=ARG0$TUR10-0122540} " +
+                        "{turkish=karmaşık}{morphologicalAnalysis=karmaşık+ADJ}{metaMorphemes=karmaşık}{semantics=TUR10-0422250}{namedEntity=NONE}{propbank=ARG0$TUR10-0122540} " +
+                        "{turkish=dil}{morphologicalAnalysis=dil+NOUN+A3SG+PNON+NOM}{metaMorphemes=dil}{semantics=TUR10-0204790}{namedEntity=NONE}{propbank=ARG0$TUR10-0122540} " +
+                        "{turkish=savaşı}{morphologicalAnalysis=savaş+NOUN+A3SG+PNON+ACC}{metaMorphemes=savaş+yH}{semantics=TUR10-0135880}{namedEntity=NONE}{propbank=ARG1$TUR10-0122540} " +
+                        "{turkish=bulandırmıştır}{morphologicalAnalysis=bulan+VERB^DB+VERB+CAUS+POS+NARR+COP+A3SG}{metaMorphemes=bulan+DHr+mHs+DHr}{semantics=TUR10-0122540}{namedEntity=NONE}{propbank=PREDICATE$TUR10-0122540} " +
+                        "{turkish=.}{morphologicalAnalysis=.+PUNC}{metaMorphemes=.}{semantics=TUR10-1081860}{namedEntity=NONE}{propbank=NONE}",
                 tree0.generateAnnotatedSentence().toString());
         assertEquals("{turkish=Yollar}{morphologicalAnalysis=yol+NOUN+A3PL+PNON+NOM}{metaMorphemes=yol+lAr}{semantics=TUR10-0858630}{namedEntity=ORGANIZATION}{propbank=ARG0$TUR10-0834430} " +
                         "{turkish=ve}{morphologicalAnalysis=ve+CONJ}{metaMorphemes=ve}{semantics=TUR10-0816400}{namedEntity=ORGANIZATION}{propbank=ARG0$TUR10-0834430} " +
@@ -146,6 +141,40 @@ public class ParseTreeDrawableTest {
                         "{turkish=eder}{morphologicalAnalysis=et+VERB+POS+AOR+A3SG}{metaMorphemes=et+Ar}{semantics=TUR10-0915630}{namedEntity=NONE}{propbank=PREDICATE$TUR10-0915630} " +
                         "{turkish=.}{morphologicalAnalysis=.+PUNC}{metaMorphemes=.}{semantics=TUR10-1081860}{namedEntity=NONE}{propbank=NONE}",
                 tree9.generateAnnotatedSentence().toString());
+    }
+
+    @Test
+    public void testGenerateAnnotatedSentence2() throws Exception {
+        ParseTreeDrawable tree = new ParseTreeDrawable(new FileInputStream("trees2/0000.dev"));
+        assertEquals("{english=The}{posTag=DT} {english=complicated}{posTag=VBN} {english=language}{posTag=NN} {english=in}{posTag=IN} {english=the}{posTag=DT} {english=huge}{posTag=JJ} {english=new}{posTag=JJ} {english=law}{posTag=NN} {english=has}{posTag=VBZ} {english=muddied}{posTag=VBN} {english=the}{posTag=DT} {english=fight}{posTag=NN} {english=.}{posTag=.}",
+                tree.generateAnnotatedSentence("english").toString());
+        tree = new ParseTreeDrawable(new FileInputStream("trees2/0001.dev"));
+        assertEquals("{english=The}{posTag=DT} {english=Ways}{posTag=NNP} {english=and}{posTag=CC} {english=Means}{posTag=NNP} {english=Committee}{posTag=NNP} {english=will}{posTag=MD} {english=hold}{posTag=VB} {english=a}{posTag=DT} {english=hearing}{posTag=NN} {english=on}{posTag=IN} {english=the}{posTag=DT} {english=bill}{posTag=NN} {english=next}{posTag=IN} {english=Tuesday}{posTag=NNP} {english=.}{posTag=.}",
+                tree.generateAnnotatedSentence("english").toString());
+        tree = new ParseTreeDrawable(new FileInputStream("trees2/0002.dev"));
+        assertEquals("{english=We}{posTag=PRP} {english='re}{posTag=VBP} {english=about}{posTag=IN} {english=to}{posTag=TO} {english=see}{posTag=VB} {english=if}{posTag=IN} {english=advertising}{posTag=NN} {english=works}{posTag=VBZ} {english=.}{posTag=.}",
+                tree.generateAnnotatedSentence("english").toString());
+        tree = new ParseTreeDrawable(new FileInputStream("trees2/0003.dev"));
+        assertEquals("{english=This}{posTag=DT} {english=time}{posTag=NN} {english=around}{posTag=RP} {english=,}{posTag=,} {english=they}{posTag=PRP} {english='re}{posTag=VBP} {english=moving}{posTag=VBG} {english=even}{posTag=RB} {english=faster}{posTag=RBR} {english=.}{posTag=.}",
+                tree.generateAnnotatedSentence("english").toString());
+        tree = new ParseTreeDrawable(new FileInputStream("trees2/0004.dev"));
+        assertEquals("{english=Shearson}{posTag=NNP} {english=Lehman}{posTag=NNP} {english=Hutton}{posTag=NNP} {english=Inc.}{posTag=NNP} {english=by}{posTag=IN} {english=yesterday}{posTag=NN} {english=afternoon}{posTag=NN} {english=had}{posTag=VBD} {english=already}{posTag=RB} {english=written}{posTag=VBN} {english=new}{posTag=JJ} {english=TV}{posTag=NN} {english=ads}{posTag=NNS} {english=.}{posTag=.}",
+                tree.generateAnnotatedSentence("english").toString());
+        tree = new ParseTreeDrawable(new FileInputStream("trees2/0005.dev"));
+        assertEquals("{english=This}{posTag=DT} {english=time}{posTag=NN} {english=,}{posTag=,} {english=the}{posTag=DT} {english=firms}{posTag=NNS} {english=were}{posTag=VBD} {english=ready}{posTag=JJ} {english=.}{posTag=.}",
+                tree.generateAnnotatedSentence("english").toString());
+        tree = new ParseTreeDrawable(new FileInputStream("trees2/0006.dev"));
+        assertEquals("{english=``}{posTag=``} {english=To}{posTag=TO} {english=maintain}{posTag=VB} {english=that}{posTag=DT} {english=dialogue}{posTag=NN} {english=is}{posTag=VBZ} {english=absolutely}{posTag=RB} {english=crucial}{posTag=JJ} {english=.}{posTag=.}",
+                tree.generateAnnotatedSentence("english").toString());
+        tree = new ParseTreeDrawable(new FileInputStream("trees2/0007.dev"));
+        assertEquals("{english=It}{posTag=PRP} {english=would}{posTag=MD} {english=have}{posTag=VB} {english=been}{posTag=VBN} {english=too}{posTag=RB} {english=late}{posTag=JJ} {english=to}{posTag=TO} {english=think}{posTag=VB} {english=about}{posTag=IN} {english=on}{posTag=IN} {english=Friday}{posTag=NNP} {english=.}{posTag=.}",
+                tree.generateAnnotatedSentence("english").toString());
+        tree = new ParseTreeDrawable(new FileInputStream("trees2/0008.dev"));
+        assertEquals("{english=We}{posTag=PRP} {english=had}{posTag=VBD} {english=to}{posTag=TO} {english=think}{posTag=VB} {english=about}{posTag=IN} {english=it}{posTag=PRP} {english=ahead}{posTag=RB} {english=of}{posTag=IN} {english=time}{posTag=NN} {english=.}{posTag=.} {english=''}{posTag=''}",
+                tree.generateAnnotatedSentence("english").toString());
+        tree = new ParseTreeDrawable(new FileInputStream("trees2/0009.dev"));
+        assertEquals("{english=It}{posTag=PRP} {english=goes}{posTag=VBZ} {english=on}{posTag=RB} {english=to}{posTag=TO} {english=plug}{posTag=VB} {english=a}{posTag=DT} {english=few}{posTag=JJ} {english=diversified}{posTag=JJ} {english=Fidelity}{posTag=NNP} {english=funds}{posTag=NNS} {english=by}{posTag=IN} {english=name}{posTag=NN} {english=.}{posTag=.}",
+                tree.generateAnnotatedSentence("english").toString());
     }
 
 }
