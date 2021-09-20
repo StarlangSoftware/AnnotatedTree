@@ -6,7 +6,7 @@
 
     <groupId>io.github.starlangsoftware</groupId>
     <artifactId>AnnotatedTree</artifactId>
-    <version>1.0.23</version>
+    <version>1.0.24</version>
     <packaging>jar</packaging>
 
     <name>NlpToolkit.AnnotatedTree</name>
@@ -50,12 +50,12 @@
         <dependency>
             <groupId>io.github.starlangsoftware</groupId>
             <artifactId>AnnotatedSentence</artifactId>
-            <version>1.0.35</version>
+            <version>1.0.36</version>
         </dependency>
         <dependency>
             <groupId>io.github.starlangsoftware</groupId>
             <artifactId>SyntacticParser</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>javax.xml.parsers</groupId>
