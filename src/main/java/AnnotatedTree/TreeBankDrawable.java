@@ -6,8 +6,6 @@ import ParseTree.ParseNode;
 import ParseTree.ParseTree;
 import ParseTree.TreeBank;
 import DataStructure.CounterHashMap;
-import MorphologicalAnalysis.FsmMorphologicalAnalyzer;
-import MorphologicalAnalysis.FsmParseList;
 import MorphologicalAnalysis.MorphologicalParse;
 import AnnotatedTree.Processor.Condition.IsTurkishLeafNode;
 import AnnotatedTree.Processor.ConvertToTurkishParseTree;

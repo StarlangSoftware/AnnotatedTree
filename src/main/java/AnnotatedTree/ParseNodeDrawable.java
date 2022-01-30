@@ -2,11 +2,8 @@ package AnnotatedTree;
 
 import AnnotatedSentence.LayerNotExistsException;
 import AnnotatedSentence.ViewLayerType;
-import ContextFreeGrammar.ContextFreeGrammar;
 import MorphologicalAnalysis.MorphologicalParse;
-import MorphologicalAnalysis.MorphologicalTag;
 import ParseTree.ParseNode;
-import ContextFreeGrammar.Rule;
 import ParseTree.Symbol;
 import Dictionary.EnglishWordComparator;
 import AnnotatedTree.Processor.Condition.IsTurkishLeafNode;
@@ -159,14 +156,16 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public String getLayerData(){
-        if (data != null)
+        if (data != null){
             return data.getName();
+        }
         return layers.getLayerDescription();
     }
 
     public String getLayerData(ViewLayerType viewLayer){
-        if (viewLayer == ViewLayerType.WORD || layers == null)
+        if (viewLayer == ViewLayerType.WORD || layers == null){
             return data.getName();
+        }
         return layers.getLayerData(viewLayer);
     }
 
@@ -718,7 +717,19 @@ public class ParseNodeDrawable extends ParseNode {
     public String toTurkishSentence(){
         if (children.size() == 0){
             if (getLayerData(ViewLayerType.TURKISH_WORD) != null && !getLayerData(ViewLayerType.TURKISH_WORD).equals("*NONE*")){
-                return " " + getLayerData(ViewLayerType.TURKISH_WORD).replaceAll("-LRB-", "(").replaceAll("-RRB-", ")").replaceAll("-LSB-", "[").replaceAll("-RSB-", "]").replaceAll("-LCB-", "{").replaceAll("-RCB-", "}").replaceAll("-lrb-", "(").replaceAll("-rrb-", ")").replaceAll("-lsb-", "[").replaceAll("-rsb-", "]").replaceAll("-lcb-", "{").replaceAll("-rcb-", "}");
+                return " " + getLayerData(ViewLayerType.TURKISH_WORD)
+                        .replaceAll("-LRB-", "(")
+                        .replaceAll("-RRB-", ")")
+                        .replaceAll("-LSB-", "[")
+                        .replaceAll("-RSB-", "]")
+                        .replaceAll("-LCB-", "{")
+                        .replaceAll("-RCB-", "}")
+                        .replaceAll("-lrb-", "(")
+                        .replaceAll("-rrb-", ")")
+                        .replaceAll("-lsb-", "[")
+                        .replaceAll("-rsb-", "]")
+                        .replaceAll("-lcb-", "{")
+                        .replaceAll("-rcb-", "}");
             } else {
                 return " ";
             }
