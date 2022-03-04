@@ -9,7 +9,6 @@ import AnnotatedTree.Processor.Condition.*;
 import AnnotatedTree.Processor.NodeDrawableCollector;
 import WordNet.WordNet;
 
-import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -57,17 +56,23 @@ public class ParseTreeDrawable extends ParseTree {
         root = newRootNode;
     }
 
+    private void readFromLine(String line) throws ParenthesisInLayerException{
+        if (line.contains("(") && line.contains(")")){
+            line = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")")).trim();
+            root = new ParseNodeDrawable(null, line, false, 0);
+            updateTraversalIndexes();
+        } else {
+            root = null;
+        }
+    }
+
     private void readFromFile(String currentPath){
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileDescription.getFileName(currentPath)), StandardCharsets.UTF_8));
             String line = br.readLine();
-            if (line.contains("(") && line.contains(")")){
-                line = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")")).trim();
-                root = new ParseNodeDrawable(null, line, false, 0);
-                updateTraversalIndexes();
-            } else {
+            readFromLine(line);
+            if (root == null){
                 System.out.println("File " + fileDescription.getFileName(currentPath) + " is not a valid parse tree file");
-                root = null;
             }
             br.close();
         } catch (IOException e) {
@@ -78,18 +83,21 @@ public class ParseTreeDrawable extends ParseTree {
         }
     }
 
+    public ParseTreeDrawable(String line){
+        try {
+            readFromLine(line);
+        } catch (ParenthesisInLayerException e) {
+            System.out.println(e.toString());
+            root = null;
+        }
+    }
+
     public ParseTreeDrawable(FileInputStream file){
         try {
             name = file.getFD().toString();
             BufferedReader br = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
             String line = br.readLine();
-            if (line != null && line.contains("(") && line.contains(")")){
-                line = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")")).trim();
-                root = new ParseNodeDrawable(null, line, false, 0);
-                updateTraversalIndexes();
-            } else {
-                root = null;
-            }
+            readFromLine(line);
             br.close();
         } catch (IOException e) {
             root = null;
@@ -136,22 +144,6 @@ public class ParseTreeDrawable extends ParseTree {
         try {
             fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileDescription.getFileName()), "UTF-8"));
             fw.write("( " + this.toString() + " )\n");
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String toSvg(ViewLayerType viewLayer) {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">"
-                + ((ParseNodeDrawable)root).toSvgFormat(viewLayer) + "</svg>";
-    }
-
-    public void saveAsSvg(ViewLayerType viewLayer){
-        BufferedWriter fw;
-        try {
-            fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileDescription.getFileName(TreeBankDrawable.TREE_IMAGES) + ".svg"), "UTF-8"));
-            fw.write(this.toSvg(viewLayer));
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -399,13 +391,6 @@ public class ParseTreeDrawable extends ParseTree {
 
     public ParseNodeDrawable getLeafWithIndex(int index){
         return ((ParseNodeDrawable)root).getLeafWithIndex(index);
-    }
-
-    public void paint(Graphics g, int nodeWidth, int nodeHeight, ViewLayerType viewLayer){
-        ((ParseNodeDrawable)root).paint(g, nodeWidth, nodeHeight, maxDepth(), viewLayer);
-        if (viewLayer == ViewLayerType.INFLECTIONAL_GROUP){
-            ((ParseNodeDrawable)root).drawDependency(g, this);
-        }
     }
 
 }

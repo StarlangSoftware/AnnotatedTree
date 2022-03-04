@@ -13,9 +13,6 @@ import NamedEntityRecognition.Gazetteer;
 import Util.Permutation;
 
 import java.awt.*;
-import java.awt.geom.CubicCurve2D;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class ParseNodeDrawable extends ParseNode {
@@ -133,6 +130,30 @@ public class ParseNodeDrawable extends ParseNode {
     public void setDataAndClearLayers(Symbol data){
         super.setData(data);
         layers = null;
+    }
+
+    public boolean isDragged(){
+        return dragged;
+    }
+
+    public boolean isEditable(){
+        return editable;
+    }
+
+    public boolean isSearched(){
+        return searched;
+    }
+
+    public boolean isGuessed(){
+        return guessed;
+    }
+
+    public boolean isSelected(){
+        return selected;
+    }
+
+    public int getInOrderTraversalIndex(){
+        return inOrderTraversalIndex;
     }
 
     public void setGuessed(){
@@ -339,21 +360,6 @@ public class ParseNodeDrawable extends ParseNode {
 
     public boolean hasDeletedChild(){
         return hasDeletedChild;
-    }
-
-    public int getSubItemAt(int x, int y){
-        if (area.contains(x, y) && children.size() == 0)
-            return (int) ((y - area.getY()) / 20);
-        else {
-            for (ParseNode aChildren : children) {
-                ParseNodeDrawable aChild = (ParseNodeDrawable) aChildren;
-                int result = aChild.getSubItemAt(x, y);
-                if (result != -1){
-                    return result;
-                }
-            }
-            return -1;
-        }
     }
 
     public boolean satisfy(ParseNodeSearchable node){
@@ -781,6 +787,21 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    public int getSubItemAt(int x, int y){
+        if (area.contains(x, y) && children.size() == 0)
+            return (int) ((y - area.getY()) / 20);
+        else {
+            for (ParseNode aChildren : children) {
+                ParseNodeDrawable aChild = (ParseNodeDrawable) aChildren;
+                int result = aChild.getSubItemAt(x, y);
+                if (result != -1){
+                    return result;
+                }
+            }
+            return -1;
+        }
+    }
+
     public ParseNodeDrawable getNodeAt(int x, int y){
         if (area.contains(x, y))
             return this;
@@ -811,457 +832,8 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
-    private int getStringSize(Graphics g, ViewLayerType viewLayer){
-        int i, stringSize = 0;
-        if (children.size() == 0){
-            switch (viewLayer){
-                case ENGLISH_WORD:
-                case TURKISH_WORD:
-                case PERSIAN_WORD:
-                case NER:
-                    stringSize = g.getFontMetrics().stringWidth(layers.getLayerData(viewLayer));
-                    break;
-                case PROPBANK:
-                    stringSize = g.getFontMetrics().stringWidth(layers.getArgument().getArgumentType());
-                    break;
-                case ENGLISH_SEMANTICS:
-                    stringSize = g.getFontMetrics().stringWidth(layers.getLayerData(viewLayer).substring(6, 14));
-                    break;
-                case SHALLOW_PARSE:
-                    try {
-                        for (i = 0; i < layers.getNumberOfWords(); i++)
-                            if (g.getFontMetrics().stringWidth(layers.getShallowParseAt(i)) > stringSize){
-                                stringSize = g.getFontMetrics().stringWidth(layers.getShallowParseAt(i));
-                            }
-                    } catch (LayerNotExistsException | WordNotExistsException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case SEMANTICS:
-                    try {
-                        stringSize = g.getFontMetrics().stringWidth(layers.getLayerData(ViewLayerType.TURKISH_WORD));
-                        for (i = 0; i < layers.getNumberOfMeanings(); i++)
-                            if (g.getFontMetrics().stringWidth(layers.getSemanticAt(i).substring(6)) > stringSize){
-                                stringSize = g.getFontMetrics().stringWidth(layers.getSemanticAt(i).substring(6));
-                            }
-                    } catch (LayerNotExistsException | WordNotExistsException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case META_MORPHEME_MOVED:
-                case META_MORPHEME:
-                case PART_OF_SPEECH:
-                case INFLECTIONAL_GROUP:
-                case ENGLISH_PROPBANK:
-                    for (i = 0; i < layers.getLayerSize(viewLayer); i++)
-                        try {
-                            if (g.getFontMetrics().stringWidth(layers.getLayerInfoAt(viewLayer, i)) > stringSize){
-                                stringSize = g.getFontMetrics().stringWidth(layers.getLayerInfoAt(viewLayer, i));
-                            }
-                        } catch (LayerNotExistsException | LayerItemNotExistsException | WordNotExistsException e) {
-                            e.printStackTrace();
-                        }
-                    break;
-                default:
-                    stringSize = g.getFontMetrics().stringWidth(data.getName());
-                    break;
-            }
-            return stringSize;
-        } else {
-            return g.getFontMetrics().stringWidth(data.getName());
-        }
-    }
-
-    private void setArea(int x, int y, int stringSize, ViewLayerType viewLayer){
-        if (children.size() == 0){
-            switch (viewLayer){
-                case WORD:
-                case TURKISH_WORD:
-                case PERSIAN_WORD:
-                case ENGLISH_WORD:
-                case NER:
-                case PROPBANK:
-                    area = new Rectangle(x - 5, y - 15, stringSize + 10, 20);
-                    break;
-                case ENGLISH_SEMANTICS:
-                    area = new Rectangle(x - 5, y - 15, stringSize + 10, 40);
-                    break;
-                case SHALLOW_PARSE:
-                case SEMANTICS:
-                    try {
-                        area = new Rectangle(x - 5, y - 15, stringSize + 10, 20 * (layers.getNumberOfWords() + 1));
-                    } catch (LayerNotExistsException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case META_MORPHEME_MOVED:
-                case META_MORPHEME:
-                case PART_OF_SPEECH:
-                case INFLECTIONAL_GROUP:
-                case ENGLISH_PROPBANK:
-                    area = new Rectangle(x - 5, y - 15, stringSize + 10, 20 * (layers.getLayerSize(viewLayer) + 1));
-                    break;
-            }
-        } else {
-            area = new Rectangle(x - 5, y - 15, stringSize + 10, 20);
-        }
-    }
-
-    private void drawString(Graphics g, int x, int y, ViewLayerType viewLayer){
-        int i;
-        if (children.size() == 0){
-            switch (viewLayer){
-                case WORD:
-                    g.drawString(data.getName(), x, y);
-                    break;
-                case ENGLISH_WORD:
-                case TURKISH_WORD:
-                case PERSIAN_WORD:
-                    g.drawString(layers.getLayerData(viewLayer), x, y);
-                    break;
-                case ENGLISH_SEMANTICS:
-                    g.drawString(layers.getLayerData(ViewLayerType.ENGLISH_WORD), x, y);
-                    g.setColor(Color.RED);
-                    g.drawString(layers.getLayerData(viewLayer).substring(6, 14), x, y + 20);
-                    break;
-                case META_MORPHEME_MOVED:
-                case META_MORPHEME:
-                case PART_OF_SPEECH:
-                case INFLECTIONAL_GROUP:
-                    for (i = 0; i < layers.getLayerSize(viewLayer); i++){
-                        if (i > 0 && !guessed){
-                            g.setColor(Color.RED);
-                        }
-                        try {
-                            g.drawString(layers.getLayerInfoAt(viewLayer, i), x, y);
-                            y += 20;
-                        } catch (LayerNotExistsException | LayerItemNotExistsException | WordNotExistsException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    break;
-                case PROPBANK:
-                    g.drawString(layers.getLayerData(ViewLayerType.TURKISH_WORD), x, y);
-                    g.setColor(Color.RED);
-                    y += 25;
-                    g.drawString(layers.getArgument().getArgumentType(), x, y);
-                    if (layers.getArgument().getId() != null){
-                        Font previousFont = g.getFont();
-                        g.setFont(new Font("Serif", Font.PLAIN, 10));
-                        g.drawString(layers.getArgument().getId(), x - 15, y + 10);
-                        g.setFont(previousFont);
-                    }
-                    break;
-                case ENGLISH_PROPBANK:
-                    g.drawString(layers.getLayerData(ViewLayerType.TURKISH_WORD), x, y);
-                    g.setColor(Color.RED);
-                    y += 25;
-                    if (layers.getLayerData(ViewLayerType.PROPBANK) != null){
-                        g.drawString(layers.getArgument().getArgumentType(), x, y);
-                        if (layers.getArgument().getId() != null){
-                            Font previousFont = g.getFont();
-                            g.setFont(new Font("Serif", Font.PLAIN, 10));
-                            g.drawString(layers.getArgument().getId(), x - 15, y + 10);
-                            g.setFont(previousFont);
-                        }
-                    }
-                    y += 25;
-                    g.setColor(Color.MAGENTA);
-                    g.drawString(layers.getLayerData(ViewLayerType.ENGLISH_WORD), x, y);
-                    for (i = 0; i < layers.getLayerSize(viewLayer); i++){
-                        g.setColor(Color.RED);
-                        try {
-                            y += 25;
-                            g.drawString(layers.getArgumentAt(i).getArgumentType(), x, y);
-                            if (layers.getArgumentAt(i).getId() != null){
-                                Font previousFont = g.getFont();
-                                g.setFont(new Font("Serif", Font.PLAIN, 10));
-                                g.drawString(layers.getArgumentAt(i).getId(), x - 15, y + 10);
-                                g.setFont(previousFont);
-                            }
-                        } catch (LayerNotExistsException | WordNotExistsException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    break;
-                case SHALLOW_PARSE:
-                    g.drawString(layers.getLayerData(ViewLayerType.TURKISH_WORD), x, y);
-                    g.setColor(Color.RED);
-                    try {
-                        for (i = 0; i < layers.getNumberOfWords(); i++){
-                            try {
-                                y += 20;
-                                g.drawString(layers.getShallowParseAt(i), x, y);
-                            } catch (LayerNotExistsException | WordNotExistsException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    } catch (LayerNotExistsException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case SEMANTICS:
-                    g.drawString(layers.getLayerData(ViewLayerType.TURKISH_WORD), x, y);
-                    g.setColor(Color.RED);
-                    for (i = 0; i < layers.getNumberOfMeanings(); i++){
-                        try {
-                            y += 20;
-                            g.drawString(layers.getSemanticAt(i).substring(6), x, y);
-                        } catch (LayerNotExistsException | WordNotExistsException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    break;
-                case NER:
-                    g.drawString(layers.getLayerData(ViewLayerType.TURKISH_WORD), x, y);
-                    g.setColor(Color.RED);
-                    g.drawString(layers.getLayerData(ViewLayerType.NER), x, y + 20);
-                    break;
-            }
-        } else {
-            g.drawString(data.getName(), x, y);
-        }
-    }
-
-    public void drawDependency(Graphics g, ParseTreeDrawable tree){
-        ParseNodeDrawable toNode;
-        int toIG;
-        String dependency;
-        int startX, startY, dragX, dragY;
-        Point2D.Double pointCtrl1, pointCtrl2, pointStart, pointEnd;
-        CubicCurve2D.Double cubicCurve;
-        if (children.size() == 0 && layers != null && layers.getLayerData(ViewLayerType.DEPENDENCY) != null){
-            String[] words = layers.getLayerData(ViewLayerType.DEPENDENCY).split(",");
-            toNode = tree.getLeafWithIndex(Integer.parseInt(words[0]));
-            toIG = Integer.parseInt(words[1]);
-            dependency = words[2];
-            startX = area.x + area.width / 2;
-            startY = area.y + 20;
-            dragX = toNode.area.x + toNode.area.width / 2;
-            dragY = toNode.area.y + 20 * toIG;
-            pointStart = new Point2D.Double(startX, startY);
-            pointEnd = new Point2D.Double(dragX, dragY);
-            if (dragY > startY){
-                pointCtrl1 = new Point2D.Double(startX, (startY + dragY) / 2 + 40);
-                pointCtrl2 = new Point2D.Double((startX + dragX) / 2, dragY + 50);
-            } else {
-                pointCtrl1 = new Point2D.Double((startX + dragX) / 2, startY + 30);
-                pointCtrl2 = new Point2D.Double(dragX, (startY + dragY) / 2 + 40);
-            }
-            cubicCurve = new CubicCurve2D.Double(pointStart.x, pointStart.y, pointCtrl1.x, pointCtrl1.y, pointCtrl2.x, pointCtrl2.y, pointEnd.x, pointEnd.y);
-            Graphics2D g2 = (Graphics2D)g;
-            g2.setColor(Color.RED);
-            g.drawString(dependency, (startX + dragX) / 2, Math.max(startY, dragY) + 50);
-            g2.draw(cubicCurve);
-            g2.setColor(Color.BLACK);
-        } else {
-            for (ParseNode aChildren : children) {
-                ParseNodeDrawable aChild = (ParseNodeDrawable) aChildren;
-                aChild.drawDependency(g, tree);
-            }
-        }
-    }
-
-    private String toSvgText(int x, int y, String color, String text, int fontSize){
-        return "<text x=\"" + x + "\" y=\"" + y + "\" font-size = \"" + fontSize + "\" fill=\"" + color + "\">" + text + "</text>\n";
-    }
-
-    private String toSvgText(int x, int y, String color, String text){
-        return "<text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + color + "\">" + text + "</text>\n";
-    }
-
-    public String toSvgFormat(ViewLayerType viewLayer){
-        String result;
-        Graphics g = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB).getGraphics();
-        int i, x, y, stringSize = getStringSize(g, viewLayer), width;
-        if (viewLayer.equals(ViewLayerType.ENGLISH_PROPBANK)){
-            width = 100;
-        } else {
-            width = 70;
-        }
-        x = (inOrderTraversalIndex + 1) * width - stringSize / 2;
-        y = depth * 80 + 15;
-        setArea(x, y, stringSize, viewLayer);
-        if (children.size() == 0){
-            switch (viewLayer){
-                case WORD:
-                    return toSvgText(x, y, "blue", data.getName());
-                case ENGLISH_WORD:
-                case TURKISH_WORD:
-                case PERSIAN_WORD:
-                    return toSvgText(x, y, "blue", layers.getLayerData(viewLayer));
-                case ENGLISH_SEMANTICS:
-                    return toSvgText(x, y, "blue", layers.getLayerData(viewLayer).substring(6, 14));
-                case META_MORPHEME_MOVED:
-                case META_MORPHEME:
-                case PART_OF_SPEECH:
-                case INFLECTIONAL_GROUP:
-                    result = "";
-                    for (i = 0; i < layers.getLayerSize(viewLayer); i++){
-                        try {
-                            if (layers.getLayerInfoAt(viewLayer, i).length() > 1 && layers.getLayerInfoAt(viewLayer, i).toUpperCase(new Locale("tr")).equals(layers.getLayerInfoAt(viewLayer, i))){
-                                result = result + toSvgText(x, y, "red", layers.getLayerInfoAt(viewLayer, i));
-                            } else {
-                                result = result + toSvgText(x, y, "blue", layers.getLayerInfoAt(viewLayer, i));
-                            }
-                        } catch (LayerNotExistsException | LayerItemNotExistsException | WordNotExistsException e) {
-                            e.printStackTrace();
-                        }
-                        y += 20;
-                    }
-                    return result;
-                case ENGLISH_PROPBANK:
-                    result = toSvgText(x, y, "blue", layers.getLayerData(ViewLayerType.TURKISH_WORD));
-                    y += 25;
-                    if (layers.getLayerData(ViewLayerType.PROPBANK) != null){
-                        result = result + toSvgText(x, y, "red", layers.getLayerData(ViewLayerType.PROPBANK));
-                    }
-                    y += 25;
-                    result = result + toSvgText(x, y, "magenta", layers.getLayerData(ViewLayerType.ENGLISH_WORD));
-                    for (i = 0; i < layers.getLayerSize(viewLayer); i++){
-                        try {
-                            y += 25;
-                            result = result + toSvgText(x, y, "red", layers.getArgumentAt(i).getArgumentType());
-                            if (layers.getArgumentAt(i).getId() != null){
-                                result = result + toSvgText(x - 15, y + 10, "red", layers.getArgumentAt(i).getId(), 10);
-                            }
-                        } catch (LayerNotExistsException | WordNotExistsException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    return result;
-                case SHALLOW_PARSE:
-                    result = toSvgText(x, y, "blue", layers.getLayerData(ViewLayerType.TURKISH_WORD));
-                    try {
-                        for (i = 0; i < layers.getNumberOfWords(); i++){
-                            try {
-                                y += 20;
-                                result = result + toSvgText(x, y, "red", layers.getShallowParseAt(i));
-                            } catch (LayerNotExistsException | WordNotExistsException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    } catch (LayerNotExistsException e) {
-                        e.printStackTrace();
-                    }
-                    return result;
-                case SEMANTICS:
-                    result = toSvgText(x, y, "blue", layers.getLayerData(ViewLayerType.TURKISH_WORD));
-                    for (i = 0; i < layers.getNumberOfMeanings(); i++){
-                        try {
-                            y += 20;
-                            result = result + toSvgText(x, y, "red", layers.getSemanticAt(i).substring(6));
-                        } catch (LayerNotExistsException | WordNotExistsException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    return result;
-                case NER:
-                    result = toSvgText(x, y, "blue", layers.getLayerData(ViewLayerType.TURKISH_WORD));
-                    return result + toSvgText(x, y + 20, "red", layers.getLayerData(ViewLayerType.NER));
-                case PROPBANK:
-                    result = toSvgText(x, y, "blue", layers.getLayerData(ViewLayerType.TURKISH_WORD));
-                    return result + toSvgText(x, y + 20, "red", layers.getLayerData(ViewLayerType.PROPBANK));
-            }
-        } else {
-            if (parent == null){
-                result = toSvgText(x, y, "black", data.getName());
-            } else {
-                result = toSvgText(x, y - 10, "black", data.getName());
-            }
-            for (ParseNode aChildren : children) {
-                ParseNodeDrawable aChild = (ParseNodeDrawable) aChildren;
-                int x1 = (inOrderTraversalIndex + 1) * width;
-                int y1 = depth * 80 + 20;
-                int x2 = (aChild.inOrderTraversalIndex + 1) * width;
-                int y2 = aChild.depth * 80 - 20;
-                result = result + "<line x1=\"" + x1 + "\" y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 + "\" style=\"stroke:rgb(0,0,0);stroke-width:2\"/>\n";
-            }
-            for (ParseNode aChildren : children) {
-                ParseNodeDrawable aChild = (ParseNodeDrawable) aChildren;
-                result = result + aChild.toSvgFormat(viewLayer);
-            }
-            return result;
-        }
-        return null;
-    }
-
-    public void paint(Graphics g, int nodeWidth, int nodeHeight, int maxDepth, ViewLayerType viewLayer){
-        int stringSize, addY, x, y;
-        ViewLayerType originalLayer = viewLayer;
-        if (children.size() == 0 && viewLayer != ViewLayerType.WORD){
-            viewLayer = layers.checkLayer(viewLayer);
-        }
-        stringSize = getStringSize(g, viewLayer);
-        if (depth == 0){
-            addY = 15;
-        } else {
-            if (depth == maxDepth){
-                addY = -5;
-            } else {
-                addY = 5;
-            }
-        }
-        x = (inOrderTraversalIndex + 1) * nodeWidth - stringSize / 2;
-        y = depth * nodeHeight + addY;
-        setArea(x, y, stringSize, viewLayer);
-        if (searched){
-            g.setColor(Color.BLUE);
-            g.draw3DRect(x - 5, y - 15, stringSize + 10, 20, true);
-            g.setColor(Color.BLACK);
-        } else {
-            if (editable){
-                g.setColor(Color.RED);
-                g.drawRect(x - 5, y - 15, stringSize + 10, 20);
-                g.setColor(Color.BLACK);
-            } else {
-                if (dragged){
-                    g.setColor(Color.MAGENTA);
-                    if (selectedIndex == -1)
-                        g.drawRect(x - 5, y - 15, stringSize + 10, 20);
-                    else {
-                        if (originalLayer != ViewLayerType.TURKISH_WORD){
-                            g.drawRect(x - 5, y - 15 + 20 * selectedIndex, stringSize + 10, 20);
-                        } else {
-                            g.drawRect(x - 5 + selectedIndex * (stringSize + 10) / (numberOfChildren() + 1), y - 15, (stringSize + 10) / (numberOfChildren() + 1), 20);
-                        }
-                    }
-                    g.setColor(Color.BLACK);
-                } else {
-                    if (selected){
-                        if (selectedIndex == -1)
-                            g.drawRect(x - 5, y - 15, stringSize + 10, 20);
-                        else
-                            g.drawRect(x - 5, y - 15 + 20 * selectedIndex, stringSize + 10, 20);
-                    }
-                }
-            }
-        }
-        if (children.size() == 0){
-            if (guessed){
-                g.setColor(Color.MAGENTA);
-            } else {
-                if (originalLayer != viewLayer && (originalLayer == ViewLayerType.TURKISH_WORD || originalLayer == ViewLayerType.PERSIAN_WORD)){
-                    g.setColor(Color.RED);
-                } else {
-                    g.setColor(Color.BLUE);
-                }
-            }
-        } else {
-            if (parent != null && this == parent.headChild()){
-                g.setColor(Color.GRAY);
-            }
-        }
-        drawString(g, x, y, viewLayer);
-        g.setColor(Color.BLACK);
-        for (ParseNode aChildren : children) {
-            ParseNodeDrawable aChild = (ParseNodeDrawable) aChildren;
-            g.drawLine((inOrderTraversalIndex + 1) * nodeWidth, depth * nodeHeight + 20, (aChild.inOrderTraversalIndex + 1) * nodeWidth, aChild.depth * nodeHeight - 20);
-        }
-        for (ParseNode aChildren : children) {
-            ParseNodeDrawable aChild = (ParseNodeDrawable) aChildren;
-            aChild.paint(g, nodeWidth, nodeHeight, maxDepth, viewLayer);
-        }
+    public void setArea(int x, int y, int width, int height){
+        this.area = new Rectangle(x, y, width, height);
     }
 
 }
