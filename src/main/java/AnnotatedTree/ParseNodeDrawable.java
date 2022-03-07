@@ -11,8 +11,8 @@ import AnnotatedTree.Processor.NodeDrawableCollector;
 import Dictionary.*;
 import NamedEntityRecognition.Gazetteer;
 import Util.Permutation;
+import Util.RectAngle;
 
-import java.awt.*;
 import java.util.*;
 
 public class ParseNodeDrawable extends ParseNode {
@@ -21,7 +21,7 @@ public class ParseNodeDrawable extends ParseNode {
     protected int inOrderTraversalIndex;
     protected int leafIndex = -1;
     protected int depth;
-    protected Rectangle area;
+    protected RectAngle area;
     protected boolean selected = false;
     protected boolean editable = false;
     protected boolean dragged = false;
@@ -323,7 +323,7 @@ public class ParseNodeDrawable extends ParseNode {
         return selectedIndex;
     }
 
-    public Rectangle getArea(){
+    public RectAngle getArea(){
         return area;
     }
 
@@ -833,7 +833,7 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public void setArea(int x, int y, int width, int height){
-        this.area = new Rectangle(x, y, width, height);
+        this.area = new RectAngle(x, y, width, height);
     }
 
 }
