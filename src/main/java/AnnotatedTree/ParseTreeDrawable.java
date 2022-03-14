@@ -7,12 +7,17 @@ import ParseTree.Symbol;
 import Corpus.FileDescription;
 import AnnotatedTree.Processor.Condition.*;
 import AnnotatedTree.Processor.NodeDrawableCollector;
+import PropBank.Argument;
+import PropBank.Frameset;
+import PropBank.FramesetList;
 import WordNet.WordNet;
+import WordNet.SynSet;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class ParseTreeDrawable extends ParseTree {
     private FileDescription fileDescription;
@@ -267,6 +272,22 @@ public class ParseTreeDrawable extends ParseTree {
 
     public boolean layerAll(ViewLayerType viewLayerType){
         return ((ParseNodeDrawable)(root)).layerAll(viewLayerType);
+    }
+
+    public HashSet<Frameset> getPredicateSynSets(WordNet wordNet, FramesetList framesetList){
+        HashSet<Frameset> synSets = new HashSet<>();
+        NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) root, new IsTurkishLeafNode());
+        ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
+        for (ParseNodeDrawable leafNode : leafList){
+            Argument argument = leafNode.getLayerInfo().getArgument();
+            if (argument != null && argument.getArgumentType().equals("PREDICATE")){
+                SynSet synSet = wordNet.getSynSetWithId(leafNode.getLayerInfo().getArgument().getId());
+                if (synSet != null && framesetList.frameExists(synSet.getId())){
+                    synSets.add(framesetList.getFrameSet(synSet.getId()));
+                }
+            }
+        }
+        return synSets;
     }
 
     public boolean updateConnectedPredicate(String previousId, String currentId){
