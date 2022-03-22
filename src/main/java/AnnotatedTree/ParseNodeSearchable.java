@@ -2,8 +2,8 @@ package AnnotatedTree;
 
 import AnnotatedSentence.ViewLayerType;
 import ParseTree.ParseNode;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
+import Xml.XmlAttribute;
+import Xml.XmlElement;
 
 import java.util.ArrayList;
 
@@ -14,22 +14,20 @@ public class ParseNodeSearchable extends ParseNode {
     private ArrayList<String> searchValues;
     private boolean isLeaf = false;
 
-    public ParseNodeSearchable(ParseNodeSearchable parent, Node node){
-        NamedNodeMap attributes;
-        Node child;
+    public ParseNodeSearchable(ParseNodeSearchable parent, XmlElement node){
+        XmlElement child;
         children = new ArrayList<ParseNode>();
         this.parent = parent;
-        isLeaf = node.getNodeName().equalsIgnoreCase("leaf");
+        isLeaf = node.getName().equalsIgnoreCase("leaf");
         searchTypes = new ArrayList<>();
         viewLayerTypes = new ArrayList<>();
         searchValues = new ArrayList<>();
         if (node.hasAttributes()){
-            attributes = node.getAttributes();
-            for (int i = 0; i < attributes.getLength(); i++){
-                Node attribute = attributes.item(i);
-                String viewLayerType = attribute.getNodeName().substring(0, 3);
-                String searchType = attribute.getNodeName().substring(3);
-                searchValues.add(attribute.getNodeValue());
+            for (int i = 0; i < node.attributeSize(); i++){
+                XmlAttribute attribute = node.getAttribute(i);
+                String viewLayerType = attribute.getName().substring(0, 3);
+                String searchType = attribute.getName().substring(3);
+                searchValues.add(attribute.getValue());
                 if (searchType.equalsIgnoreCase("equals")){
                     searchTypes.add(SearchType.EQUALS);
                 } else {
@@ -108,7 +106,7 @@ public class ParseNodeSearchable extends ParseNode {
         }
         child = node.getFirstChild();
         while (child != null){
-            if (child.getNodeName().equalsIgnoreCase("node") || child.getNodeName().equalsIgnoreCase("leaf"))
+            if (child.getName().equalsIgnoreCase("node") || child.getName().equalsIgnoreCase("leaf"))
                 children.add(new ParseNodeSearchable(this, child));
             child = child.getNextSibling();
         }

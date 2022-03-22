@@ -1,11 +1,11 @@
 package AnnotatedTree;
 
 import ParseTree.ParseTree;
-import org.w3c.dom.Node;
+import Xml.XmlElement;
 
 public class ParseTreeSearchable extends ParseTree {
 
-    public ParseTreeSearchable(Node rootNode){
+    public ParseTreeSearchable(XmlElement rootNode){
         root = new ParseNodeSearchable(null, rootNode);
     }
 
