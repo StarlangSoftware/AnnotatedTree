@@ -364,6 +364,12 @@ public class ParseTreeDrawable extends ParseTree {
         return sentence;
     }
 
+    public ParseTree generateParseTree(boolean surfaceForm){
+        ParseTree result = new ParseTree(new ParseNode(root.getData()));
+        ((ParseNodeDrawable) root).generateParseNode(result.getRoot(), surfaceForm);
+        return result;
+    }
+
     public ArrayList<ParseNodeDrawable> extractNodesWithVerbs(WordNet wordNet){
         NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable) root, new IsVerbNode(wordNet));
         return nodeDrawableCollector.collect();

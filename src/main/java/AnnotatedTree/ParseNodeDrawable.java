@@ -757,6 +757,27 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    public void generateParseNode(ParseNode parseNode, boolean surfaceForm){
+        if (numberOfChildren() == 0){
+            if (surfaceForm){
+                parseNode.setData(new Symbol(getLayerData(ViewLayerType.TURKISH_WORD)));
+            } else {
+                try{
+                    parseNode.setData(new Symbol(getLayerInfo().getMorphologicalParseAt(0).getWord().getName()));
+                } catch (LayerNotExistsException | WordNotExistsException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            parseNode.setData(data);
+            for (int i = 0; i < numberOfChildren(); i++){
+                ParseNode newChild = new ParseNode();
+                parseNode.addChild(newChild);
+                ((ParseNodeDrawable) children.get(i)).generateParseNode(newChild, surfaceForm);
+            }
+        }
+    }
+
     public String toString(){
         if (children.size() < 2){
             if (children.size() < 1){

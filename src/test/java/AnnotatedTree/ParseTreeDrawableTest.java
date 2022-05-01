@@ -28,6 +28,23 @@ public class ParseTreeDrawableTest {
     }
 
     @Test
+    public void testGenerateParseTree() {
+        ParseTree tree;
+        tree = tree0.generateParseTree(true);
+        assertEquals("(S (NP (NP (ADJP (ADJP yeni) (ADJP Büyük))  (NP yasada))  (NP (ADJP karmaşık) (NP dil)) )  (VP (NP savaşı) (VP bulandırmıştır))  (. .)) ", tree.toString());
+        tree = tree0.generateParseTree(false);
+        assertEquals("(S (NP (NP (ADJP (ADJP yeni) (ADJP büyük))  (NP yasa))  (NP (ADJP karmaşık) (NP dil)) )  (VP (NP savaş) (VP bulan))  (. .)) ", tree.toString());
+        tree = tree1.generateParseTree(true);
+        assertEquals("(S (NP (NP (NP Yollar) (CONJP ve) (NP Araçlar))  (NP Komitesi))  (VP (ADVP (ADJP gelecek) (NP Salı))  (NP (PP (NP fatura) (PP için))  (NP (DP bir) (NP duruşma)) )  (VP yapacak))  (. .)) ", tree.toString());
+        tree = tree1.generateParseTree(false);
+        assertEquals("(S (NP (NP (NP yol) (CONJP ve) (NP araç))  (NP komite))  (VP (ADVP (ADJP gelecek) (NP salı))  (NP (PP (NP fatura) (PP için))  (NP (DP bir) (NP duruşma)) )  (VP yap))  (. .)) ", tree.toString());
+        tree = tree2.generateParseTree(true);
+        assertEquals("(S (NP Biz) (VP (S (NP reklamın) (NP (NP işe) (ADVP yarayıp) (NP yaramadığını)) )  (NP görmek) (VP üzereyiz))  (. .)) ", tree.toString());
+        tree = tree2.generateParseTree(false);
+        assertEquals("(S (NP biz) (VP (S (NP reklam) (NP (NP iş) (ADVP yara) (NP yara)) )  (NP gör) (VP üzere))  (. .)) ", tree.toString());
+    }
+
+    @Test
     public void testMaxDepth() {
         assertEquals(5, tree0.maxDepth());
         assertEquals(5, tree1.maxDepth());
