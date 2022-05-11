@@ -17,13 +17,10 @@ import WordNet.WordNet;
 import Corpus.*;
 import Dictionary.*;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
 public class TreeBankDrawable extends TreeBank {
-    private int readCount;
-    private JProgressBar progressBar;
     static final public String ENGLISH_PATH = "../English/";
     static final public String TURKISH_PATH = "../Turkish/";
     static final public String TURKISH_PARSE_PATH = "../Turkish-Parse/";
@@ -32,57 +29,6 @@ public class TreeBankDrawable extends TreeBank {
 
     public TreeBankDrawable(ArrayList<ParseTree> parseTrees){
         this.parseTrees = parseTrees;
-    }
-
-    private class ReadTree extends SwingWorker {
-        private File file;
-
-        public ReadTree(File file){
-            this.file = file;
-        }
-
-        protected Object doInBackground() throws Exception {
-            try {
-                ParseTreeDrawable parseTree = new ParseTreeDrawable(new FileInputStream(file.getAbsolutePath()));
-                if (parseTree.getRoot() != null){
-                    parseTree.setName(file.getName());
-                    parseTree.setFileDescription(new FileDescription(file.getParent(), file.getName()));
-                    parseTrees.add(parseTree);
-                } else {
-                    System.out.println("Parse Tree " + file.getName() + " can not be read");
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        protected void done() {
-            readCount++;
-            progressBar.setValue(readCount);
-            if (progressBar.getValue() == progressBar.getMaximum()){
-                progressBar.setVisible(false);
-            }
-        }
-
-    }
-
-    public TreeBankDrawable(File folder, final JProgressBar progressBar){
-        parseTrees = Collections.synchronizedList(new ArrayList<>());
-        this.progressBar = progressBar;
-        File[] listOfFiles = folder.listFiles();
-        if (listOfFiles != null) {
-            Arrays.sort(listOfFiles);
-            readCount = 0;
-            progressBar.setMaximum(listOfFiles.length);
-            for (File file:listOfFiles){
-                if (file.isDirectory()){
-                    continue;
-                }
-                ReadTree task = new ReadTree(file);
-                task.execute();
-            }
-        }
     }
 
     public TreeBankDrawable(File folder){
@@ -312,10 +258,6 @@ public class TreeBankDrawable extends TreeBank {
             }
         }
         return treeList;
-    }
-
-    public void removeTree(int index){
-        parseTrees.remove(index);
     }
 
     public void sort(){

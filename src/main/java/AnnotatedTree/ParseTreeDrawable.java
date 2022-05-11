@@ -21,7 +21,6 @@ import java.util.HashSet;
 public class ParseTreeDrawable extends ParseTree {
     private FileDescription fileDescription;
     private int maxInOrderTraversalIndex;
-    private String name;
 
     public ParseTreeDrawable(String path, String rawFileName){
         this(new FileDescription(path, rawFileName));
@@ -98,7 +97,6 @@ public class ParseTreeDrawable extends ParseTree {
 
     public ParseTreeDrawable(FileInputStream file){
         try {
-            name = file.getFD().toString();
             BufferedReader br = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
             String line = br.readLine();
             readFromLine(line);
@@ -119,14 +117,6 @@ public class ParseTreeDrawable extends ParseTree {
 
     public int getMaxInOrderTraversalIndex(){
         return maxInOrderTraversalIndex;
-    }
-
-    public void setName(String name){
-        this.name = name;
-    }
-
-    public String getName(){
-        return name;
     }
 
     public void nextTree(int count){
