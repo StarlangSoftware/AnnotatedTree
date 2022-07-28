@@ -22,7 +22,7 @@ As is self-explanatory, 'turkish' tag shows the original Turkish word; 'morpholo
 Video Lectures
 ============
 
-[<img src=video1.jpg width="50%">](https://youtu.be/LfMf1bo3tEw)
+[<img src=video1.jpg width="50%">](https://youtu.be/LfMf1bo3tEw)[<img src=video2.jpg width="50%">](https://youtu.be/QoFPb9XY8Vc)
 
 For Developers
 ============
