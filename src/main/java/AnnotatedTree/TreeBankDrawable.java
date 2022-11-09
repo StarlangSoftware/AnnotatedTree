@@ -1,5 +1,7 @@
 package AnnotatedTree;
 
+import AnnotatedSentence.AnnotatedCorpus;
+import AnnotatedSentence.AnnotatedSentence;
 import AnnotatedSentence.LayerNotExistsException;
 import AnnotatedSentence.ViewLayerType;
 import ParseTree.ParseNode;
@@ -9,9 +11,7 @@ import DataStructure.CounterHashMap;
 import MorphologicalAnalysis.MorphologicalParse;
 import AnnotatedTree.Processor.Condition.IsTurkishLeafNode;
 import AnnotatedTree.Processor.ConvertToTurkishParseTree;
-import AnnotatedTree.Processor.LeafConverter.LeafToLanguageConverter;
 import AnnotatedTree.Processor.NodeDrawableCollector;
-import AnnotatedTree.Processor.TreeToStringConverter;
 import Util.Interval;
 import WordNet.WordNet;
 import Corpus.*;
@@ -154,17 +154,12 @@ public class TreeBankDrawable extends TreeBank {
         }
     }
 
-    public Corpus createCorpus(LeafToLanguageConverter leafToLanguageConverter){
-        Corpus corpus = new Corpus();
+    public AnnotatedCorpus createAnnotatedCorpus(){
+        AnnotatedCorpus corpus = new AnnotatedCorpus();
         for (ParseTree tree:parseTrees){
             ParseTreeDrawable parseTree = (ParseTreeDrawable) tree;
-            TreeToStringConverter treeToStringConverter = new TreeToStringConverter(parseTree, leafToLanguageConverter);
-            String sentence = treeToStringConverter.convert();
-            if (!sentence.isEmpty()){
-                corpus.addSentence(new Sentence(sentence));
-            } else {
-                System.out.println("Parse Tree " + parseTree.getName() + " is not translated");
-            }
+            AnnotatedSentence sentence = parseTree.generateAnnotatedSentence();
+            corpus.addSentence(sentence);
         }
         return corpus;
     }
