@@ -49,8 +49,7 @@ public class TreeBankDrawable extends TreeBank {
                     } else {
                         System.out.println("Parse Tree " + file.getName() + " can not be read");
                     }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                } catch (FileNotFoundException ignored) {
                 }
             }
         }
@@ -77,8 +76,7 @@ public class TreeBankDrawable extends TreeBank {
                     } else {
                         System.out.println("Parse Tree " + file.getName() + " can not be read");
                     }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                } catch (FileNotFoundException ignored) {
                 }
             }
         }
@@ -116,8 +114,7 @@ public class TreeBankDrawable extends TreeBank {
                 } else {
                     System.out.println("Parse Tree " + String.format("%04d", i) + pattern + " can not be read");
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            } catch (FileNotFoundException ignored) {
             }
         }
     }
@@ -198,7 +195,7 @@ public class TreeBankDrawable extends TreeBank {
                                     break;
                             }
                         }
-                    } catch (LayerNotExistsException | WordNotExistsException e){
+                    } catch (LayerNotExistsException | WordNotExistsException ignored){
                     }
                 }
             }
@@ -228,8 +225,7 @@ public class TreeBankDrawable extends TreeBank {
                         MorphologicalParse parse = leafNode.getLayerInfo().getMorphologicalParseAt(i);
                         counts.put(parse.getWord().getName());
                     }
-                } catch (LayerNotExistsException | WordNotExistsException e) {
-                    e.printStackTrace();
+                } catch (LayerNotExistsException | WordNotExistsException ignored) {
                 }
             }
         }
@@ -248,7 +244,7 @@ public class TreeBankDrawable extends TreeBank {
         ArrayList<ParseTreeDrawable> treeList = new ArrayList<>();
         for (ParseTree tree:parseTrees){
             ParseTreeDrawable parseTree = (ParseTreeDrawable) tree;
-            if (parseTree.extractNodesWithPredicateVerbs(wordNet).size() > 0){
+            if (!parseTree.extractNodesWithPredicateVerbs(wordNet).isEmpty()){
                 treeList.add(parseTree);
             }
         }
@@ -256,7 +252,7 @@ public class TreeBankDrawable extends TreeBank {
     }
 
     public void sort(){
-        Collections.sort(parseTrees, new ParseTreeComparator());
+        parseTrees.sort(new ParseTreeComparator());
     }
 
 }

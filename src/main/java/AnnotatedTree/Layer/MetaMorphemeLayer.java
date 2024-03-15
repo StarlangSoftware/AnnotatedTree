@@ -15,7 +15,7 @@ public class MetaMorphemeLayer extends MetaMorphemesMovedLayer{
 
     public void setLayerValue(MetamorphicParse parse){
         layerValue = parse.toString();
-        items = new ArrayList<MetamorphicParse>();
+        items = new ArrayList<>();
         if (layerValue != null){
             String[] splitWords = layerValue.split("\\s");
             for (String word:splitWords){
@@ -28,13 +28,13 @@ public class MetaMorphemeLayer extends MetaMorphemesMovedLayer{
         int size = 0;
         for (MetamorphicParse parse: items){
             if (index < size + parse.size()){
-                String result = parse.getMetaMorpheme(index - size);
+                StringBuilder result = new StringBuilder(parse.getMetaMorpheme(index - size));
                 index++;
                 while (index < size + parse.size()){
-                    result = result + "+" + parse.getMetaMorpheme(index - size);
+                    result.append("+").append(parse.getMetaMorpheme(index - size));
                     index++;
                 }
-                return result;
+                return result.toString();
             }
             size += parse.size();
         }

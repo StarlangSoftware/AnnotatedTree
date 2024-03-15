@@ -5,18 +5,18 @@ import AnnotatedTree.ParseTreeDrawable;
 import AnnotatedTree.Processor.LeafConverter.LeafToStringConverter;
 
 public class TreeToStringConverter {
-    private LeafToStringConverter converter;
-    private ParseTreeDrawable parseTree;
+    private final LeafToStringConverter converter;
+    private final ParseTreeDrawable parseTree;
 
     private String convertToString(ParseNodeDrawable parseNode){
         if (parseNode.isLeaf()){
             return converter.leafConverter(parseNode);
         } else {
-            String st = "";
+            StringBuilder st = new StringBuilder();
             for (int i = 0; i < parseNode.numberOfChildren(); i++) {
-                st = st + convertToString((ParseNodeDrawable)parseNode.getChild(i));
+                st.append(convertToString((ParseNodeDrawable) parseNode.getChild(i)));
             }
-            return st;
+            return st.toString();
         }
     }
 

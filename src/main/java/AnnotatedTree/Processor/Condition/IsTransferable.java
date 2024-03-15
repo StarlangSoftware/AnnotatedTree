@@ -4,7 +4,7 @@ import AnnotatedSentence.ViewLayerType;
 import AnnotatedTree.ParseNodeDrawable;
 
 public class IsTransferable extends IsLeafNode {
-    private ViewLayerType secondLanguage;
+    private final ViewLayerType secondLanguage;
 
     public IsTransferable(ViewLayerType secondLanguage){
         this.secondLanguage = secondLanguage;

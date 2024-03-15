@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class SemiContainsLayerInformation implements LeafListCondition{
 
-    private ViewLayerType viewLayerType;
+    private final ViewLayerType viewLayerType;
 
     public SemiContainsLayerInformation(ViewLayerType viewLayerType){
         this.viewLayerType = viewLayerType;

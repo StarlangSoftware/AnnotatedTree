@@ -7,7 +7,7 @@ import AnnotatedTree.*;
 import WordNet.WordNet;
 
 public class IsVerbNode extends IsLeafNode{
-    private WordNet wordNet;
+    private final WordNet wordNet;
 
     public IsVerbNode(WordNet wordNet){
         this.wordNet = wordNet;
@@ -27,8 +27,7 @@ public class IsVerbNode extends IsLeafNode{
                         }
                     }
                 }
-            } catch (LayerNotExistsException | WordNotExistsException e) {
-                e.printStackTrace();
+            } catch (LayerNotExistsException | WordNotExistsException ignored) {
             }
         }
         return false;

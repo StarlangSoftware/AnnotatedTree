@@ -14,6 +14,8 @@ import WordNet.WordNet;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,7 +73,7 @@ public class ParseTreeDrawable extends ParseTree {
 
     private void readFromFile(String currentPath){
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileDescription.getFileName(currentPath)), StandardCharsets.UTF_8));
+            BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(fileDescription.getFileName(currentPath))), StandardCharsets.UTF_8));
             String line = br.readLine();
             readFromLine(line);
             if (root == null){
@@ -81,7 +83,7 @@ public class ParseTreeDrawable extends ParseTree {
         } catch (IOException e) {
             root = null;
         } catch (ParenthesisInLayerException e) {
-            System.out.println(e.toString() + " in file " + fileDescription.getFileName(currentPath));
+            System.out.println(e + " in file " + fileDescription.getFileName(currentPath));
             root = null;
         }
     }
@@ -90,7 +92,7 @@ public class ParseTreeDrawable extends ParseTree {
         try {
             readFromLine(line);
         } catch (ParenthesisInLayerException e) {
-            System.out.println(e.toString());
+            System.out.println(e);
             root = null;
         }
     }
@@ -104,7 +106,7 @@ public class ParseTreeDrawable extends ParseTree {
         } catch (IOException e) {
             root = null;
         } catch (ParenthesisInLayerException e) {
-            System.out.println(e.toString());
+            System.out.println(e);
             root = null;
         }
     }
@@ -136,22 +138,20 @@ public class ParseTreeDrawable extends ParseTree {
     public void save(){
         BufferedWriter fw;
         try {
-            fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileDescription.getFileName()), "UTF-8"));
-            fw.write("( " + this.toString() + " )\n");
+            fw = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(fileDescription.getFileName())), StandardCharsets.UTF_8));
+            fw.write("( " + this + " )\n");
             fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
         }
     }
 
     public void saveWithPath(String newPath){
         BufferedWriter fw;
         try {
-            fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileDescription.getFileName(newPath)), "UTF-8"));
-            fw.write("( " + this.toString() + " )\n");
+            fw = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(fileDescription.getFileName(newPath))), StandardCharsets.UTF_8));
+            fw.write("( " + this + " )\n");
             fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
         }
     }
 
@@ -215,8 +215,7 @@ public class ParseTreeDrawable extends ParseTree {
                 updateTraversalIndexes();
                 ((ParseNodeDrawable) root).updateDepths(0);
             }
-        } catch (LayerNotExistsException | ParenthesisInLayerException | WordNotExistsException e) {
-            e.printStackTrace();
+        } catch (LayerNotExistsException | ParenthesisInLayerException | WordNotExistsException ignored) {
         }
     }
 
@@ -335,8 +334,7 @@ public class ParseTreeDrawable extends ParseTree {
                 for (int i = 0; i < layers.getNumberOfWords(); i++){
                     sentence.addWord(layers.toAnnotatedWord(i));
                 }
-            } catch (LayerNotExistsException e) {
-                e.printStackTrace();
+            } catch (LayerNotExistsException ignored) {
             }
         }
         return sentence;

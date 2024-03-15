@@ -13,7 +13,7 @@ public class MorphologicalAnalysisLayer extends MultiWordMultiItemLayer<Morpholo
     }
 
     public void setLayerValue(String layerValue){
-        this.items = new ArrayList<MorphologicalParse>();
+        this.items = new ArrayList<>();
         this.layerValue = layerValue;
         if (layerValue != null){
             String[] splitWords = layerValue.split("\\s");
@@ -25,7 +25,7 @@ public class MorphologicalAnalysisLayer extends MultiWordMultiItemLayer<Morpholo
 
     public void setLayerValue(MorphologicalParse parse){
         layerValue = parse.getTransitionList();
-        items = new ArrayList<MorphologicalParse>();
+        items = new ArrayList<>();
         items.add(parse);
     }
 

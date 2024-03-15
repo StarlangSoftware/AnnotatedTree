@@ -12,54 +12,54 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 
 public class LayerInfo {
-    private EnumMap<ViewLayerType, WordLayer> layers;
+    private final EnumMap<ViewLayerType, WordLayer> layers;
 
-    public LayerInfo(String info){
-        String[] splitLayers = info.split("[\\{\\}]");
-        layers = new EnumMap<ViewLayerType, WordLayer>(ViewLayerType.class);
-        for (String layer:splitLayers){
+    public LayerInfo(String info) {
+        String[] splitLayers = info.split("[{}]");
+        layers = new EnumMap<>(ViewLayerType.class);
+        for (String layer : splitLayers) {
             if (layer.isEmpty())
                 continue;
             String layerType = layer.substring(0, layer.indexOf("="));
             String layerValue = layer.substring(layer.indexOf("=") + 1);
-            if (layerType.equalsIgnoreCase("turkish")){
+            if (layerType.equalsIgnoreCase("turkish")) {
                 layers.put(ViewLayerType.TURKISH_WORD, new TurkishWordLayer(layerValue));
             } else {
-                if (layerType.equalsIgnoreCase("persian")){
+                if (layerType.equalsIgnoreCase("persian")) {
                     layers.put(ViewLayerType.PERSIAN_WORD, new PersianWordLayer(layerValue));
                 } else {
-                    if (layerType.equalsIgnoreCase("english")){
+                    if (layerType.equalsIgnoreCase("english")) {
                         layers.put(ViewLayerType.ENGLISH_WORD, new EnglishWordLayer(layerValue));
                     } else {
-                        if (layerType.equalsIgnoreCase("morphologicalAnalysis")){
+                        if (layerType.equalsIgnoreCase("morphologicalAnalysis")) {
                             layers.put(ViewLayerType.INFLECTIONAL_GROUP, new MorphologicalAnalysisLayer(layerValue));
                             layers.put(ViewLayerType.PART_OF_SPEECH, new MorphologicalAnalysisLayer(layerValue));
                         } else {
-                            if (layerType.equalsIgnoreCase("metaMorphemes")){
+                            if (layerType.equalsIgnoreCase("metaMorphemes")) {
                                 layers.put(ViewLayerType.META_MORPHEME, new MetaMorphemeLayer(layerValue));
                             } else {
-                                if (layerType.equalsIgnoreCase("metaMorphemesMoved")){
+                                if (layerType.equalsIgnoreCase("metaMorphemesMoved")) {
                                     layers.put(ViewLayerType.META_MORPHEME_MOVED, new MetaMorphemesMovedLayer(layerValue));
                                 } else {
-                                    if (layerType.equalsIgnoreCase("dependency")){
+                                    if (layerType.equalsIgnoreCase("dependency")) {
                                         layers.put(ViewLayerType.DEPENDENCY, new DependencyLayer(layerValue));
                                     } else {
-                                        if (layerType.equalsIgnoreCase("semantics")){
+                                        if (layerType.equalsIgnoreCase("semantics")) {
                                             layers.put(ViewLayerType.SEMANTICS, new TurkishSemanticLayer(layerValue));
                                         } else {
-                                            if (layerType.equalsIgnoreCase("namedEntity")){
+                                            if (layerType.equalsIgnoreCase("namedEntity")) {
                                                 layers.put(ViewLayerType.NER, new NERLayer(layerValue));
                                             } else {
-                                                if (layerType.equalsIgnoreCase("propBank")){
+                                                if (layerType.equalsIgnoreCase("propBank")) {
                                                     layers.put(ViewLayerType.PROPBANK, new TurkishPropbankLayer(layerValue));
                                                 } else {
-                                                    if (layerType.equalsIgnoreCase("englishPropbank")){
+                                                    if (layerType.equalsIgnoreCase("englishPropbank")) {
                                                         layers.put(ViewLayerType.ENGLISH_PROPBANK, new EnglishPropbankLayer(layerValue));
                                                     } else {
-                                                        if (layerType.equalsIgnoreCase("englishSemantics")){
+                                                        if (layerType.equalsIgnoreCase("englishSemantics")) {
                                                             layers.put(ViewLayerType.ENGLISH_SEMANTICS, new EnglishSemanticLayer(layerValue));
                                                         } else {
-                                                            if (layerType.equalsIgnoreCase("shallowParse")){
+                                                            if (layerType.equalsIgnoreCase("shallowParse")) {
                                                                 layers.put(ViewLayerType.SHALLOW_PARSE, new ShallowParseLayer(layerValue));
                                                             }
                                                         }
@@ -78,15 +78,15 @@ public class LayerInfo {
     }
 
     public LayerInfo() {
-        layers = new EnumMap<ViewLayerType, WordLayer>(ViewLayerType.class);
+        layers = new EnumMap<>(ViewLayerType.class);
     }
 
-    public LayerInfo clone(){
+    public LayerInfo clone() {
         return new LayerInfo(getLayerDescription());
     }
 
-    public void setLayerData(ViewLayerType viewLayer, String layerValue){
-        switch (viewLayer){
+    public void setLayerData(ViewLayerType viewLayer, String layerValue) {
+        switch (viewLayer) {
             case PERSIAN_WORD:
                 layers.put(ViewLayerType.PERSIAN_WORD, new PersianWordLayer(layerValue));
                 layers.remove(ViewLayerType.SEMANTICS);
@@ -138,25 +138,25 @@ public class LayerInfo {
         }
     }
 
-    public void setMorphologicalAnalysis(MorphologicalParse parse){
+    public void setMorphologicalAnalysis(MorphologicalParse parse) {
         layers.put(ViewLayerType.INFLECTIONAL_GROUP, new MorphologicalAnalysisLayer(parse.toString()));
         layers.put(ViewLayerType.PART_OF_SPEECH, new MorphologicalAnalysisLayer(parse.toString()));
     }
 
-    public void setMetaMorphemes(MetamorphicParse parse){
+    public void setMetaMorphemes(MetamorphicParse parse) {
         layers.put(ViewLayerType.META_MORPHEME, new MetaMorphemeLayer(parse.toString()));
     }
 
-    public boolean layerExists(ViewLayerType viewLayerType){
+    public boolean layerExists(ViewLayerType viewLayerType) {
         return layers.containsKey(viewLayerType);
     }
 
-    public ViewLayerType checkLayer(ViewLayerType viewLayer){
-        switch (viewLayer){
+    public ViewLayerType checkLayer(ViewLayerType viewLayer) {
+        switch (viewLayer) {
             case TURKISH_WORD:
             case PERSIAN_WORD:
             case ENGLISH_SEMANTICS:
-                if (!layers.containsKey(viewLayer)){
+                if (!layers.containsKey(viewLayer)) {
                     return ViewLayerType.ENGLISH_WORD;
                 }
             case PART_OF_SPEECH:
@@ -179,10 +179,10 @@ public class LayerInfo {
     }
 
     public int getNumberOfWords() throws LayerNotExistsException {
-        if (layers.containsKey(ViewLayerType.TURKISH_WORD)){
+        if (layers.containsKey(ViewLayerType.TURKISH_WORD)) {
             return ((TurkishWordLayer) layers.get(ViewLayerType.TURKISH_WORD)).size();
         } else {
-            if (layers.containsKey(ViewLayerType.PERSIAN_WORD)){
+            if (layers.containsKey(ViewLayerType.PERSIAN_WORD)) {
                 return ((PersianWordLayer) layers.get(ViewLayerType.PERSIAN_WORD)).size();
             } else {
                 throw new LayerNotExistsException("Turkish");
@@ -191,13 +191,13 @@ public class LayerInfo {
     }
 
     private String getMultiWordAt(ViewLayerType viewLayerType, int index, String layerName) throws WordNotExistsException, LayerNotExistsException {
-        if (layers.containsKey(viewLayerType)){
-            if (layers.get(viewLayerType) instanceof MultiWordLayer){
+        if (layers.containsKey(viewLayerType)) {
+            if (layers.get(viewLayerType) instanceof MultiWordLayer) {
                 MultiWordLayer<String> multiWordLayer = (MultiWordLayer<String>) layers.get(viewLayerType);
-                if (index < multiWordLayer.size() && index >= 0){
+                if (index < multiWordLayer.size() && index >= 0) {
                     return multiWordLayer.getItemAt(index);
                 } else {
-                    if (viewLayerType.equals(ViewLayerType.SEMANTICS)){
+                    if (viewLayerType.equals(ViewLayerType.SEMANTICS)) {
                         return multiWordLayer.getItemAt(multiWordLayer.size() - 1);
                     }
                     throw new WordNotExistsException(multiWordLayer, index);
@@ -214,8 +214,8 @@ public class LayerInfo {
         return getMultiWordAt(ViewLayerType.TURKISH_WORD, index, "turkish");
     }
 
-    public int getNumberOfMeanings(){
-        if (layers.containsKey(ViewLayerType.SEMANTICS)){
+    public int getNumberOfMeanings() {
+        if (layers.containsKey(ViewLayerType.SEMANTICS)) {
             return ((TurkishSemanticLayer) layers.get(ViewLayerType.SEMANTICS)).size();
         } else {
             return 0;
@@ -231,8 +231,8 @@ public class LayerInfo {
     }
 
     public Argument getArgument() {
-        if (layers.containsKey(ViewLayerType.PROPBANK)){
-            if (layers.get(ViewLayerType.PROPBANK) instanceof TurkishPropbankLayer){
+        if (layers.containsKey(ViewLayerType.PROPBANK)) {
+            if (layers.get(ViewLayerType.PROPBANK) instanceof TurkishPropbankLayer) {
                 TurkishPropbankLayer argumentLayer = (TurkishPropbankLayer) layers.get(ViewLayerType.PROPBANK);
                 return argumentLayer.getArgument();
             } else {
@@ -243,9 +243,9 @@ public class LayerInfo {
         }
     }
 
-    public Argument getArgumentAt(int index) throws LayerNotExistsException, WordNotExistsException {
-        if (layers.containsKey(ViewLayerType.ENGLISH_PROPBANK)){
-            if (layers.get(ViewLayerType.ENGLISH_PROPBANK) instanceof SingleWordMultiItemLayer){
+    public Argument getArgumentAt(int index) throws LayerNotExistsException {
+        if (layers.containsKey(ViewLayerType.ENGLISH_PROPBANK)) {
+            if (layers.get(ViewLayerType.ENGLISH_PROPBANK) instanceof SingleWordMultiItemLayer) {
                 SingleWordMultiItemLayer<Argument> multiArgumentLayer = (SingleWordMultiItemLayer<Argument>) layers.get(ViewLayerType.ENGLISH_PROPBANK);
                 return multiArgumentLayer.getItemAt(index);
             } else {
@@ -257,10 +257,10 @@ public class LayerInfo {
     }
 
     public MorphologicalParse getMorphologicalParseAt(int index) throws LayerNotExistsException, WordNotExistsException {
-        if (layers.containsKey(ViewLayerType.INFLECTIONAL_GROUP)){
-            if (layers.get(ViewLayerType.INFLECTIONAL_GROUP) instanceof MultiWordLayer){
+        if (layers.containsKey(ViewLayerType.INFLECTIONAL_GROUP)) {
+            if (layers.get(ViewLayerType.INFLECTIONAL_GROUP) instanceof MultiWordLayer) {
                 MultiWordLayer<MorphologicalParse> multiWordLayer = (MultiWordLayer<MorphologicalParse>) layers.get(ViewLayerType.INFLECTIONAL_GROUP);
-                if (index < multiWordLayer.size() && index >= 0){
+                if (index < multiWordLayer.size() && index >= 0) {
                     return multiWordLayer.getItemAt(index);
                 } else {
                     throw new WordNotExistsException(multiWordLayer, index);
@@ -274,10 +274,10 @@ public class LayerInfo {
     }
 
     public MetamorphicParse getMetamorphicParseAt(int index) throws WordNotExistsException, LayerNotExistsException {
-        if (layers.containsKey(ViewLayerType.META_MORPHEME)){
-            if (layers.get(ViewLayerType.META_MORPHEME) instanceof MultiWordLayer){
+        if (layers.containsKey(ViewLayerType.META_MORPHEME)) {
+            if (layers.get(ViewLayerType.META_MORPHEME) instanceof MultiWordLayer) {
                 MultiWordLayer<MetamorphicParse> multiWordLayer = (MultiWordLayer<MetamorphicParse>) layers.get(ViewLayerType.META_MORPHEME);
-                if (index < multiWordLayer.size() && index >= 0){
+                if (index < multiWordLayer.size() && index >= 0) {
                     return multiWordLayer.getItemAt(index);
                 } else {
                     throw new WordNotExistsException(multiWordLayer, index);
@@ -291,10 +291,10 @@ public class LayerInfo {
     }
 
     public String getMetaMorphemeAtIndex(int index) throws LayerItemNotExistsException, LayerNotExistsException {
-        if (layers.containsKey(ViewLayerType.META_MORPHEME)){
-            if (layers.get(ViewLayerType.META_MORPHEME) instanceof MetaMorphemeLayer){
+        if (layers.containsKey(ViewLayerType.META_MORPHEME)) {
+            if (layers.get(ViewLayerType.META_MORPHEME) instanceof MetaMorphemeLayer) {
                 MetaMorphemeLayer metaMorphemeLayer = (MetaMorphemeLayer) layers.get(ViewLayerType.META_MORPHEME);
-                if (index < metaMorphemeLayer.getLayerSize(ViewLayerType.META_MORPHEME) && index >= 0){
+                if (index < metaMorphemeLayer.getLayerSize(ViewLayerType.META_MORPHEME) && index >= 0) {
                     return metaMorphemeLayer.getLayerInfoAt(ViewLayerType.META_MORPHEME, index);
                 } else {
                     throw new LayerItemNotExistsException(metaMorphemeLayer, index);
@@ -308,10 +308,10 @@ public class LayerInfo {
     }
 
     public String getMetaMorphemeFromIndex(int index) throws LayerItemNotExistsException, LayerNotExistsException {
-        if (layers.containsKey(ViewLayerType.META_MORPHEME)){
-            if (layers.get(ViewLayerType.META_MORPHEME) instanceof MetaMorphemeLayer){
+        if (layers.containsKey(ViewLayerType.META_MORPHEME)) {
+            if (layers.get(ViewLayerType.META_MORPHEME) instanceof MetaMorphemeLayer) {
                 MetaMorphemeLayer metaMorphemeLayer = (MetaMorphemeLayer) layers.get(ViewLayerType.META_MORPHEME);
-                if (index < metaMorphemeLayer.getLayerSize(ViewLayerType.META_MORPHEME) && index >= 0){
+                if (index < metaMorphemeLayer.getLayerSize(ViewLayerType.META_MORPHEME) && index >= 0) {
                     return metaMorphemeLayer.getLayerInfoFrom(index);
                 } else {
                     throw new LayerItemNotExistsException(metaMorphemeLayer, index);
@@ -324,23 +324,23 @@ public class LayerInfo {
         }
     }
 
-    public int getLayerSize(ViewLayerType viewLayer){
-        if (layers.get(viewLayer) instanceof MultiWordMultiItemLayer){
+    public int getLayerSize(ViewLayerType viewLayer) {
+        if (layers.get(viewLayer) instanceof MultiWordMultiItemLayer) {
             return ((MultiWordMultiItemLayer) layers.get(viewLayer)).getLayerSize(viewLayer);
         } else {
-            if (layers.get(viewLayer) instanceof SingleWordMultiItemLayer){
+            if (layers.get(viewLayer) instanceof SingleWordMultiItemLayer) {
                 return ((SingleWordMultiItemLayer) layers.get(viewLayer)).getLayerSize(viewLayer);
             }
         }
         return 0;
     }
 
-    public String getLayerInfoAt(ViewLayerType viewLayer, int index) throws LayerNotExistsException, LayerItemNotExistsException, WordNotExistsException {
-        switch (viewLayer){
+    public String getLayerInfoAt(ViewLayerType viewLayer, int index) throws LayerNotExistsException, LayerItemNotExistsException {
+        switch (viewLayer) {
             case META_MORPHEME_MOVED:
             case PART_OF_SPEECH:
             case INFLECTIONAL_GROUP:
-                if (layers.get(viewLayer) instanceof MultiWordMultiItemLayer){
+                if (layers.get(viewLayer) instanceof MultiWordMultiItemLayer) {
                     return ((MultiWordMultiItemLayer) layers.get(viewLayer)).getLayerInfoAt(viewLayer, index);
                 } else {
                     throw new LayerNotExistsException(viewLayer.toString());
@@ -354,38 +354,38 @@ public class LayerInfo {
         }
     }
 
-    public String getLayerDescription(){
-        String result = "";
-        for (ViewLayerType viewLayerType : layers.keySet()){
-            if (viewLayerType != ViewLayerType.PART_OF_SPEECH){
-                result = result + layers.get(viewLayerType).getLayerDescription();
+    public String getLayerDescription() {
+        StringBuilder result = new StringBuilder();
+        for (ViewLayerType viewLayerType : layers.keySet()) {
+            if (viewLayerType != ViewLayerType.PART_OF_SPEECH) {
+                result.append(layers.get(viewLayerType).getLayerDescription());
             }
         }
-        return result;
+        return result.toString();
     }
 
-    public String getLayerData(ViewLayerType viewLayer){
-        if (layers.containsKey(viewLayer)){
+    public String getLayerData(ViewLayerType viewLayer) {
+        if (layers.containsKey(viewLayer)) {
             return layers.get(viewLayer).getLayerValue();
         } else {
             return null;
         }
     }
 
-    public String getRobustLayerData(ViewLayerType viewLayer){
+    public String getRobustLayerData(ViewLayerType viewLayer) {
         viewLayer = checkLayer(viewLayer);
         return getLayerData(viewLayer);
     }
 
     private void updateMetaMorphemesMoved() throws LayerNotExistsException, WordNotExistsException {
-        if (layers.containsKey(ViewLayerType.META_MORPHEME)){
+        if (layers.containsKey(ViewLayerType.META_MORPHEME)) {
             MetaMorphemeLayer metaMorphemeLayer = (MetaMorphemeLayer) layers.get(ViewLayerType.META_MORPHEME);
-            if (metaMorphemeLayer.size() > 0){
-                String result = metaMorphemeLayer.getItemAt(0).toString();
-                for (int i = 1; i < metaMorphemeLayer.size(); i++){
-                    result = result + " " + metaMorphemeLayer.getItemAt(i).toString();
+            if (metaMorphemeLayer.size() > 0) {
+                StringBuilder result = new StringBuilder(metaMorphemeLayer.getItemAt(0).toString());
+                for (int i = 1; i < metaMorphemeLayer.size(); i++) {
+                    result.append(" ").append(metaMorphemeLayer.getItemAt(i).toString());
                 }
-                layers.put(ViewLayerType.META_MORPHEME_MOVED, new MetaMorphemesMovedLayer(result));
+                layers.put(ViewLayerType.META_MORPHEME_MOVED, new MetaMorphemesMovedLayer(result.toString()));
             } else {
                 throw new WordNotExistsException(metaMorphemeLayer, 0);
             }
@@ -394,36 +394,36 @@ public class LayerInfo {
         }
     }
 
-    public void removeLayer(ViewLayerType layerType){
+    public void removeLayer(ViewLayerType layerType) {
         layers.remove(layerType);
     }
 
-    public void metaMorphemeClear(){
+    public void metaMorphemeClear() {
         layers.remove(ViewLayerType.META_MORPHEME);
         layers.remove(ViewLayerType.META_MORPHEME_MOVED);
     }
 
-    public void englishClear(){
+    public void englishClear() {
         layers.remove(ViewLayerType.ENGLISH_WORD);
     }
 
-    public void dependencyClear(){
+    public void dependencyClear() {
         layers.remove(ViewLayerType.DEPENDENCY);
     }
 
-    public void metaMorphemesMovedClear(){
+    public void metaMorphemesMovedClear() {
         layers.remove(ViewLayerType.META_MORPHEME_MOVED);
     }
 
-    public void semanticClear(){
+    public void semanticClear() {
         layers.remove(ViewLayerType.SEMANTICS);
     }
 
-    public void englishSemanticClear(){
+    public void englishSemanticClear() {
         layers.remove(ViewLayerType.ENGLISH_SEMANTICS);
     }
 
-    public void morphologicalAnalysisClear(){
+    public void morphologicalAnalysisClear() {
         layers.remove(ViewLayerType.INFLECTIONAL_GROUP);
         layers.remove(ViewLayerType.PART_OF_SPEECH);
         layers.remove(ViewLayerType.META_MORPHEME);
@@ -432,9 +432,9 @@ public class LayerInfo {
 
     public MetamorphicParse metaMorphemeRemove(int index) throws LayerNotExistsException, WordNotExistsException, LayerItemNotExistsException {
         MetamorphicParse removedParse;
-        if (layers.containsKey(ViewLayerType.META_MORPHEME)){
+        if (layers.containsKey(ViewLayerType.META_MORPHEME)) {
             MetaMorphemeLayer metaMorphemeLayer = (MetaMorphemeLayer) layers.get(ViewLayerType.META_MORPHEME);
-            if (index >= 0 && index < metaMorphemeLayer.getLayerSize(ViewLayerType.META_MORPHEME)){
+            if (index >= 0 && index < metaMorphemeLayer.getLayerSize(ViewLayerType.META_MORPHEME)) {
                 removedParse = metaMorphemeLayer.metaMorphemeRemoveFromIndex(index);
                 updateMetaMorphemesMoved();
             } else {
@@ -446,16 +446,16 @@ public class LayerInfo {
         return removedParse;
     }
 
-    public boolean isVerbal(){
-        if (layers.containsKey(ViewLayerType.INFLECTIONAL_GROUP)){
+    public boolean isVerbal() {
+        if (layers.containsKey(ViewLayerType.INFLECTIONAL_GROUP)) {
             return ((MorphologicalAnalysisLayer) layers.get(ViewLayerType.INFLECTIONAL_GROUP)).isVerbal();
         } else {
             return false;
         }
     }
 
-    public boolean isNominal(){
-        if (layers.containsKey(ViewLayerType.INFLECTIONAL_GROUP)){
+    public boolean isNominal() {
+        if (layers.containsKey(ViewLayerType.INFLECTIONAL_GROUP)) {
             return ((MorphologicalAnalysisLayer) layers.get(ViewLayerType.INFLECTIONAL_GROUP)).isNominal();
         } else {
             return false;
@@ -464,12 +464,12 @@ public class LayerInfo {
 
     public ArrayList<LayerInfo> divideIntoWords() throws LayerNotExistsException {
         ArrayList<LayerInfo> result = new ArrayList<>();
-        for (int i = 0; i < getNumberOfWords(); i++){
+        for (int i = 0; i < getNumberOfWords(); i++) {
             try {
                 LayerInfo layerInfo = new LayerInfo();
                 layerInfo.setLayerData(ViewLayerType.TURKISH_WORD, getTurkishWordAt(i));
                 layerInfo.setLayerData(ViewLayerType.ENGLISH_WORD, getLayerData(ViewLayerType.ENGLISH_WORD));
-                if (layerExists(ViewLayerType.INFLECTIONAL_GROUP)){
+                if (layerExists(ViewLayerType.INFLECTIONAL_GROUP)) {
                     layerInfo.setMorphologicalAnalysis(getMorphologicalParseAt(i));
                 }
                 if (layerExists(ViewLayerType.META_MORPHEME)) {
@@ -481,7 +481,7 @@ public class LayerInfo {
                 if (layerExists(ViewLayerType.ENGLISH_SEMANTICS)) {
                     layerInfo.setLayerData(ViewLayerType.ENGLISH_SEMANTICS, getLayerData(ViewLayerType.ENGLISH_SEMANTICS));
                 }
-                if (layerExists(ViewLayerType.NER)){
+                if (layerExists(ViewLayerType.NER)) {
                     layerInfo.setLayerData(ViewLayerType.NER, getLayerData(ViewLayerType.NER));
                 }
                 if (layerExists(ViewLayerType.SEMANTICS)) {
@@ -494,37 +494,35 @@ public class LayerInfo {
                     layerInfo.setLayerData(ViewLayerType.SHALLOW_PARSE, getShallowParseAt(i));
                 }
                 result.add(layerInfo);
-                } catch (WordNotExistsException e) {
-                e.printStackTrace();
+            } catch (WordNotExistsException ignored) {
             }
         }
         return result;
     }
 
     public AnnotatedWord toAnnotatedWord(int wordIndex) throws LayerNotExistsException {
-        try{
+        try {
             AnnotatedWord annotatedWord = new AnnotatedWord(getTurkishWordAt(wordIndex));
-            if (layerExists(ViewLayerType.INFLECTIONAL_GROUP)){
+            if (layerExists(ViewLayerType.INFLECTIONAL_GROUP)) {
                 annotatedWord.setParse(getMorphologicalParseAt(wordIndex).toString());
             }
-            if (layerExists(ViewLayerType.META_MORPHEME)){
+            if (layerExists(ViewLayerType.META_MORPHEME)) {
                 annotatedWord.setMetamorphicParse(getMetamorphicParseAt(wordIndex).toString());
             }
-            if (layerExists(ViewLayerType.SEMANTICS)){
+            if (layerExists(ViewLayerType.SEMANTICS)) {
                 annotatedWord.setSemantic(getSemanticAt(wordIndex));
             }
-            if (layerExists(ViewLayerType.NER)){
+            if (layerExists(ViewLayerType.NER)) {
                 annotatedWord.setNamedEntityType(getLayerData(ViewLayerType.NER));
             }
-            if (layerExists(ViewLayerType.PROPBANK)){
+            if (layerExists(ViewLayerType.PROPBANK)) {
                 annotatedWord.setArgument(getArgument().toString());
             }
-            if (layerExists(ViewLayerType.SHALLOW_PARSE)){
+            if (layerExists(ViewLayerType.SHALLOW_PARSE)) {
                 annotatedWord.setShallowParse(getShallowParseAt(wordIndex));
             }
             return annotatedWord;
-        } catch (WordNotExistsException e) {
-            e.printStackTrace();
+        } catch (WordNotExistsException ignored) {
         }
         return null;
     }

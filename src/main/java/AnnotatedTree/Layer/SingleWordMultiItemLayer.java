@@ -5,7 +5,7 @@ import AnnotatedSentence.ViewLayerType;
 import java.util.ArrayList;
 
 public abstract class SingleWordMultiItemLayer<T> extends SingleWordLayer<T> {
-    protected ArrayList<T> items = new ArrayList<T>();
+    protected ArrayList<T> items = new ArrayList<>();
 
     public T getItemAt(int index){
         if (index < items.size()){

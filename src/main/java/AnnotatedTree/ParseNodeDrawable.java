@@ -27,14 +27,14 @@ public class ParseNodeDrawable extends ParseNode {
     protected boolean dragged = false;
     protected boolean searched = false;
     protected int selectedIndex = -1;
-    private static String verbalLabel = "VG";
+    private static final String verbalLabel = "VG";
     private boolean hasDeletedChild = false;
     private boolean guessed = false;
-    private static ArrayList<String> sentenceLabels = new ArrayList<String>(Arrays.asList("SINV", "SBARQ", "SBAR", "SQ", "S"));
+    private static final ArrayList<String> sentenceLabels = new ArrayList<>(Arrays.asList("SINV", "SBARQ", "SBAR", "SQ", "S"));
 
     public ParseNodeDrawable(ParseNodeDrawable parent, String line, boolean isLeaf, int depth) throws ParenthesisInLayerException {
         int parenthesisCount = 0;
-        String childLine = "";
+        StringBuilder childLine = new StringBuilder();
         this.depth = depth;
         this.parent = parent;
         children = new ArrayList<>();
@@ -56,7 +56,7 @@ public class ParseNodeDrawable extends ParseNode {
             } else {
                 for (int i = startPos + 1; i < line.length(); i++){
                     if (line.charAt(i) != ' ' || parenthesisCount > 0){
-                        childLine = childLine + line.charAt(i);
+                        childLine.append(line.charAt(i));
                     }
                     if (line.charAt(i) == '('){
                         parenthesisCount++;
@@ -65,9 +65,9 @@ public class ParseNodeDrawable extends ParseNode {
                             parenthesisCount--;
                         }
                     }
-                    if (parenthesisCount == 0 && !childLine.isEmpty()){
-                        children.add(new ParseNodeDrawable(this, childLine.trim(), false, depth + 1));
-                        childLine = "";
+                    if (parenthesisCount == 0 && (childLine.length() > 0)){
+                        children.add(new ParseNodeDrawable(this, childLine.toString().trim(), false, depth + 1));
+                        childLine = new StringBuilder();
                     }
                 }
             }
@@ -79,7 +79,7 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public ParseNodeDrawable(ParseNodeDrawable parent, ParseNodeDrawable child, String symbol){
-        this.children = new ArrayList<ParseNode>();
+        this.children = new ArrayList<>();
         this.depth = child.depth;
         child.updateDepths(this.depth + 1);
         this.parent = parent;
@@ -92,7 +92,7 @@ public class ParseNodeDrawable extends ParseNode {
 
     public ParseNodeDrawable clone(){
         ParseNodeDrawable result = new ParseNodeDrawable(data);
-        result.children = new ArrayList<ParseNode>();
+        result.children = new ArrayList<>();
         if (layers != null)
             result.layers = layers.clone();
         return result;
@@ -115,7 +115,7 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public void clearLayer(ViewLayerType layerType){
-        if (children.size() == 0 && layerExists(layerType)){
+        if (children.isEmpty() && layerExists(layerType)){
             layers.removeLayer(layerType);
         }
         for (int i = 0; i < numberOfChildren(); i++){
@@ -169,7 +169,7 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public String headWord(ViewLayerType viewLayerType){
-        if (children.size() > 0){
+        if (!children.isEmpty()){
             return ((ParseNodeDrawable) headChild()).headWord(viewLayerType);
         } else {
             return getLayerData(viewLayerType);
@@ -200,7 +200,7 @@ public class ParseNodeDrawable extends ParseNode {
 
     public int leafTraversal(int pos){
         int i;
-        if (children.size() == 0){
+        if (children.isEmpty()){
             pos++;
             leafIndex = pos;
         }
@@ -226,7 +226,7 @@ public class ParseNodeDrawable extends ParseNode {
 
     public int maxInOrderTraversal(){
         int maxIndex, childIndex;
-        if (children.size() == 0)
+        if (children.isEmpty())
             return inOrderTraversalIndex;
         else {
             maxIndex = inOrderTraversalIndex;
@@ -274,7 +274,7 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public int glossAgreementCount(ParseNodeDrawable parseNode, ViewLayerType viewLayerType){
-        if (children.size() == 0){
+        if (children.isEmpty()){
             if (parseNode.numberOfChildren() == 0){
                 if (getLayerData(viewLayerType).equalsIgnoreCase(parseNode.getLayerData(viewLayerType))){
                     return 1;
@@ -364,7 +364,7 @@ public class ParseNodeDrawable extends ParseNode {
 
     public boolean satisfy(ParseNodeSearchable node){
         int i;
-        if (node.isLeaf() && children.size() > 0)
+        if (node.isLeaf() && !children.isEmpty())
             return false;
         for (i = 0; i < node.size(); i++){
             ViewLayerType viewLayer = node.getViewLayerType(i);
@@ -433,8 +433,7 @@ public class ParseNodeDrawable extends ParseNode {
                 MorphologicalParse morphologicalParse = layerInfo.getMorphologicalParseAt(layerInfo.getNumberOfWords() - 1);
                 String symbol = morphologicalParse.getTreePos();
                 setData(new Symbol(symbol));
-            } catch (LayerNotExistsException | WordNotExistsException e) {
-                e.printStackTrace();
+            } catch (LayerNotExistsException | WordNotExistsException ignored) {
             }
         } else {
             for (ParseNode aChildren:children){
@@ -479,12 +478,12 @@ public class ParseNodeDrawable extends ParseNode {
         for (ParseNode child: children)
             ((ParseNodeDrawable)child).augment();
         ArrayList<Symbol> childrenSymbols = getChildrenSymbols();
-        Collections.sort(childrenSymbols, new EnglishWordComparator());
-        if (childrenSymbols.size() > 0){
+        childrenSymbols.sort(new EnglishWordComparator());
+        if (!childrenSymbols.isEmpty()){
             if (layers != null){
-                layers.setLayerData(ViewLayerType.ENGLISH_WORD, layers.getLayerData(ViewLayerType.ENGLISH_WORD) + childrenSymbols.toString());
+                layers.setLayerData(ViewLayerType.ENGLISH_WORD, layers.getLayerData(ViewLayerType.ENGLISH_WORD) + childrenSymbols);
             } else {
-                data = new Symbol(data.getName() + childrenSymbols.toString());
+                data = new Symbol(data.getName() + childrenSymbols);
             }
         }
     }
@@ -523,10 +522,8 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public boolean layerExists(ViewLayerType viewLayerType){
-        if (children.size() == 0){
-            if (getLayerData(viewLayerType) != null){
-                return true;
-            }
+        if (children.isEmpty()){
+            return getLayerData(viewLayerType) != null;
         } else {
             for (ParseNode aChild : children) {
                 if (((ParseNodeDrawable)aChild).layerExists(viewLayerType)){
@@ -552,7 +549,7 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public boolean mapTree(ParseNodeDrawable parseNode, HashMap<ParseNode, ParseNodeDrawable> nodeMap){
-        if (this.children.size() > 0){
+        if (!this.children.isEmpty()){
             if (this.getData().equals(parseNode.getData()) && this.children.size() == parseNode.children.size()){
                 Permutation permutation = new Permutation(children.size());
                 boolean found = false;
@@ -584,10 +581,8 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public boolean layerAll(ViewLayerType viewLayerType){
-        if (children.size() == 0){
-            if (getLayerData(viewLayerType) == null && !isDummyNode()){
-                return false;
-            }
+        if (children.isEmpty()){
+            return getLayerData(viewLayerType) != null || isDummyNode();
         } else {
             for (ParseNode aChild : children) {
                 if (!((ParseNodeDrawable)aChild).layerAll(viewLayerType)){
@@ -599,7 +594,7 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public ArrayList<ParseNodeDrawable> satisfy(ParseTreeSearchable tree){
-        ArrayList<ParseNodeDrawable> result = new ArrayList<ParseNodeDrawable>();
+        ArrayList<ParseNodeDrawable> result = new ArrayList<>();
         if (satisfy((ParseNodeSearchable)tree.getRoot())){
             result.add(this);
         }
@@ -623,9 +618,9 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public boolean extractVerbal(){
-        ArrayList<ParseNodeDrawable> queue = new ArrayList<ParseNodeDrawable>();
+        ArrayList<ParseNodeDrawable> queue = new ArrayList<>();
         queue.add(this);
-        while (queue.size() > 0){
+        while (!queue.isEmpty()){
             ParseNodeDrawable nextItem = queue.remove(0);
             if (nextItem.layers != null && nextItem.layers.isVerbal()){
                 if (nextItem.layers.isNominal()){
@@ -662,7 +657,7 @@ public class ParseNodeDrawable extends ParseNode {
 
     private void setShallowParseLayer(ChunkType chunkType, String label){
         boolean startWord = true;
-        String nodeLabel = "", wordLabel = "";
+        String nodeLabel = "", wordLabel;
         NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector(this, new IsTurkishLeafNode());
         ArrayList<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
         if (sentenceLabels.contains(label))
@@ -700,8 +695,7 @@ public class ParseNodeDrawable extends ParseNode {
                     }
                 }
                 node.getLayerInfo().setLayerData(ViewLayerType.SHALLOW_PARSE, nodeLabel);
-            } catch (LayerNotExistsException e) {
-                e.printStackTrace();
+            } catch (LayerNotExistsException ignored) {
             }
         }
     }
@@ -721,7 +715,7 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public String toTurkishSentence(){
-        if (children.size() == 0){
+        if (children.isEmpty()){
             if (getLayerData(ViewLayerType.TURKISH_WORD) != null && !getLayerData(ViewLayerType.TURKISH_WORD).equals("*NONE*")){
                 return " " + getLayerData(ViewLayerType.TURKISH_WORD)
                         .replaceAll("-LRB-", "(")
@@ -740,11 +734,11 @@ public class ParseNodeDrawable extends ParseNode {
                 return " ";
             }
         } else {
-            String st = "";
+            StringBuilder st = new StringBuilder();
             for (ParseNode aChild : children) {
-                st = st + ((ParseNodeDrawable) aChild).toTurkishSentence();
+                st.append(((ParseNodeDrawable) aChild).toTurkishSentence());
             }
-            return st;
+            return st.toString();
         }
     }
 
@@ -764,8 +758,7 @@ public class ParseNodeDrawable extends ParseNode {
             } else {
                 try{
                     parseNode.setData(new Symbol(getLayerInfo().getMorphologicalParseAt(0).getWord().getName()));
-                } catch (LayerNotExistsException | WordNotExistsException e) {
-                    e.printStackTrace();
+                } catch (LayerNotExistsException | WordNotExistsException ignored) {
                 }
             }
         } else {
@@ -780,22 +773,22 @@ public class ParseNodeDrawable extends ParseNode {
 
     public String toString(){
         if (children.size() < 2){
-            if (children.size() < 1){
+            if (children.isEmpty()){
                 return getLayerData();
             } else {
                 return "(" + data.getName() + " " + children.get(0).toString() + ")";
             }
         } else {
-            String st = "(" + data.getName();
+            StringBuilder st = new StringBuilder("(" + data.getName());
             for (ParseNode aChild : children) {
-                st = st + " " + aChild.toString();
+                st.append(" ").append(aChild.toString());
             }
             return st + ") ";
         }
     }
 
     public ParseNodeDrawable getLeafWithIndex(int index){
-        if (children.size() == 0 && leafIndex == index){
+        if (children.isEmpty() && leafIndex == index){
             return this;
         } else {
             for (ParseNode aChildren : children) {
@@ -809,8 +802,8 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public int getSubItemAt(int x, int y){
-        if (area.contains(x, y) && children.size() == 0)
-            return (int) ((y - area.getY()) / 20);
+        if (area.contains(x, y) && children.isEmpty())
+            return (y - area.getY()) / 20;
         else {
             for (ParseNode aChildren : children) {
                 ParseNodeDrawable aChild = (ParseNodeDrawable) aChildren;
@@ -839,7 +832,7 @@ public class ParseNodeDrawable extends ParseNode {
     }
 
     public ParseNodeDrawable getLeafNodeAt(int x, int y){
-        if (area.contains(x, y) && children.size() == 0)
+        if (area.contains(x, y) && children.isEmpty())
             return this;
         else {
             for (ParseNode aChildren : children) {

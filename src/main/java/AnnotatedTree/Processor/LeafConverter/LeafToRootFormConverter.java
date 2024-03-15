@@ -16,7 +16,7 @@ public class LeafToRootFormConverter implements LeafToStringConverter  {
                     rootWords.append(" ").append(root);
                 }
             }
-        } catch (LayerNotExistsException | WordNotExistsException e) {
+        } catch (LayerNotExistsException | WordNotExistsException ignored) {
         }
         return rootWords.toString();
     }

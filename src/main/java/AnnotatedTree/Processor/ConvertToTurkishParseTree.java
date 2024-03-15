@@ -7,7 +7,7 @@ import AnnotatedTree.*;
 import java.util.Iterator;
 
 public class ConvertToTurkishParseTree {
-    private ParseTreeDrawable parseTree;
+    private final ParseTreeDrawable parseTree;
 
     private void searchNONE(ParseNodeDrawable parseNode) {
         boolean isDeleted;

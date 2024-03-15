@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public abstract class MultiWordLayer<T> extends WordLayer{
 
-    protected ArrayList<T> items = new ArrayList<T>();
+    protected ArrayList<T> items = new ArrayList<>();
 
     public T getItemAt(int index){
         if (index < items.size()){

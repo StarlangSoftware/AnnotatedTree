@@ -14,7 +14,7 @@ public class SearchTree {
         XmlElement parseNode, rootNode, nextNode;
         XmlDocument doc = new XmlDocument(fileName);
         doc.parse();
-        searchTrees = new ArrayList<ParseTreeSearchable>();
+        searchTrees = new ArrayList<>();
         rootNode = doc.getFirstChild();
         parseNode = rootNode.getFirstChild();
         while (parseNode != null){
@@ -33,14 +33,10 @@ public class SearchTree {
         ArrayList<ParseNodeDrawable> tmpResult;
         for (ParseTreeSearchable treeSearchable:searchTrees){
             tmpResult = tree.satisfy(treeSearchable);
-            if (tmpResult.size() > 0){
-                ArrayList<ParseNode> result = new ArrayList<ParseNode>();
-                for (ParseNodeDrawable parseNodeDrawable: tmpResult){
-                    result.add(parseNodeDrawable);
-                }
-                return result;
+            if (!tmpResult.isEmpty()){
+                return new ArrayList<>(tmpResult);
             }
         }
-        return new ArrayList<ParseNode>();
+        return new ArrayList<>();
     }
 }

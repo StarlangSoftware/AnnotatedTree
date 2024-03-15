@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class NotContainsLayerInformation implements LeafListCondition {
 
-    private ViewLayerType viewLayerType;
+    private final ViewLayerType viewLayerType;
 
     public NotContainsLayerInformation(ViewLayerType viewLayerType){
         this.viewLayerType = viewLayerType;

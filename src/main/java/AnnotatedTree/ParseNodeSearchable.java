@@ -9,14 +9,14 @@ import java.util.ArrayList;
 
 public class ParseNodeSearchable extends ParseNode {
 
-    private ArrayList<SearchType> searchTypes;
-    private ArrayList<ViewLayerType> viewLayerTypes;
-    private ArrayList<String> searchValues;
-    private boolean isLeaf = false;
+    private final ArrayList<SearchType> searchTypes;
+    private final ArrayList<ViewLayerType> viewLayerTypes;
+    private final ArrayList<String> searchValues;
+    private final boolean isLeaf;
 
     public ParseNodeSearchable(ParseNodeSearchable parent, XmlElement node){
         XmlElement child;
-        children = new ArrayList<ParseNode>();
+        children = new ArrayList<>();
         this.parent = parent;
         isLeaf = node.getName().equalsIgnoreCase("leaf");
         searchTypes = new ArrayList<>();

@@ -12,7 +12,7 @@ public abstract class TargetLanguageWordLayer extends MultiWordLayer<String> {
     }
 
     public void setLayerValue(String layerValue){
-        items = new ArrayList<String>();
+        items = new ArrayList<>();
         this.layerValue = layerValue;
         if (layerValue != null){
             String[] splitWords = layerValue.split("\\s");

@@ -7,8 +7,8 @@ import AnnotatedTree.Processor.NodeModification.NodeModifier;
 import AnnotatedTree.WordNotExistsException;
 
 public class TreeModifier {
-    private ParseTreeDrawable parseTree;
-    private NodeModifier nodeModifier;
+    private final ParseTreeDrawable parseTree;
+    private final NodeModifier nodeModifier;
 
     private void nodeModify(ParseNodeDrawable parseNode) throws LayerNotExistsException, WordNotExistsException{
         nodeModifier.modifier(parseNode);
@@ -20,10 +20,8 @@ public class TreeModifier {
     public void modify(){
         try{
             nodeModify((ParseNodeDrawable)parseTree.getRoot());
-        } catch (WordNotExistsException e) {
-            System.out.println(e.toString() + " " + parseTree.getName());
-        } catch (LayerNotExistsException e) {
-            System.out.println(e.toString() + " " + parseTree.getName());
+        } catch (WordNotExistsException | LayerNotExistsException e) {
+            System.out.println(e + " " + parseTree.getName());
         }
     }
 

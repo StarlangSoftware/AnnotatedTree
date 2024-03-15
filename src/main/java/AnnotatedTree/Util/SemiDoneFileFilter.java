@@ -15,8 +15,8 @@ import java.util.ArrayList;
 
 public class SemiDoneFileFilter extends FileFilter {
 
-    private String path;
-    private ViewLayerType viewLayerType;
+    private final String path;
+    private final ViewLayerType viewLayerType;
 
     public SemiDoneFileFilter(String path, ViewLayerType viewLayerType){
         this.path = path;

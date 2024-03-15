@@ -6,8 +6,8 @@ import AnnotatedTree.Processor.Condition.NodeDrawableCondition;
 import java.util.ArrayList;
 
 public class NodeDrawableCollector {
-    private NodeDrawableCondition condition;
-    private ParseNodeDrawable rootNode;
+    private final NodeDrawableCondition condition;
+    private final ParseNodeDrawable rootNode;
 
     public NodeDrawableCollector(ParseNodeDrawable rootNode, NodeDrawableCondition condition){
         this.rootNode = rootNode;
@@ -24,7 +24,7 @@ public class NodeDrawableCollector {
     }
 
     public ArrayList<ParseNodeDrawable> collect(){
-        ArrayList<ParseNodeDrawable> result = new ArrayList<ParseNodeDrawable>();
+        ArrayList<ParseNodeDrawable> result = new ArrayList<>();
         collectNodes(rootNode, result);
         return result;
     }

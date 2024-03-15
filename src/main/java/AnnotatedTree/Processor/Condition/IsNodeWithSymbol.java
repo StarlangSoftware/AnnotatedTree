@@ -3,7 +3,7 @@ package AnnotatedTree.Processor.Condition;
 import AnnotatedTree.ParseNodeDrawable;
 
 public class IsNodeWithSymbol implements NodeDrawableCondition {
-    private String symbol;
+    private final String symbol;
 
     public IsNodeWithSymbol(String symbol){
         this.symbol = symbol;

@@ -4,7 +4,7 @@ import AnnotatedSentence.ViewLayerType;
 import AnnotatedTree.ParseNodeDrawable;
 
 public class IsNoneNode extends IsLeafNode{
-    private ViewLayerType secondLanguage;
+    private final ViewLayerType secondLanguage;
 
     public IsNoneNode(ViewLayerType secondLanguage){
         this.secondLanguage = secondLanguage;

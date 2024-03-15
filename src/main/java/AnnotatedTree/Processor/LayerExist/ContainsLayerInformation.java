@@ -7,7 +7,7 @@ import AnnotatedTree.Processor.Condition.IsTurkishLeafNode;
 import java.util.ArrayList;
 
 public class ContainsLayerInformation implements LeafListCondition {
-    private ViewLayerType viewLayerType;
+    private final ViewLayerType viewLayerType;
 
     public ContainsLayerInformation(ViewLayerType viewLayerType){
         this.viewLayerType = viewLayerType;

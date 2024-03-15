@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.function.BiFunction;
 
 public class TreeLayerStatistics extends LayerStatistics{
-    private TreeBank treeBank;
+    private final TreeBank treeBank;
 
     public TreeLayerStatistics(TreeBank treeBank){
         this.treeBank = treeBank;
@@ -35,7 +35,7 @@ public class TreeLayerStatistics extends LayerStatistics{
                             counts.put(info);
                         }
                     }
-                } catch (LayerNotExistsException e) {
+                } catch (LayerNotExistsException ignored) {
                 }
             }
         }

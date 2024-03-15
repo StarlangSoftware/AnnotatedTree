@@ -13,7 +13,7 @@ public class MetaMorphemesMovedLayer extends MultiWordMultiItemLayer<Metamorphic
     }
 
     public void setLayerValue(String layerValue){
-        items = new ArrayList<MetamorphicParse>();
+        items = new ArrayList<>();
         this.layerValue = layerValue;
         if (layerValue != null){
             String[] splitWords = layerValue.split("\\s");

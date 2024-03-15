@@ -4,7 +4,7 @@ import AnnotatedSentence.LayerNotExistsException;
 import AnnotatedTree.*;
 
 public class IsNodeWithSynSetId extends IsLeafNode{
-    private String id;
+    private final String id;
 
     public IsNodeWithSynSetId(String id){
         this.id = id;
@@ -19,8 +19,7 @@ public class IsNodeWithSynSetId extends IsLeafNode{
                     if (synSetId.equals(id)){
                         return true;
                     }
-                } catch (LayerNotExistsException | WordNotExistsException e) {
-                    e.printStackTrace();
+                } catch (LayerNotExistsException | WordNotExistsException ignored) {
                 }
             }
         }

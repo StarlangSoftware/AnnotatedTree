@@ -9,10 +9,9 @@ public class NodePermutation {
 
     public ArrayList<Integer> nodePermutation;
     public int count;
-    public double logProb;
 
     public NodePermutation(ArrayList<Integer> aPerm){
-        nodePermutation = new ArrayList<Integer>();
+        nodePermutation = new ArrayList<>();
         nodePermutation.addAll(aPerm);
         count = 1;
     }
@@ -24,16 +23,15 @@ public class NodePermutation {
     }
 
     public void apply(ArrayList<ParseNode> nodes){
-        ArrayList<ParseNode> tmp = new ArrayList<ParseNode>();
-        tmp.addAll(nodes);
+        ArrayList<ParseNode> tmp = new ArrayList<>(nodes);
         for (int i = 0; i < nodePermutation.size(); i++)
             nodes.set(i, tmp.get(i));
     }
 
     public NodePermutation(ParseNode fromNode, ParseNode toNode){
         count = 1;
-        nodePermutation = new ArrayList<Integer>(fromNode.numberOfChildren());
-        ArrayList<Boolean> isUsed = new ArrayList<Boolean>(toNode.numberOfChildren());
+        nodePermutation = new ArrayList<>(fromNode.numberOfChildren());
+        ArrayList<Boolean> isUsed = new ArrayList<>(toNode.numberOfChildren());
         for (int i = 0; i < toNode.numberOfChildren(); i++)
             isUsed.add(false);
         for (int i = 0; i < toNode.numberOfChildren(); i++){
@@ -56,9 +54,9 @@ public class NodePermutation {
     }
 
     public String toString(){
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (Integer i : nodePermutation){
-            result = result + " " + i;
+            result.append(" ").append(i);
         }
         return result + "-->" + count + "\n";
     }
