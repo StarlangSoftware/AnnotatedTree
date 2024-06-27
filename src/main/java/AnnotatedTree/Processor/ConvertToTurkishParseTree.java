@@ -9,6 +9,11 @@ import java.util.Iterator;
 public class ConvertToTurkishParseTree {
     private final ParseTreeDrawable parseTree;
 
+    /**
+     * Searches recursively all descendants of the given parse node for NONE leaf nodes. If a NONE node is found, it is
+     * deleted.
+     * @param parseNode Parse node for which all descendants will be checked for NONE.
+     */
     private void searchNONE(ParseNodeDrawable parseNode) {
         boolean isDeleted;
         Iterator<ParseNode> childIterator = parseNode.getChildIterator();
@@ -31,6 +36,11 @@ public class ConvertToTurkishParseTree {
         }
     }
 
+    /**
+     * Recursive method that searches if any descendants of the given parse node is a terminal leaf node.
+     * @param parseNode Parse node to be checked.
+     * @return True if any descendant of the given parse node is a terminal leaf node, false otherwise.
+     */
     private boolean hasTerminal(ParseNodeDrawable parseNode) {
         boolean result = false;
         if (parseNode.getLayerInfo() == null) {
@@ -56,6 +66,10 @@ public class ConvertToTurkishParseTree {
         return result;
     }
 
+    /**
+     * Recursive method that deletes all non-terminal leaf descendants of the given node.
+     * @param parseNode PArse node to be checked
+     */
     private void deleteLeafNonTerminals(ParseNodeDrawable parseNode) {
         ParseNodeDrawable currentNode;
         Iterator<ParseNode> childIterator = parseNode.getChildIterator();

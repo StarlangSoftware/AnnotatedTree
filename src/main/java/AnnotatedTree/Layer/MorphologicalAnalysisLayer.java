@@ -7,11 +7,21 @@ import java.util.ArrayList;
 
 public class MorphologicalAnalysisLayer extends MultiWordMultiItemLayer<MorphologicalParse>{
 
+    /**
+     * Constructor for the morphological analysis layer. Sets the morphological parse information for multiple words in
+     * the node.
+     * @param layerValue Layer value for the morphological parse information. Consists of morphological parse information
+     *                   of multiple words separated via space character.
+     */
     public MorphologicalAnalysisLayer(String layerValue) {
         layerName = "morphologicalAnalysis";
         setLayerValue(layerValue);
     }
 
+    /**
+     * Sets the layer value to the string form of the given morphological parse.
+     * @param layerValue New morphological parse.
+     */
     public void setLayerValue(String layerValue){
         this.items = new ArrayList<>();
         this.layerValue = layerValue;
@@ -23,13 +33,23 @@ public class MorphologicalAnalysisLayer extends MultiWordMultiItemLayer<Morpholo
         }
     }
 
+    /**
+     * Sets the layer value to the string form of the given morphological parse.
+     * @param parse New morphological parse.
+     */
     public void setLayerValue(MorphologicalParse parse){
         layerValue = parse.getTransitionList();
         items = new ArrayList<>();
         items.add(parse);
     }
 
-    public int getLayerSize(ViewLayerType viewLayer) {
+    /**
+     * Returns the total number of morphological tags (for PART_OF_SPEECH) or inflectional groups
+     * (for INFLECTIONAL_GROUP) in the words in the node.
+     * @param viewLayer Layer type.
+     * @return Total number of morphological tags (for PART_OF_SPEECH) or inflectional groups (for INFLECTIONAL_GROUP)
+     * in the words in the node.
+     */    public int getLayerSize(ViewLayerType viewLayer) {
         int size;
         switch (viewLayer){
             case PART_OF_SPEECH:
@@ -49,6 +69,13 @@ public class MorphologicalAnalysisLayer extends MultiWordMultiItemLayer<Morpholo
         }
     }
 
+    /**
+     * Returns the morphological tag (for PART_OF_SPEECH) or inflectional group (for INFLECTIONAL_GROUP) at position
+     * index.
+     * @param viewLayer Layer type.
+     * @param index Position of the morphological tag (for PART_OF_SPEECH) or inflectional group (for INFLECTIONAL_GROUP)
+     * @return The morphological tag (for PART_OF_SPEECH) or inflectional group (for INFLECTIONAL_GROUP)
+     */
     public String getLayerInfoAt(ViewLayerType viewLayer, int index) {
         int size;
         switch (viewLayer){
@@ -74,6 +101,10 @@ public class MorphologicalAnalysisLayer extends MultiWordMultiItemLayer<Morpholo
         return null;
     }
 
+    /**
+     * Checks if the last inflectional group contains VERB tag.
+     * @return True if the last inflectional group contains VERB tag, false otherwise.
+     */
     public boolean isVerbal(){
         String dbLabel = "^DB+";
         String needle = "VERB+";
@@ -85,6 +116,10 @@ public class MorphologicalAnalysisLayer extends MultiWordMultiItemLayer<Morpholo
         return haystack.contains(needle);
     }
 
+    /**
+     * Checks if the last verbal inflectional group contains ZERO tag.
+     * @return True if the last verbal inflectional group contains ZERO tag, false otherwise.
+     */
     public boolean isNominal(){
         String dbLabel = "^DB+VERB+";
         String needle = "ZERO+";

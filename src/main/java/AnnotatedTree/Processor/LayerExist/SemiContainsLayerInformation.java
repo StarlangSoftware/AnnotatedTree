@@ -10,10 +10,20 @@ public class SemiContainsLayerInformation implements LeafListCondition{
 
     private final ViewLayerType viewLayerType;
 
+    /**
+     * Constructor for SemiContainsLayerInformation class. Sets the viewLayerType attribute.
+     * @param viewLayerType Layer for which check is done.
+     */
     public SemiContainsLayerInformation(ViewLayerType viewLayerType){
         this.viewLayerType = viewLayerType;
     }
 
+    /**
+     * Checks if some (but not all) of the leaf nodes in the leafList contains the given layer information.
+     * @param leafList Array list storing the leaf nodes.
+     * @return True if some (but not all) of the leaf nodes in the leafList contains the given layer information, false
+     * otherwise.
+     */
     public boolean satisfies(ArrayList<ParseNodeDrawable> leafList) {
         int notDone = 0, done = 0;
         for (ParseNodeDrawable parseNode : leafList){

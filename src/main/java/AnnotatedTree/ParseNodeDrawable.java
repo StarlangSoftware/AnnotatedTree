@@ -32,6 +32,14 @@ public class ParseNodeDrawable extends ParseNode {
     private boolean guessed = false;
     private static final ArrayList<String> sentenceLabels = new ArrayList<>(Arrays.asList("SINV", "SBARQ", "SBAR", "SQ", "S"));
 
+    /**
+     * Constructs a ParseNodeDrawable from a single line. If the node is a leaf node, it only sets the data. Otherwise,
+     * splits the line w.r.t. spaces and parenthesis and calls itself recursively to generate its child parseNodes.
+     * @param parent The parent node of this node.
+     * @param line The input line to create this parseNode.
+     * @param isLeaf True, if this node is a leaf node; false otherwise.
+     * @param depth Depth of the node.
+     */
     public ParseNodeDrawable(ParseNodeDrawable parent, String line, boolean isLeaf, int depth) throws ParenthesisInLayerException {
         int parenthesisCount = 0;
         StringBuilder childLine = new StringBuilder();
@@ -74,10 +82,21 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Another simple constructor for ParseNode. It only takes input the data, and sets it.
+     * @param data Data for this node.
+     */
     public ParseNodeDrawable(Symbol data){
         super(data);
     }
 
+    /**
+     * Another constructor for ParseNodeDrawable. Sets the parent to the given parent, and adds given child as a
+     * single child, and sets the given symbol as data.
+     * @param parent Parent of this node.
+     * @param child Single child of this node.
+     * @param symbol Symbol of this node.
+     */
     public ParseNodeDrawable(ParseNodeDrawable parent, ParseNodeDrawable child, String symbol){
         this.children = new ArrayList<>();
         this.depth = child.depth;
@@ -98,10 +117,19 @@ public class ParseNodeDrawable extends ParseNode {
         return result;
     }
 
+    /**
+     * Accessor for layers attribute
+     * @return Layers attribute
+     */
     public LayerInfo getLayerInfo(){
         return layers;
     }
 
+    /**
+     * Returns the data. Either the node is a leaf node, in which case English word layer is returned; or the node is
+     * a nonleaf node, in which case the node tag is returned.
+     * @return English word for leaf node, constituency tag for non-leaf node.
+     */
     public Symbol getData(){
         if (layers == null){
             return super.getData();
@@ -110,10 +138,17 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Clears the layers hash map.
+     */
     public void clearLayers(){
         layers = new LayerInfo();
     }
 
+    /**
+     * Recursive method to clear a given layer.
+     * @param layerType Name of the layer to be cleared
+     */
     public void clearLayer(ViewLayerType layerType){
         if (children.isEmpty() && layerExists(layerType)){
             layers.removeLayer(layerType);
@@ -123,43 +158,82 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Clears the node tag.
+     */
     public void clearData(){
         data = null;
     }
 
+    /**
+     * Setter for the data attribute and also clears all layers.
+     * @param data New data field.
+     */
     public void setDataAndClearLayers(Symbol data){
         super.setData(data);
         layers = null;
     }
 
+    /**
+     * Accessor for dragged attribute
+     * @return Dragged attribute.
+     */
     public boolean isDragged(){
         return dragged;
     }
 
+    /**
+     * Accessor for editable attribute
+     * @return Editable attribute.
+     */
     public boolean isEditable(){
         return editable;
     }
 
+    /**
+     * Accessor for searched attribute
+     * @return Searched attribute.
+     */
     public boolean isSearched(){
         return searched;
     }
 
+    /**
+     * Accessor for guessed attribute
+     * @return Guessed attribute.
+     */
     public boolean isGuessed(){
         return guessed;
     }
 
+    /**
+     * Accessor for selected attribute
+     * @return Selected attribute.
+     */
     public boolean isSelected(){
         return selected;
     }
 
+    /**
+     * Accessor for inOrderTraversalIndex attribute
+     * @return InOrderTraversalIndex attribute.
+     */
     public int getInOrderTraversalIndex(){
         return inOrderTraversalIndex;
     }
 
+    /**
+     * Mutator for the guessed attribute. It sets to true.
+     */
     public void setGuessed(){
         guessed = true;
     }
 
+    /**
+     * Mutator for the data field. If the layers is null, its sets the data field, otherwise it sets the English layer
+     * to the given value.
+     * @param data Data to be set.
+     */
     public void setData(Symbol data){
         if (layers == null){
             super.setData(data);
@@ -168,6 +242,11 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Returns the layer value of the head child of this node.
+     * @param viewLayerType Layer name
+     * @return Layer value of the head child of this node.
+     */
     public String headWord(ViewLayerType viewLayerType){
         if (!children.isEmpty()){
             return ((ParseNodeDrawable) headChild()).headWord(viewLayerType);
@@ -176,6 +255,11 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Accessor for the data or layers attribute.
+     * @return If data is not null, this node is a non-leaf node, it returns the data field. Otherwise, this node is a
+     * leaf node, it returns the layer description.
+     */
     public String getLayerData(){
         if (data != null){
             return data.getName();
@@ -183,6 +267,11 @@ public class ParseNodeDrawable extends ParseNode {
         return layers.getLayerDescription();
     }
 
+    /**
+     * Returns the layer value of a given layer.
+     * @param viewLayer Layer name
+     * @return Value of the given layer
+     */
     public String getLayerData(ViewLayerType viewLayer){
         if (viewLayer == ViewLayerType.WORD || layers == null){
             return data.getName();
@@ -190,14 +279,28 @@ public class ParseNodeDrawable extends ParseNode {
         return layers.getLayerData(viewLayer);
     }
 
+    /**
+     * Accessor for the leafIndex attribute
+     * @return LeafIndex attribute
+     */
     public int getLeafIndex(){
         return leafIndex;
     }
 
+    /**
+     * Accessor for the depth attribute
+     * @return Depth attribute
+     */
     public int getDepth(){
         return depth;
     }
 
+    /*
+     * Recursive setter method for the leafIndex attribute. LeafIndex shows the index of the leaf node according to the
+     * inorder traversal without considering non-leaf nodes.
+     * @param pos Current leaf index
+     * @return Updated leaf index
+     */
     public int leafTraversal(int pos){
         int i;
         if (children.isEmpty()){
@@ -210,6 +313,12 @@ public class ParseNodeDrawable extends ParseNode {
         return pos;
     }
 
+    /**
+     * Recursive setter method for the inOrderTraversalIndex attribute. InOrderTraversalIndex shows the index of the
+     * node according to the inorder traversal.
+     * @param pos Current inorder traversal index
+     * @return Update inorder traversal index
+     */
     public int inOrderTraversal(int pos){
         int i;
         for (i = 0; i < children.size() / 2; i++){
@@ -224,6 +333,10 @@ public class ParseNodeDrawable extends ParseNode {
         return pos;
     }
 
+    /**
+     * Returns the maximum inorder traversal index considering this node and all of its descendants.
+     * @return The maximum inorder traversal index considering this node and all of its descendants.
+     */
     public int maxInOrderTraversal(){
         int maxIndex, childIndex;
         if (children.isEmpty())
@@ -241,6 +354,13 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Returns the number of structural agreement between this node and the given node recursively. Two nodes agree in
+     * structural manner if they have the same number of children and all of their children have the same tags in the
+     * same order.
+     * @param parseNode Parse node to compare in structural manner
+     * @return The number of structural agreement between this node and the given node recursively.
+     */
     public int structureAgreementCount(ParseNodeDrawable parseNode){
         if (children.size() > 1){
             int sum = 1;
@@ -273,6 +393,13 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Returns the number of gloss agreements between this node and the given node recursively. Two nodes agree in
+     * glosses if they are both leaf nodes and their layer info are the same.
+     * @param parseNode Parse node to compare in gloss manner
+     * @param viewLayerType Layer name to compare
+     * @return The number of gloss agreements between this node and the given node recursively.
+     */
     public int glossAgreementCount(ParseNodeDrawable parseNode, ViewLayerType viewLayerType){
         if (children.isEmpty()){
             if (parseNode.numberOfChildren() == 0){
@@ -295,12 +422,21 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Replaces a given old child with the given new child.
+     * @param oldChild Old child to be replaced
+     * @param newChild New child which replaces old child
+     */
     public void replaceChild(ParseNodeDrawable oldChild, ParseNodeDrawable newChild){
         newChild.updateDepths(this.depth + 1);
         newChild.parent = this;
         children.set(children.indexOf(oldChild), newChild);
     }
 
+    /**
+     * Recursive method which updates the depth attribute
+     * @param depth Current depth to set.
+     */
     public void updateDepths(int depth){
         this.depth = depth;
         for (ParseNode aChildren:children){
@@ -309,6 +445,10 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Calculates the maximum depth of the subtree rooted from this node.
+     * @return The maximum depth of the subtree rooted from this node.
+     */
     public int maxDepth(){
         int depth = this.depth;
         for (ParseNode aChildren : children) {
@@ -319,49 +459,95 @@ public class ParseNodeDrawable extends ParseNode {
         return depth;
     }
 
+    /**
+     * Accessor for the selectedIndex attribute.
+     * @return SelectedIndex attribute
+     */
     public int getSelectedIndex(){
         return selectedIndex;
     }
 
+    /**
+     * Accessor for the area attribute.
+     * @return Area attribute.
+     */
     public RectAngle getArea(){
         return area;
     }
 
+    /**
+     * Mutator for the selected attribute.
+     * @param selected New selected value
+     */
     public void setSelected(boolean selected){
         this.selected = selected;
         selectedIndex = -1;
     }
 
+    /**
+     * Mutator for the selected and selectedIndex attributes.
+     * @param selected New selected value
+     * @param selectedIndex New selectedIndex value
+     */
     public void setSelected(boolean selected, int selectedIndex){
         this.selected = selected;
         this.selectedIndex = selectedIndex;
     }
 
+    /**
+     * Mutator for the editable attribute.
+     * @param editable New editable attribute.
+     */
     public void setEditable(boolean editable){
         this.editable = editable;
     }
 
+    /**
+     * Mutator for the searched attribute.
+     * @param searched New searched attribute.
+     */
     public void setSearched(boolean searched){
         this.searched = searched;
     }
 
+    /**
+     * Mutator for the dragged attribute.
+     * @param dragged New dragged attribute.
+     */
     public void setDragged(boolean dragged){
         this.dragged = dragged;
     }
 
+    /**
+     * Mutator for the dragged and selectedIndex attributes.
+     * @param dragged New dragged attribute.
+     * @param selectedIndex New selectedIndex attribute.
+     */
     public void setDragged(boolean dragged, int selectedIndex){
         this.dragged = dragged;
         this.selectedIndex = selectedIndex;
     }
 
+    /**
+     * Mutator for the hasDeletedChild attribute. Sets it to true.
+     */
     public void setChildDeleted(){
         hasDeletedChild = true;
     }
 
+    /**
+     * Accessor for the hasDeletedChild attribute
+     * @return hasDeletedChild attribute.
+     */
     public boolean hasDeletedChild(){
         return hasDeletedChild;
     }
 
+    /**
+     * Recursive method that checks if the current node satisfies the conditions in the given search node.
+     * @param node Node containing the search condition
+     * @return True if the node satisfies the condition, false otherwise.
+     */
     public boolean satisfy(ParseNodeSearchable node){
         int i;
         if (node.isLeaf() && !children.isEmpty())
@@ -426,6 +612,10 @@ public class ParseNodeDrawable extends ParseNode {
         return true;
     }
 
+    /**
+     * Recursive method that updates all pos tags in the leaf nodes according to the morphological tag in those leaf
+     * nodes.
+     */
     public void updatePosTags(){
         if (children.size() == 1 && children.get(0).isLeaf() && !children.get(0).isDummyNode()){
             LayerInfo layerInfo = ((ParseNodeDrawable)children.get(0)).getLayerInfo();
@@ -443,6 +633,13 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Recursive method that calculates the score of this node compared to the given correctNode. If the children of
+     * this node are the same as the children of the correctNode (also in the same order), then the score is 1,
+     * otherwise the score is 0. The total score is the sum of all scores of all descendant nodes of the current node.
+     * @param correctNode Node to be compared with this node.
+     * @return Number of nodes matched in the subtree rooted with this node.
+     */
     public int score(ParseNodeDrawable correctNode){
         int sum;
         boolean isCorrectOrder = true;
@@ -465,6 +662,10 @@ public class ParseNodeDrawable extends ParseNode {
         return sum;
     }
 
+    /**
+     * Returns all symbols in this node.
+     * @return All symbols in the children of this node.
+     */
     public ArrayList<Symbol> getChildrenSymbols(){
         ArrayList<Symbol> childrenSymbols = new ArrayList<>();
         for (ParseNode node: children){
@@ -488,6 +689,10 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Recursive method that returns the concatenation of all pos tags of all descendants of this node.
+     * @return The concatenation of all pos tags of all descendants of this node.
+     */
     public String ancestorString(){
         if (parent == null){
             return data.getName();
@@ -511,6 +716,12 @@ public class ParseNodeDrawable extends ParseNode {
             ((ParseNodeDrawable)child).deAugment();
     }
 
+    /**
+     * Checks if the children of the current node is a permutation of the children of the given thatParseNode.
+     * @param thatParseNode Parse node to be compared.
+     * @return True if the children of the current node is a permutation of the children of the given thatParseNode,
+     * false otherwise.
+     */
     public boolean isPermutation(ParseNodeDrawable thatParseNode){
         boolean b;
         this.augment();
@@ -521,6 +732,13 @@ public class ParseNodeDrawable extends ParseNode {
         return b;
     }
 
+    /**
+     * Recursive method that checks if all nodes in the subtree rooted with this node has the annotation in the given
+     * layer.
+     * @param viewLayerType Layer name
+     * @return True if all nodes in the subtree rooted with this node has the annotation in the given layer, false
+     * otherwise.
+     */
     public boolean layerExists(ViewLayerType viewLayerType){
         if (children.isEmpty()){
             return getLayerData(viewLayerType) != null;
@@ -534,6 +752,11 @@ public class ParseNodeDrawable extends ParseNode {
         return false;
     }
 
+    /**
+     * Checks if the current node is a dummy node or not. A node is a dummy node if its data contains '*', or its
+     * data is '0' and its parent is '-NONE-'.
+     * @return True if the current node is a dummy node, false otherwise.
+     */
     public boolean isDummyNode(){
         String data = getLayerData(ViewLayerType.ENGLISH_WORD);
         String parentData = ((ParseNodeDrawable) parent).getLayerData(ViewLayerType.ENGLISH_WORD);
@@ -580,6 +803,12 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Checks if all nodes in the subtree rooted with this node has annotation with the given layer.
+     * @param viewLayerType Layer name
+     * @return True if all nodes in the subtree rooted with this node has annotation with the given layer, false
+     * otherwise.
+     */
     public boolean layerAll(ViewLayerType viewLayerType){
         if (children.isEmpty()){
             return getLayerData(viewLayerType) != null || isDummyNode();
@@ -593,6 +822,12 @@ public class ParseNodeDrawable extends ParseNode {
         return true;
     }
 
+    /**
+     * Recursive method that returns all nodes in the subtree rooted with this node those satisfy the conditions in the
+     * given tree.
+     * @param tree Tree containing the search condition
+     * @return All nodes in the subtree rooted with this node those satisfy the conditions in the given tree.
+     */
     public ArrayList<ParseNodeDrawable> satisfy(ParseTreeSearchable tree){
         ArrayList<ParseNodeDrawable> result = new ArrayList<>();
         if (satisfy((ParseNodeSearchable)tree.getRoot())){
@@ -637,6 +872,9 @@ public class ParseNodeDrawable extends ParseNode {
         return false;
     }
 
+    /**
+     * Recursive method that accumulates all tag symbols in the descendants of this node in the tagList.
+     */
     public void extractTags(ArrayList<String> tagList){
         if (numberOfChildren() != 0){
             tagList.add(getData().getName());
@@ -646,6 +884,9 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Recursive method that accumulates number of children of all descendants of this node in the childNumberList.
+     */
     public void extractNumberOfChildren(ArrayList<Integer> childNumberList){
         if (numberOfChildren() != 0){
             childNumberList.add(numberOfChildren());
@@ -655,6 +896,12 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Sets the shallow parse layer of all leaf nodes in the subtree rooted with this node to the given label according
+     * to the given chunking type.
+     * @param chunkType Type of the chunking used to annotate.
+     * @param label Shallow parse label for the leaf nodes.
+     */
     private void setShallowParseLayer(ChunkType chunkType, String label){
         boolean startWord = true;
         String nodeLabel = "", wordLabel;
@@ -700,6 +947,11 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Recursive method that sets the shallow parse layer of all leaf nodes in the subtree rooted with this node
+     * according to the given chunking type.
+     * @param chunkType Type of the chunking used to annotate.
+     */
     public void setShallowParseLayer(ChunkType chunkType){
         String label;
         if (getData() != null && getData().isChunkLabel() && parent != null) {
@@ -714,6 +966,11 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Recursive method to convert the subtree rooted with this node to a string. All parenthesis types are converted to
+     * their regular forms.
+     * @return String version of the subtree rooted with this node.
+     */
     public String toTurkishSentence(){
         if (children.isEmpty()){
             if (getLayerData(ViewLayerType.TURKISH_WORD) != null && !getLayerData(ViewLayerType.TURKISH_WORD).equals("*NONE*")){
@@ -751,6 +1008,12 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Recursive method that sets the tag information of the given parse node with all descendants with respect to the
+     * morphological annotation of the current node with all descendants.
+     * @param parseNode Parse node whose tag information will be changed.
+     * @param surfaceForm If true, tag will be replaced with the surface form annotation.
+     */
     public void generateParseNode(ParseNode parseNode, boolean surfaceForm){
         if (numberOfChildren() == 0){
             if (surfaceForm){
@@ -771,6 +1034,10 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Recursive method to convert the subtree rooted with this node to a string.
+     * @return String version of the subtree rooted with this node.
+     */
     public String toString(){
         if (children.size() < 2){
             if (children.isEmpty()){
@@ -787,6 +1054,11 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Returns the leaf node at position index in the subtree rooted with this node.
+     * @param index Position of the leaf node.
+     * @return The leaf node at position index in the subtree rooted with this node.
+     */
     public ParseNodeDrawable getLeafWithIndex(int index){
         if (children.isEmpty() && leafIndex == index){
             return this;
@@ -801,6 +1073,13 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Returns the index of the layer data in the given x and y coordinates in the panel that displays the annotated
+     * tree.
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return Index of the layer data in the given x and y coordinates in the panel that displays the annotated tree.
+     */
     public int getSubItemAt(int x, int y){
         if (area.contains(x, y) && children.isEmpty())
             return (y - area.getY()) / 20;
@@ -816,6 +1095,12 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Returns the parse node in the given x and y coordinates in the panel that displays the annotated tree.
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return The parse node in the given x and y coordinates in the panel that displays the annotated tree.
+     */
     public ParseNodeDrawable getNodeAt(int x, int y){
         if (area.contains(x, y))
             return this;
@@ -831,6 +1116,12 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Returns the leaf node in the given x and y coordinates in the panel that displays the annotated tree.
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return The leaf node in the given x and y coordinates in the panel that displays the annotated tree.
+     */
     public ParseNodeDrawable getLeafNodeAt(int x, int y){
         if (area.contains(x, y) && children.isEmpty())
             return this;
@@ -846,6 +1137,13 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Mutator for the area attribute
+     * @param x New x coordinate of the area
+     * @param y New y coordinate of the area
+     * @param width New width of the area
+     * @param height New height of the area
+     */
     public void setArea(int x, int y, int width, int height){
         this.area = new RectAngle(x, y, width, height);
     }

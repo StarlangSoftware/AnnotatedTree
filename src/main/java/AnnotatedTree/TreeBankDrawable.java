@@ -31,6 +31,12 @@ public class TreeBankDrawable extends TreeBank {
         this.parseTrees = parseTrees;
     }
 
+    /**
+     * A constructor of {@link TreeBankDrawable} class which reads all {@link ParseTreeDrawable} files inside the given
+     * folder. For each file inside that folder, the constructor creates a ParseTreeDrawable and puts in inside the list
+     * parseTrees.
+     * @param folder Folder where all parseTrees reside.
+     */
     public TreeBankDrawable(File folder){
         parseTrees = new ArrayList<>();
         File[] listOfFiles = folder.listFiles();
@@ -55,6 +61,13 @@ public class TreeBankDrawable extends TreeBank {
         }
     }
 
+    /**
+     * A constructor of {@link TreeBankDrawable} class which reads all {@link ParseTreeDrawable} files with the file
+     * name satisfying the given pattern inside the given folder. For each file inside that folder, the constructor
+     * creates a ParseTreeDrawable and puts in inside the list parseTrees.
+     * @param folder Folder where all parseTrees reside.
+     * @param pattern File pattern such as "." ".train" ".test".
+     */
     public TreeBankDrawable(File folder, String pattern){
         parseTrees = new ArrayList<>();
         File[] listOfFiles = folder.listFiles();
@@ -82,6 +95,14 @@ public class TreeBankDrawable extends TreeBank {
         }
     }
 
+    /**
+     * A constructor of {@link TreeBankDrawable} class which reads the files numbered in the given interval with the
+     * file name having thr given extension inside the given folder. For each file inside that folder, the constructor
+     * creates a ParseTreeDrawable and puts in inside the list parseTrees.
+     * @param path Folder where all parseTrees reside.
+     * @param extension File pattern such as "train" "test".
+     * @param interval Starting  and ending index for the ParseTrees read.
+     */
     public TreeBankDrawable(String path, String extension, Interval interval){
         parseTrees = new ArrayList<>();
         for (int i = 0; i < interval.size(); i++){
@@ -94,6 +115,15 @@ public class TreeBankDrawable extends TreeBank {
         }
     }
 
+    /**
+     * A constructor of {@link TreeBankDrawable} class which reads the files numbered from from to to with the file name
+     * having thr given extension inside the given folder. For each file inside that folder, the constructor
+     * creates a ParseTreeDrawable and puts in inside the list parseTrees.
+     * @param path Folder where all parseTrees reside.
+     * @param extension File pattern such as "train" "test".
+     * @param from Starting index for the ParseTrees read.
+     * @param to Ending index for the ParseTrees read.
+     */
     public TreeBankDrawable(String path, String extension, int from, int to){
         parseTrees = new ArrayList<>();
         for (int i = from; i <= to; i++){
@@ -104,6 +134,15 @@ public class TreeBankDrawable extends TreeBank {
         }
     }
 
+    /**
+     * A constructor of {@link TreeBankDrawable} class which reads the files numbered from from to to with the file name
+     * satisfying the given pattern inside the given folder. For each file inside that folder, the constructor
+     * creates a ParseTreeDrawable and puts in inside the list parseTrees.
+     * @param folder Folder where all parseTrees reside.
+     * @param pattern File pattern such as "." ".train" ".test".
+     * @param from Starting index for the ParseTrees read.
+     * @param to Ending index for the ParseTrees read.
+     */
     public TreeBankDrawable(File folder, String pattern, int from, int to){
         parseTrees = new ArrayList<>();
         for (int i = from; i <= to; i++){
@@ -119,14 +158,28 @@ public class TreeBankDrawable extends TreeBank {
         }
     }
 
+    /**
+     * Accessor for the parseTrees attribute
+     * @return ParseTrees attribute
+     */
     public List<ParseTree> getParseTrees(){
         return parseTrees;
     }
 
+    /**
+     * Accessor for a specific tree with the given position in the array.
+     * @param index Index of the parseTree.
+     * @return Tree that is in the position index
+     */
     public ParseTreeDrawable get(int index){
         return (ParseTreeDrawable) parseTrees.get(index);
     }
 
+    /**
+     * Accessor for a specific tree with the given file name.
+     * @param fileName File name of the tree
+     * @return Tree that has the given file name
+     */
     public ParseTreeDrawable get(String fileName){
         for (ParseTree tree : parseTrees){
             if (((ParseTreeDrawable) tree).getFileDescription().getRawFileName().equals(fileName)){
@@ -161,6 +214,10 @@ public class TreeBankDrawable extends TreeBank {
         return corpus;
     }
 
+    /**
+     * Create a TxtDictionary from the root nodes of the morphological parses of the words in the trees.
+     * @return TxtDictionary from the root nodes of the morphological parses of the words in the trees.
+     */
     public TxtDictionary createDictionary() {
         TxtDictionary dictionary = new TxtDictionary(new TurkishWordComparator());
         for (ParseTree tree:parseTrees){
@@ -203,6 +260,11 @@ public class TreeBankDrawable extends TreeBank {
         return dictionary;
     }
 
+    /**
+     * Returns list of trees that contain at least one verb
+     * @param wordNet Wordnet used for checking the pos tag of the synset.
+     * @return List of trees that contai at least one verb.
+     */
     public ArrayList<ParseNodeDrawable> extractVerbs(WordNet wordNet){
         ArrayList<ParseNodeDrawable> nodeList = new ArrayList<>();
         for (ParseTree tree:parseTrees){
@@ -232,6 +294,10 @@ public class TreeBankDrawable extends TreeBank {
         return counts;
     }
 
+    /**
+     * Clears the given layer for all nodes in all trees
+     * @param layerType Layer name
+     */
     public void clearLayer(ViewLayerType layerType){
         for (ParseTree tree:parseTrees){
             ParseTreeDrawable parseTree = (ParseTreeDrawable) tree;
@@ -240,6 +306,11 @@ public class TreeBankDrawable extends TreeBank {
         }
     }
 
+    /**
+     * Returns list of trees that contain at least one verb which is annotated as 'PREDICATE'.
+     * @param wordNet Wordnet used for checking the pos tag of the synset.
+     * @return List of trees that contain at least one verb which is annotated as 'PREDICATE'.
+     */
     public ArrayList<ParseTreeDrawable> extractTreesWithPredicates(WordNet wordNet){
         ArrayList<ParseTreeDrawable> treeList = new ArrayList<>();
         for (ParseTree tree:parseTrees){
@@ -251,6 +322,9 @@ public class TreeBankDrawable extends TreeBank {
         return treeList;
     }
 
+    /**
+     * Sorts the tres in the treebanks according to their filenames.
+     */
     public void sort(){
         parseTrees.sort(new ParseTreeComparator());
     }

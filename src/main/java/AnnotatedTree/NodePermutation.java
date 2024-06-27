@@ -10,18 +10,33 @@ public class NodePermutation {
     public ArrayList<Integer> nodePermutation;
     public int count;
 
+    /**
+     * Constructor for NodePermutation class. NodePermutation stores a permutation of indexes of nodes starting from 0
+     * to number of nodes - 1. Sets the permutation to the given permutation.
+     * @param aPerm Permutation of nodes.
+     */
     public NodePermutation(ArrayList<Integer> aPerm){
         nodePermutation = new ArrayList<>();
         nodePermutation.addAll(aPerm);
         count = 1;
     }
 
+    /**
+     * Constructor for NodePermutation class. NodePermutation stores a permutation of indexes of nodes starting from 0
+     * to number of nodes - 1. Sets permutation to initial identity permutation, i.e., 0, 1, ..., n - 1.
+     * @param n Number of nodes.
+     */
     public NodePermutation(int n){
         this.nodePermutation = new ArrayList<>();
         for (int i = 0; i < n; i++)
             this.nodePermutation.add(i);
     }
 
+    /**
+     * Changes the order in the array list according to the node permutation. For example, if the node permutation is
+     * 0, 2, 1; then the second node becomes the third node and the third node becomes the second node.
+     * @param nodes List of nodes whose order will be changed according to the permutation.
+     */
     public void apply(ArrayList<ParseNode> nodes){
         ArrayList<ParseNode> tmp = new ArrayList<>(nodes);
         for (int i = 0; i < nodePermutation.size(); i++)

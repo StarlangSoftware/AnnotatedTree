@@ -5,6 +5,12 @@ import AnnotatedTree.ParseNodeDrawable;
 
 public class IsNumber extends IsLeafNode{
 
+    /**
+     * Checks if the node is a leaf node and contains numerals as the data and its parent has the tag CD.
+     * @param parseNode Parse node to check.
+     * @return True if the node is a leaf node and contains numerals as the data and its parent has the tag CD, false
+     * otherwise.
+     */
     public boolean satisfies(ParseNodeDrawable parseNode) {
         if (super.satisfies(parseNode)){
             String data = parseNode.getLayerData(ViewLayerType.ENGLISH_WORD);

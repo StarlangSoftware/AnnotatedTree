@@ -18,11 +18,23 @@ public class NotDoneFileFilter extends FileFilter {
     private final String path;
     private final ViewLayerType viewLayerType;
 
+    /**
+     * Constructor for NotDoneFileFilter. NotDoneFileFilter is used to filter out the files whose leaf nodes are fully
+     * annotated, or some of them are annotated. The files shown to the user are those that are not annotated at all
+     * with the given layer info.
+     * @param path Path of the files.
+     * @param viewLayerType Name of the layer for which annotation check is done.
+     */
     public NotDoneFileFilter(String path, ViewLayerType viewLayerType){
         this.path = path;
         this.viewLayerType = viewLayerType;
     }
 
+    /**
+     * Checks if the file satisfies the condition of the filter.
+     * @param f File to be checked.
+     * @return True if the file satisfies the condition of the filter, false otherwise.
+     */
     public boolean accept(File f) {
         File file = new File(path + f.getName());
         try {
@@ -35,6 +47,10 @@ public class NotDoneFileFilter extends FileFilter {
         }
     }
 
+    /**
+     * Returns "Not Done".
+     * @return "Not Done".
+     */
     public String getDescription() {
         return "Not Done";
     }

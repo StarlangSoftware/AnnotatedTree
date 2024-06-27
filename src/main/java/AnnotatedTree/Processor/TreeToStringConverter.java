@@ -8,6 +8,12 @@ public class TreeToStringConverter {
     private final LeafToStringConverter converter;
     private final ParseTreeDrawable parseTree;
 
+    /**
+     * Converts recursively a parse node to a string. If it is a leaf node, calls the converter's leafConverter method,
+     * otherwise concatenates the converted strings of its children.
+     * @param parseNode Parse node to convert to string.
+     * @return String form of the parse node and all of its descendants.
+     */
     private String convertToString(ParseNodeDrawable parseNode){
         if (parseNode.isLeaf()){
             return converter.leafConverter(parseNode);
@@ -20,10 +26,19 @@ public class TreeToStringConverter {
         }
     }
 
+    /**
+     * Calls the convertToString method with root of the tree to convert the parse tree to string.
+     * @return String form of the parse tree.
+     */
     public String convert(){
         return convertToString((ParseNodeDrawable)parseTree.getRoot());
     }
 
+    /**
+     * Constructor of the TreeToStringConverter class. Sets the attributes.
+     * @param parseTree Parse tree to be converted.
+     * @param converter Node to string converter interface.
+     */
     public TreeToStringConverter(ParseTreeDrawable parseTree, LeafToStringConverter converter){
         this.parseTree = parseTree;
         this.converter = converter;

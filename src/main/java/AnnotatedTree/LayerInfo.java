@@ -14,6 +14,14 @@ import java.util.EnumMap;
 public class LayerInfo {
     private final EnumMap<ViewLayerType, WordLayer> layers;
 
+    /**
+     * Constructs the layer information from the given string. Layers are represented as
+     * {layername1=layervalue1}{layername2=layervalue2}...{layernamek=layervaluek} where layer name is one of the
+     * following: turkish, persian, english, morphologicalAnalysis, metaMorphemes, metaMorphemesMoved, dependency,
+     * semantics, namedEntity, propBank, englishPropbank, englishSemantics, shallowParse. Splits the string w.r.t.
+     * parentheses and constructs layer objects and put them layers map accordingly.
+     * @param info Line consisting of layer info.
+     */
     public LayerInfo(String info) {
         String[] splitLayers = info.split("[{}]");
         layers = new EnumMap<>(ViewLayerType.class);
@@ -77,6 +85,9 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Empty constructor. Constructs empty map.
+     */
     public LayerInfo() {
         layers = new EnumMap<>(ViewLayerType.class);
     }
@@ -85,6 +96,13 @@ public class LayerInfo {
         return new LayerInfo(getLayerDescription());
     }
 
+    /**
+     * Changes the given layer info with the given string layer value. For all layers new layer object is created and
+     * replaces the original object. For turkish layer, it also destroys inflectional_group, part_of_speech,
+     * meta_morpheme, meta_morpheme_moved and semantics layers. For persian layer, it also destroys the semantics layer.
+     * @param viewLayer Layer name.
+     * @param layerValue New layer value.
+     */
     public void setLayerData(ViewLayerType viewLayer, String layerValue) {
         switch (viewLayer) {
             case PERSIAN_WORD:
@@ -138,19 +156,43 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Updates the inflectional_group and part_of_speech layers according to the given parse.
+     * @param parse New parse to update layers.
+     */
     public void setMorphologicalAnalysis(MorphologicalParse parse) {
         layers.put(ViewLayerType.INFLECTIONAL_GROUP, new MorphologicalAnalysisLayer(parse.toString()));
         layers.put(ViewLayerType.PART_OF_SPEECH, new MorphologicalAnalysisLayer(parse.toString()));
     }
 
+    /**
+     * Updates the metamorpheme layer according to the given parse.
+     * @param parse NEw parse to update layer.
+     */
     public void setMetaMorphemes(MetamorphicParse parse) {
         layers.put(ViewLayerType.META_MORPHEME, new MetaMorphemeLayer(parse.toString()));
     }
 
+    /**
+     * Checks if the given layer exists.
+     * @param viewLayerType Layer name
+     * @return True if the layer exists, false otherwise.
+     */
     public boolean layerExists(ViewLayerType viewLayerType) {
         return layers.containsKey(viewLayerType);
     }
 
+    /**
+     * Two level layer check method. For turkish, persian and english_semantics layers, if the layer does not exist,
+     * returns english layer. For part_of_speech, inflectional_group, meta_morpheme, semantics, propbank, shallow_parse,
+     * english_propbank layers, if the layer does not exist, it checks turkish layer. For meta_morpheme_moved, if the
+     * layer does not exist, it checks meta_morpheme layer.
+     * @param viewLayer Layer to be checked.
+     * @return Returns the original layer if the layer exists. For turkish, persian and english_semantics layers, if the
+     * layer  does not exist, returns english layer. For part_of_speech, inflectional_group, meta_morpheme, semantics,
+     * propbank,  shallow_parse, english_propbank layers, if the layer does not exist, it checks turkish layer
+     * recursively. For meta_morpheme_moved, if the layer does not exist, it checks meta_morpheme layer recursively.
+     */
     public ViewLayerType checkLayer(ViewLayerType viewLayer) {
         switch (viewLayer) {
             case TURKISH_WORD:
@@ -178,6 +220,10 @@ public class LayerInfo {
         return viewLayer;
     }
 
+    /**
+     * Returns number of words in the Turkish or Persian layer, whichever exists.
+     * @return Number of words in the Turkish or Persian layer, whichever exists.
+     */
     public int getNumberOfWords() throws LayerNotExistsException {
         if (layers.containsKey(ViewLayerType.TURKISH_WORD)) {
             return ((TurkishWordLayer) layers.get(ViewLayerType.TURKISH_WORD)).size();
@@ -190,6 +236,16 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Returns the layer value at the given index.
+     * @param viewLayerType Layer for which the value at the given word index will be returned.
+     * @param index Word Position of the layer value.
+     * @param layerName Name of the layer.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException. If the layer is
+     * not a MultiWordLayer, it throws LayerNotExistsException exception.
+     * @throws WordNotExistsException If the index is out of bounds, it throws WordNotExistsException.
+     * @return Layer info at word position index for a multiword layer.
+     */
     private String getMultiWordAt(ViewLayerType viewLayerType, int index, String layerName) throws WordNotExistsException, LayerNotExistsException {
         if (layers.containsKey(viewLayerType)) {
             if (layers.get(viewLayerType) instanceof MultiWordLayer) {
@@ -210,10 +266,21 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Layers may contain multiple Turkish words. This method returns the Turkish word at position index.
+     * @param index Position of the Turkish word.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     * @throws WordNotExistsException If the index is out of bounds, it throws WordNotExistsException.
+     * @return The Turkish word at position index.
+     */
     public String getTurkishWordAt(int index) throws LayerNotExistsException, WordNotExistsException {
         return getMultiWordAt(ViewLayerType.TURKISH_WORD, index, "turkish");
     }
 
+    /**
+     * Returns number of meanings in the Turkish layer.
+     * @return Number of meanings in the Turkish layer.
+     */
     public int getNumberOfMeanings() {
         if (layers.containsKey(ViewLayerType.SEMANTICS)) {
             return ((TurkishSemanticLayer) layers.get(ViewLayerType.SEMANTICS)).size();
@@ -222,14 +289,34 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Layers may contain multiple semantic information corresponding to multiple Turkish words. This method returns
+     * the sense id at position index.
+     * @param index Position of the Turkish word.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     * @throws WordNotExistsException If the index is out of bounds, it throws WordNotExistsException.
+     * @return The Turkish sense id at position index.
+     */
     public String getSemanticAt(int index) throws LayerNotExistsException, WordNotExistsException {
         return getMultiWordAt(ViewLayerType.SEMANTICS, index, "semantics");
     }
 
+    /**
+     * Layers may contain multiple shallow parse information corresponding to multiple Turkish words. This method
+     * returns the shallow parse tag at position index.
+     * @param index Position of the Turkish word.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     * @throws WordNotExistsException If the index is out of bounds, it throws WordNotExistsException.
+     * @return The shallow parse tag at position index.
+     */
     public String getShallowParseAt(int index) throws LayerNotExistsException, WordNotExistsException {
         return getMultiWordAt(ViewLayerType.SHALLOW_PARSE, index, "shallowParse");
     }
 
+    /**
+     * Returns the Turkish PropBank argument info.
+     * @return Turkish PropBank argument info.
+     */
     public Argument getArgument() {
         if (layers.containsKey(ViewLayerType.PROPBANK)) {
             if (layers.get(ViewLayerType.PROPBANK) instanceof TurkishPropbankLayer) {
@@ -243,6 +330,11 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * A word may have multiple English propbank info. This method returns the English PropBank argument info at
+     * position index.
+     * @return English PropBank argument info at position index.
+     */
     public Argument getArgumentAt(int index) throws LayerNotExistsException {
         if (layers.containsKey(ViewLayerType.ENGLISH_PROPBANK)) {
             if (layers.get(ViewLayerType.ENGLISH_PROPBANK) instanceof SingleWordMultiItemLayer) {
@@ -256,6 +348,14 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Layers may contain multiple morphological parse information corresponding to multiple Turkish words. This method
+     * returns the morphological parse at position index.
+     * @param index Position of the Turkish word.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     * @throws WordNotExistsException If the index is out of bounds, it throws WordNotExistsException.
+     * @return The morphological parse at position index.
+     */
     public MorphologicalParse getMorphologicalParseAt(int index) throws LayerNotExistsException, WordNotExistsException {
         if (layers.containsKey(ViewLayerType.INFLECTIONAL_GROUP)) {
             if (layers.get(ViewLayerType.INFLECTIONAL_GROUP) instanceof MultiWordLayer) {
@@ -273,6 +373,14 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Layers may contain multiple metamorphic parse information corresponding to multiple Turkish words. This method
+     * returns the metamorphic parse at position index.
+     * @param index Position of the Turkish word.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     * @throws WordNotExistsException If the index is out of bounds, it throws WordNotExistsException.
+     * @return The metamorphic parse at position index.
+     */
     public MetamorphicParse getMetamorphicParseAt(int index) throws WordNotExistsException, LayerNotExistsException {
         if (layers.containsKey(ViewLayerType.META_MORPHEME)) {
             if (layers.get(ViewLayerType.META_MORPHEME) instanceof MultiWordLayer) {
@@ -290,6 +398,14 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Layers may contain multiple metamorphemes corresponding to one or multiple Turkish words. This method
+     * returns the metamorpheme at position index.
+     * @param index Position of the metamorpheme.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     * @throws LayerItemNotExistsException If the index is out of bounds, it throws LayerItemNotExistsException.
+     * @return The metamorpheme at position index.
+     */
     public String getMetaMorphemeAtIndex(int index) throws LayerItemNotExistsException, LayerNotExistsException {
         if (layers.containsKey(ViewLayerType.META_MORPHEME)) {
             if (layers.get(ViewLayerType.META_MORPHEME) instanceof MetaMorphemeLayer) {
@@ -307,6 +423,14 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Layers may contain multiple metamorphemes corresponding to one or multiple Turkish words. This method
+     * returns all metamorphemes from position index.
+     * @param index Start position of the metamorpheme.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     * @throws LayerItemNotExistsException If the index is out of bounds, it throws LayerItemNotExistsException.
+     * @return All metamorphemes from position index.
+     */
     public String getMetaMorphemeFromIndex(int index) throws LayerItemNotExistsException, LayerNotExistsException {
         if (layers.containsKey(ViewLayerType.META_MORPHEME)) {
             if (layers.get(ViewLayerType.META_MORPHEME) instanceof MetaMorphemeLayer) {
@@ -324,6 +448,11 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * For layers with multiple item information, this method returns total items in that layer.
+     * @param viewLayer Layer name
+     * @return Total items in the given layer.
+     */
     public int getLayerSize(ViewLayerType viewLayer) {
         if (layers.get(viewLayer) instanceof MultiWordMultiItemLayer) {
             return ((MultiWordMultiItemLayer) layers.get(viewLayer)).getLayerSize(viewLayer);
@@ -335,6 +464,14 @@ public class LayerInfo {
         return 0;
     }
 
+    /**
+     * For layers with multiple item information, this method returns the item at position index.
+     * @param viewLayer Layer name
+     * @param index Position of the item.
+     * @return The item at position index.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     * @throws LayerItemNotExistsException If the index is out of bounds, it throws LayerItemNotExistsException.
+     */
     public String getLayerInfoAt(ViewLayerType viewLayer, int index) throws LayerNotExistsException, LayerItemNotExistsException {
         switch (viewLayer) {
             case META_MORPHEME_MOVED:
@@ -354,6 +491,10 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Returns the string form of all layer information except part_of_speech layer.
+     * @return The string form of all layer information except part_of_speech layer.
+     */
     public String getLayerDescription() {
         StringBuilder result = new StringBuilder();
         for (ViewLayerType viewLayerType : layers.keySet()) {
@@ -364,6 +505,11 @@ public class LayerInfo {
         return result.toString();
     }
 
+    /**
+     * Returns the layer info for the given layer.
+     * @param viewLayer Layer name.
+     * @return Layer info for the given layer.
+     */
     public String getLayerData(ViewLayerType viewLayer) {
         if (layers.containsKey(viewLayer)) {
             return layers.get(viewLayer).getLayerValue();
@@ -372,11 +518,23 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Returns the layer info for the given layer, if that layer exists. Otherwise, it returns the fallback layer info
+     * determined by the checkLayer.
+     * @param viewLayer Layer name
+     * @return Layer info for the given layer if it exists. Otherwise, it returns the fallback layer info determined by
+     * the checkLayer.
+     */
     public String getRobustLayerData(ViewLayerType viewLayer) {
         viewLayer = checkLayer(viewLayer);
         return getLayerData(viewLayer);
     }
 
+    /**
+     * Initializes the metamorphemesmoved layer with metamorpheme layer except the root word.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     * @throws WordNotExistsException If the root word does not exist, it throws WordNotExistsException.
+     */
     private void updateMetaMorphemesMoved() throws LayerNotExistsException, WordNotExistsException {
         if (layers.containsKey(ViewLayerType.META_MORPHEME)) {
             MetaMorphemeLayer metaMorphemeLayer = (MetaMorphemeLayer) layers.get(ViewLayerType.META_MORPHEME);
@@ -394,35 +552,60 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Removes the given layer from hash map.
+     * @param layerType Layer to be removed.
+     */
     public void removeLayer(ViewLayerType layerType) {
         layers.remove(layerType);
     }
 
+    /**
+     * Removes metamorpheme and metamorphemesmoved layers.
+     */
     public void metaMorphemeClear() {
         layers.remove(ViewLayerType.META_MORPHEME);
         layers.remove(ViewLayerType.META_MORPHEME_MOVED);
     }
 
+    /**
+     * Removes English layer.
+     */
     public void englishClear() {
         layers.remove(ViewLayerType.ENGLISH_WORD);
     }
 
+    /**
+     * Removes the dependency layer.
+     */
     public void dependencyClear() {
         layers.remove(ViewLayerType.DEPENDENCY);
     }
 
+    /**
+     * Removed metamorphemesmoved layer.
+     */
     public void metaMorphemesMovedClear() {
         layers.remove(ViewLayerType.META_MORPHEME_MOVED);
     }
 
+    /**
+     * Removes the Turkish semantic layer.
+     */
     public void semanticClear() {
         layers.remove(ViewLayerType.SEMANTICS);
     }
 
+    /**
+     * Removes the English semantic layer.
+     */
     public void englishSemanticClear() {
         layers.remove(ViewLayerType.ENGLISH_SEMANTICS);
     }
 
+    /**
+     * Removes the morphological analysis, part of speech, metamorpheme, and metamorphemesmoved layers.
+     */
     public void morphologicalAnalysisClear() {
         layers.remove(ViewLayerType.INFLECTIONAL_GROUP);
         layers.remove(ViewLayerType.PART_OF_SPEECH);
@@ -430,6 +613,14 @@ public class LayerInfo {
         layers.remove(ViewLayerType.META_MORPHEME_MOVED);
     }
 
+    /**
+     * Removes the metamorpheme at position index.
+     * @param index Position of the metamorpheme to be removed.
+     * @return Metamorphemes concatenated as a string after the removed metamorpheme.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     * @throws WordNotExistsException If the root word does not exist, it throws WordNotExistsException.
+     * @throws LayerItemNotExistsException If the index is out of bounds, it throws LayerItemNotExistsException.
+     */
     public MetamorphicParse metaMorphemeRemove(int index) throws LayerNotExistsException, WordNotExistsException, LayerItemNotExistsException {
         MetamorphicParse removedParse;
         if (layers.containsKey(ViewLayerType.META_MORPHEME)) {
@@ -446,6 +637,10 @@ public class LayerInfo {
         return removedParse;
     }
 
+    /**
+     * Checks if the last inflectional group contains VERB tag.
+     * @return True if the last inflectional group contains VERB tag, false otherwise.
+     */
     public boolean isVerbal() {
         if (layers.containsKey(ViewLayerType.INFLECTIONAL_GROUP)) {
             return ((MorphologicalAnalysisLayer) layers.get(ViewLayerType.INFLECTIONAL_GROUP)).isVerbal();
@@ -454,6 +649,10 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Checks if the last verbal inflectional group contains ZERO tag.
+     * @return True if the last verbal inflectional group contains ZERO tag, false otherwise.
+     */
     public boolean isNominal() {
         if (layers.containsKey(ViewLayerType.INFLECTIONAL_GROUP)) {
             return ((MorphologicalAnalysisLayer) layers.get(ViewLayerType.INFLECTIONAL_GROUP)).isNominal();
@@ -462,6 +661,13 @@ public class LayerInfo {
         }
     }
 
+    /**
+     * Creates an array list of LayerInfo objects, where each object correspond to one word in the tree node. Turkish
+     * words, morphological parses, metamorpheme parses, semantic senses, shallow parses are divided into corresponding
+     * words. Named entity tags and propbank arguments are the same for all words.
+     * @return An array list of LayerInfo objects created from the layer info of the node.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     */
     public ArrayList<LayerInfo> divideIntoWords() throws LayerNotExistsException {
         ArrayList<LayerInfo> result = new ArrayList<>();
         for (int i = 0; i < getNumberOfWords(); i++) {
@@ -500,6 +706,13 @@ public class LayerInfo {
         return result;
     }
 
+    /**
+     * Converts layer info of the word at position wordIndex to an AnnotatedWord. Layers are converted to their
+     * counterparts in the AnnotatedWord.
+     * @param wordIndex Index of the word to be converted.
+     * @return Converted annotatedWord
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
+     */
     public AnnotatedWord toAnnotatedWord(int wordIndex) throws LayerNotExistsException {
         try {
             AnnotatedWord annotatedWord = new AnnotatedWord(getTurkishWordAt(wordIndex));

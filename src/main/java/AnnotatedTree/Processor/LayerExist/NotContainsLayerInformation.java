@@ -10,10 +10,19 @@ public class NotContainsLayerInformation implements LeafListCondition {
 
     private final ViewLayerType viewLayerType;
 
+    /**
+     * Constructor for NotContainsLayerInformation class. Sets the viewLayerType attribute.
+     * @param viewLayerType Layer for which check is done.
+     */
     public NotContainsLayerInformation(ViewLayerType viewLayerType){
         this.viewLayerType = viewLayerType;
     }
 
+    /**
+     * Checks if none of the leaf nodes in the leafList contains the given layer information.
+     * @param leafList Array list storing the leaf nodes.
+     * @return True if none of the leaf nodes in the leafList contains the given layer information, false otherwise.
+     */
     public boolean satisfies(ArrayList<ParseNodeDrawable> leafList) {
         for (ParseNodeDrawable parseNode : leafList){
             if (!parseNode.getLayerData(ViewLayerType.ENGLISH_WORD).contains("*")) {

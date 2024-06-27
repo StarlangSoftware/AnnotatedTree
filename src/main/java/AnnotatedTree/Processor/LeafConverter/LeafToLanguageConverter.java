@@ -6,6 +6,13 @@ import AnnotatedTree.ParseNodeDrawable;
 public class LeafToLanguageConverter implements LeafToStringConverter {
     protected ViewLayerType viewLayerType;
 
+    /**
+     * Converts the data in the leaf node to string, except shortcuts to parentheses are converted to its normal forms,
+     * '*', '0', '-NONE-' are converted to empty string.
+     * @param leafNode Node to be converted to string.
+     * @return String form of the data, except shortcuts to parentheses are converted to its normal forms,
+     * '*', '0', '-NONE-' are converted to empty string.
+     */
     public String leafConverter(ParseNodeDrawable leafNode) {
         String layerData = leafNode.getLayerData(viewLayerType);
         String parentLayerData = ((ParseNodeDrawable)leafNode.getParent()).getLayerData(viewLayerType);

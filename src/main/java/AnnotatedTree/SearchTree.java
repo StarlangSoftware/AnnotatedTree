@@ -10,6 +10,11 @@ public class SearchTree {
 
     ArrayList<ParseTreeSearchable> searchTrees;
 
+    /**
+     * Constructs a set of ParseTreeSearchables from the given file name. It reads the xml file and for each xml element
+     * that contains ParseTreeSearchable, it calls its constructor.
+     * @param fileName File that contains the search info.
+     */
     public SearchTree(String fileName){
         XmlElement parseNode, rootNode, nextNode;
         XmlDocument doc = new XmlDocument(fileName);
@@ -29,6 +34,11 @@ public class SearchTree {
         }
     }
 
+    /**
+     * Returns the ParseNodes in the given tree that satisfy all conditions given in the search trees.
+     * @param tree Tree in which search operation will be done
+     * @return ParseNodes in the given tree that satisfy all conditions given in the search trees.
+     */
     public ArrayList<ParseNode> satisfy(ParseTreeDrawable tree){
         ArrayList<ParseNodeDrawable> tmpResult;
         for (ParseTreeSearchable treeSearchable:searchTrees){

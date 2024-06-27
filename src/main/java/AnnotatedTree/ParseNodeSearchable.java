@@ -14,6 +14,13 @@ public class ParseNodeSearchable extends ParseNode {
     private final ArrayList<String> searchValues;
     private final boolean isLeaf;
 
+    /**
+     * Constructs a ParseNodeSearchable from a xml node. If the node is a leaf node, it only sets the search type, layer
+     * name and value. Otherwise, it only sets the parent node. It also calls itself recursively to generate its child
+     * parseNodes.
+     * @param parent The parent node of this node.
+     * @param node Xml node that contains the node information.
+     */
     public ParseNodeSearchable(ParseNodeSearchable parent, XmlElement node){
         XmlElement child;
         children = new ArrayList<>();
@@ -112,18 +119,37 @@ public class ParseNodeSearchable extends ParseNode {
         }
     }
 
+    /**
+     * Accessor for the search type at the given position
+     * @param index Position of the search type
+     * @return Search type at the given position index.
+     */
     public SearchType getType(int index){
         return searchTypes.get(index);
     }
 
+    /**
+     * Accessor for the search value at the given position
+     * @param index Position of the search value
+     * @return Search value at the given position index.
+     */
     public String getValue(int index){
         return searchValues.get(index);
     }
 
+    /**
+     * Accessor for the layer name at the given position
+     * @param index Position of the layer name
+     * @return Layer name at the given position index.
+     */
     public ViewLayerType getViewLayerType(int index){
         return viewLayerTypes.get(index);
     }
 
+    /**
+     * Accessor for the isLeaf attribute
+     * @return IsLeaf attribute
+     */
     public boolean isLeaf(){
         return isLeaf;
     }
