@@ -105,7 +105,7 @@ Use below line to generate jar file:
         <dependency>
             <groupId>io.github.starlangsoftware</groupId>
             <artifactId>AnnotatedTree</artifactId>
-            <version>1.0.8</version>
+            <version>1.0.54</version>
         </dependency>
 
 Detailed Description
