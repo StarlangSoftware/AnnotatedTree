@@ -999,6 +999,12 @@ public class ParseNodeDrawable extends ParseNode {
         }
     }
 
+    /**
+     * Sets the NER layer according to the tag of the parent node and the word in the node. The word is searched in the
+     * gazetteer, if it exists, the NER info is replaced with the NER tag in the gazetter.
+     * @param gazetteer Gazetter where we search the word
+     * @param word Word to be searched in the gazetter
+     */
     public void checkGazetteer(Gazetteer gazetteer, String word){
         if (gazetteer.contains(word) && getParent().getData().getName().equals("NNP")){
             getLayerInfo().setLayerData(ViewLayerType.NER, gazetteer.getName());

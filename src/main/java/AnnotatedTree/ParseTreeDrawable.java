@@ -207,7 +207,7 @@ public class ParseTreeDrawable extends ParseTree {
 
     /**
      * Loads the previous tree according to the index of the parse tree. For example, if the current
-     * tree fileName is 0123.train, after the call of previousTree(4), the method will load 0122.train. If the
+     * tree fileName is 0123.train, after the call of previousTree(4), the method will load 0119.train. If the
      * previous tree does not exist, nothing will happen.
      * @param count Number of trees to go backward
      */
@@ -526,6 +526,12 @@ public class ParseTreeDrawable extends ParseTree {
         }
     }
 
+    /**
+     * Constructs an AnnotatedSentence object from the Turkish tree. Collects all leaf nodes, then for each leaf node
+     * converts layer info of all words at that node to AnnotatedWords. Layers are converted to the counterparts in the
+     * AnnotatedWord.
+     * @return AnnotatedSentence counterpart of the Turkish tree
+     */
     public AnnotatedSentence generateAnnotatedSentence(){
         AnnotatedSentence sentence = new AnnotatedSentence();
         NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable)root, new IsTurkishLeafNode());
@@ -542,6 +548,11 @@ public class ParseTreeDrawable extends ParseTree {
         return sentence;
     }
 
+    /**
+     * Constructs an AnnotatedSentence object from the English tree. Collects all leaf nodes, then for each leaf node
+     * converts the word with its parents pos tag to AnnotatedWord.
+     * @return AnnotatedSentence counterpart of the English tree
+     */
     public AnnotatedSentence generateAnnotatedSentence(String language){
         AnnotatedSentence sentence = new AnnotatedSentence();
         NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector((ParseNodeDrawable)root, new IsEnglishLeafNode());

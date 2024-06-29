@@ -27,6 +27,10 @@ public class TreeBankDrawable extends TreeBank {
     static final public String TURKISH_PHRASE_PATH = "../Turkish-Phrase/";
     static final public String TREE_IMAGES = "../Tree-Images/";
 
+    /**
+     * A simple constructor for TreeBankDrawable. Sets the parseTrees field with the given parameter.
+     * @param parseTrees Parse trees in the treebank.
+     */
     public TreeBankDrawable(ArrayList<ParseTree> parseTrees){
         this.parseTrees = parseTrees;
     }

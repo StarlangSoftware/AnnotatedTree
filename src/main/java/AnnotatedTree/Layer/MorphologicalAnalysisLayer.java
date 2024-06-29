@@ -49,7 +49,8 @@ public class MorphologicalAnalysisLayer extends MultiWordMultiItemLayer<Morpholo
      * @param viewLayer Layer type.
      * @return Total number of morphological tags (for PART_OF_SPEECH) or inflectional groups (for INFLECTIONAL_GROUP)
      * in the words in the node.
-     */    public int getLayerSize(ViewLayerType viewLayer) {
+     */
+    public int getLayerSize(ViewLayerType viewLayer) {
         int size;
         switch (viewLayer){
             case PART_OF_SPEECH:
