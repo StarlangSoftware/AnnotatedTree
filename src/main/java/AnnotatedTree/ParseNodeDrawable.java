@@ -874,6 +874,7 @@ public class ParseNodeDrawable extends ParseNode {
 
     /**
      * Recursive method that accumulates all tag symbols in the descendants of this node in the tagList.
+     * @param tagList Array list of strings to store the tag symbols.
      */
     public void extractTags(ArrayList<String> tagList){
         if (numberOfChildren() != 0){
@@ -886,6 +887,7 @@ public class ParseNodeDrawable extends ParseNode {
 
     /**
      * Recursive method that accumulates number of children of all descendants of this node in the childNumberList.
+     * @param childNumberList Array of list to store the number of children
      */
     public void extractNumberOfChildren(ArrayList<Integer> childNumberList){
         if (numberOfChildren() != 0){
@@ -1002,8 +1004,8 @@ public class ParseNodeDrawable extends ParseNode {
     /**
      * Sets the NER layer according to the tag of the parent node and the word in the node. The word is searched in the
      * gazetteer, if it exists, the NER info is replaced with the NER tag in the gazetter.
-     * @param gazetteer Gazetter where we search the word
-     * @param word Word to be searched in the gazetter
+     * @param gazetteer Gazetteer where we search the word
+     * @param word Word to be searched in the gazetteer
      */
     public void checkGazetteer(Gazetteer gazetteer, String word){
         if (gazetteer.contains(word) && getParent().getData().getName().equals("NNP")){

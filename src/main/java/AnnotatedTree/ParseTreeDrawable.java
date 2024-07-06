@@ -551,6 +551,7 @@ public class ParseTreeDrawable extends ParseTree {
     /**
      * Constructs an AnnotatedSentence object from the English tree. Collects all leaf nodes, then for each leaf node
      * converts the word with its parents pos tag to AnnotatedWord.
+     * @param language English or Persian.
      * @return AnnotatedSentence counterpart of the English tree
      */
     public AnnotatedSentence generateAnnotatedSentence(String language){
@@ -570,6 +571,8 @@ public class ParseTreeDrawable extends ParseTree {
      * its descendants) with respect to the morphological annotation of all parse nodes (with all its descendants)
      * of the current parse tree.
      * @param surfaceForm If true, tag will be replaced with the surface form annotation.
+     * @return A new parse tree by replacing the tag information of the all parse nodes with respect to the
+     * morphological annotation of all parse nodes of the current parse tree.
      */
     public ParseTree generateParseTree(boolean surfaceForm){
         ParseTree result = new ParseTree(new ParseNode(root.getData()));

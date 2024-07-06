@@ -167,7 +167,7 @@ public class LayerInfo {
 
     /**
      * Updates the metamorpheme layer according to the given parse.
-     * @param parse NEw parse to update layer.
+     * @param parse New parse to update layer.
      */
     public void setMetaMorphemes(MetamorphicParse parse) {
         layers.put(ViewLayerType.META_MORPHEME, new MetaMorphemeLayer(parse.toString()));
@@ -333,6 +333,7 @@ public class LayerInfo {
     /**
      * A word may have multiple English propbank info. This method returns the English PropBank argument info at
      * position index.
+     * @param index Position of the English argument.
      * @return English PropBank argument info at position index.
      */
     public Argument getArgumentAt(int index) throws LayerNotExistsException {
@@ -583,7 +584,7 @@ public class LayerInfo {
     }
 
     /**
-     * Removed metamorphemesmoved layer.
+     * Removes metamorphemesmoved layer.
      */
     public void metaMorphemesMovedClear() {
         layers.remove(ViewLayerType.META_MORPHEME_MOVED);
