@@ -39,6 +39,7 @@ public class ParseNodeDrawable extends ParseNode {
      * @param line The input line to create this parseNode.
      * @param isLeaf True, if this node is a leaf node; false otherwise.
      * @param depth Depth of the node.
+     * @throws ParenthesisInLayerException If there is extra paranthesis in the layer value, this exception is thrown.
      */
     public ParseNodeDrawable(ParseNodeDrawable parent, String line, boolean isLeaf, int depth) throws ParenthesisInLayerException {
         int parenthesisCount = 0;

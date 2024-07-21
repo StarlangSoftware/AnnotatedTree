@@ -222,6 +222,7 @@ public class LayerInfo {
 
     /**
      * Returns number of words in the Turkish or Persian layer, whichever exists.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
      * @return Number of words in the Turkish or Persian layer, whichever exists.
      */
     public int getNumberOfWords() throws LayerNotExistsException {
@@ -334,6 +335,7 @@ public class LayerInfo {
      * A word may have multiple English propbank info. This method returns the English PropBank argument info at
      * position index.
      * @param index Position of the English argument.
+     * @throws LayerNotExistsException If the layer does not exist, it throws LayerNotExistsException.
      * @return English PropBank argument info at position index.
      */
     public Argument getArgumentAt(int index) throws LayerNotExistsException {

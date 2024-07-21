@@ -58,6 +58,7 @@ public class MetaMorphemeLayer extends MetaMorphemesMovedLayer{
     /**
      * Removes metamorphemes from the given index. Index shows the position of the metamorpheme in the metamorphemes list.
      * @param index Position of the metamorpheme from which the other metamorphemes will be removed.
+     * @throws LayerItemNotExistsException If the index is invalid for this layer, this exception is thrown.
      * @return New metamorphic parse not containing the removed parts.
      */
     public MetamorphicParse metaMorphemeRemoveFromIndex(int index) throws LayerItemNotExistsException {
