@@ -732,7 +732,7 @@ public class LayerInfo {
                 annotatedWord.setNamedEntityType(getLayerData(ViewLayerType.NER));
             }
             if (layerExists(ViewLayerType.PROPBANK)) {
-                annotatedWord.setArgument(getArgument().toString());
+                annotatedWord.setArgumentList(getArgument().toString());
             }
             if (layerExists(ViewLayerType.SHALLOW_PARSE)) {
                 annotatedWord.setShallowParse(getShallowParseAt(wordIndex));
